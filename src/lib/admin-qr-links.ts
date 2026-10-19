@@ -35,13 +35,13 @@ export function getAdminQrLinks(): AdminQrLink[] {
       id: "menu",
       nameKey: "admin.qr.menuName",
       url: readQrLink("NEXT_PUBLIC_QR_LINK_1", getMenuOrigin()),
-      filename: "mishkah-qr-menu.png",
+      filename: "store-qr-menu.png",
     },
     {
       id: "order",
       nameKey: "admin.qr.orderName",
       url: readQrLink("NEXT_PUBLIC_QR_LINK_2", getPublicStoreOrigin()),
-      filename: "mishkah-qr-order.png",
+      filename: "store-qr-order.png",
     },
   ];
 }

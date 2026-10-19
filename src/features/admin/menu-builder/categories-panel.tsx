@@ -55,7 +55,7 @@ export function CategoriesPanel({
     e.dataTransfer.effectAllowed = "move";
     const categoryId = categories[index]?.setting.categoryId;
     if (categoryId) {
-      e.dataTransfer.setData("application/x-mishkat-category", categoryId);
+      e.dataTransfer.setData("application/x-store-category", categoryId);
     }
   };
 

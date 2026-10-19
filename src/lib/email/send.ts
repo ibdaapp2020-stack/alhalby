@@ -2,7 +2,7 @@ import { sendViaBrevo } from "@/lib/email/brevo";
 import {
   getBrevoConfig,
   getBusinessAlertRecipients,
-  getMishkahNotificationEmails,
+  getStoreNotificationEmails,
 } from "@/lib/email/config";
 import {
   renderCriticalCheckoutFailureEmail,
@@ -13,22 +13,26 @@ import {
   type OrderEmailBase,
 } from "@/lib/email/templates";
 import type { OrderChange } from "@/lib/email/significant-diff";
-import type { MishkahEmailKind, SendEmailResult } from "@/lib/email/types";
+import type { StoreEmailKind, SendEmailResult } from "@/lib/email/types";
 
-export type SendMishkahEmailOptions = {
+export type SendStoreEmailOptions = {
   to?: string | string[];
   subject: string;
   html: string;
   text?: string;
-  kind?: MishkahEmailKind;
+  kind?: StoreEmailKind;
 };
 
 /**
- * Central email entry-point for MISHKAH CAFE.
+ * Central email entry-point for order and system notifications.
  * Always server-side. Never throw secrets.
+ *
+ * Brand name, sender, and recipients are all pulled from environment vars
+ * (BREVO_SENDER_NAME, STORE_NOTIFICATION_EMAIL, STORE_ADMIN_EMAIL) so the
+ * email surface is tenant-neutral.
  */
-export async function sendMishkahEmail(
-  options: SendMishkahEmailOptions
+export async function sendStoreEmail(
+  options: SendStoreEmailOptions
 ): Promise<SendEmailResult> {
   const defaultRecipients = getBusinessAlertRecipients();
   const to = options.to ?? defaultRecipients;
@@ -38,7 +42,7 @@ export async function sendMishkahEmail(
     subject: options.subject,
     html: options.html,
     text: options.text,
-    tags: options.kind ? [`mishkah`, options.kind] : ["mishkah"],
+    tags: options.kind ? [`store`, options.kind] : ["store"],
   });
 
   if (!result.ok) {
@@ -54,14 +58,14 @@ export async function sendMishkahEmail(
   return result;
 }
 
-export async function sendMishkahTestEmail(
+export async function sendStoreTestEmail(
   to?: string | string[]
 ): Promise<SendEmailResult & { recipients: string[] }> {
   const recipients = to
     ? (Array.isArray(to) ? to : [to]).map((e) => e.trim()).filter(Boolean)
-    : getMishkahNotificationEmails().recipients;
+    : getStoreNotificationEmails().recipients;
   const content = renderTestEmailHtml();
-  const result = await sendMishkahEmail({
+  const result = await sendStoreEmail({
     to: recipients,
     subject: content.subject,
     html: content.html,
@@ -75,7 +79,7 @@ export async function sendNewOrderNotificationEmail(
   payload: OrderEmailBase
 ): Promise<SendEmailResult> {
   const content = renderNewOrderEmail(payload);
-  return sendMishkahEmail({
+  return sendStoreEmail({
     subject: content.subject,
     html: content.html,
     text: content.text,
@@ -87,7 +91,7 @@ export async function sendOrderUpdatedNotificationEmail(
   payload: OrderEmailBase & { changes: OrderChange[] }
 ): Promise<SendEmailResult> {
   const content = renderOrderUpdatedEmail(payload);
-  return sendMishkahEmail({
+  return sendStoreEmail({
     subject: content.subject,
     html: content.html,
     text: content.text,
@@ -99,7 +103,7 @@ export async function sendOrderCancelledNotificationEmail(
   payload: OrderEmailBase & { cancelReason?: string }
 ): Promise<SendEmailResult> {
   const content = renderOrderCancelledEmail(payload);
-  return sendMishkahEmail({
+  return sendStoreEmail({
     subject: content.subject,
     html: content.html,
     text: content.text,
@@ -113,10 +117,15 @@ export async function sendCriticalCheckoutFailureEmail(payload: {
   occurredAt: string;
 }): Promise<SendEmailResult> {
   const content = renderCriticalCheckoutFailureEmail(payload);
-  return sendMishkahEmail({
+  return sendStoreEmail({
     subject: content.subject,
     html: content.html,
     text: content.text,
     kind: "system",
   });
 }
+
+/** @deprecated Use {@link sendStoreEmail}. Alias retained for external scripts. */
+export const sendMishkahEmail = sendStoreEmail;
+/** @deprecated Use {@link sendStoreTestEmail}. */
+export const sendMishkahTestEmail = sendStoreTestEmail;

@@ -1,6 +1,6 @@
 import { DEFAULT_PDF_DRAFT, type PdfMenuDraft } from "@/types/pdf-menu";
 
-const KEY = "mishkat-pdf-menu-draft";
+const KEY = "store-pdf-menu-draft";
 
 export function loadPdfDraft(): PdfMenuDraft {
   if (typeof window === "undefined") return { ...DEFAULT_PDF_DRAFT };

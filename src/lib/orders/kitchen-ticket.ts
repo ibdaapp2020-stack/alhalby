@@ -225,7 +225,7 @@ const TICKET_STYLES = `
   }
 `;
 
-export function kitchenTicketHtml(order: Order): string {
+export function kitchenTicketHtml(order: Order, brandName?: string): string {
   const type = orderTypeLabel(order);
   const phone = order.customerPhone?.trim() || "";
   const customer = order.customerName?.trim() || "";
@@ -277,10 +277,12 @@ export function kitchenTicketHtml(order: Order): string {
     );
   }
 
+  // Brand name is injected by the caller (printKitchenTicket) via the
+  // `brandName` optional parameter so this layer stays tenant-agnostic.
   return `
     <style>${TICKET_STYLES}</style>
     <article class="ticket" dir="rtl">
-      <p class="brand">MISHKAT CAFÉ</p>
+      ${brandName ? `<p class="brand">${escapeHtml(brandName)}</p>` : ""}
       <h1 class="order-no">#${escapeHtml(order.orderNumber)}</h1>
       <p class="meta">${escapeHtml(formatTicketDate(order.createdAt))}</p>
       ${
@@ -305,11 +307,11 @@ export function kitchenTicketHtml(order: Order): string {
         <span class="total-label">סה״כ לתשלום</span>
         <span class="total-value">${escapeHtml(formatPrice(order.total))}</span>
       </div>
-      <p class="footer-hint">כרטיס מטבח · Mishkat</p>
+      <p class="footer-hint">כרטיס מטבח${brandName ? ` · ${escapeHtml(brandName)}` : ""}</p>
     </article>`;
 }
 
-export function printKitchenTicket(order: Order): void {
+export function printKitchenTicket(order: Order, brandName?: string): void {
   const printWindow = window.open("", "_blank", "width=440,height=780");
   if (!printWindow) return;
   printWindow.document.write(`<!doctype html>
@@ -319,7 +321,7 @@ export function printKitchenTicket(order: Order): void {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>${escapeHtml(order.orderNumber)}</title>
       </head>
-      <body>${kitchenTicketHtml(order)}</body>
+      <body>${kitchenTicketHtml(order, brandName)}</body>
     </html>`);
   printWindow.document.close();
   printWindow.focus();

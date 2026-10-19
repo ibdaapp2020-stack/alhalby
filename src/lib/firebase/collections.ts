@@ -24,7 +24,13 @@ export const COLLECTIONS = {
   printAgentHeartbeats: "printAgentHeartbeats",
 } as const;
 
-export const DEFAULT_STORE_ID = "mishkah";
+/**
+ * Default store identifier used for multi-tenant print routing when no
+ * explicit store id is passed. Override via `PRINT_STORE_ID` env var in the
+ * agent configuration, or by passing an explicit id at the call site.
+ */
+export const DEFAULT_STORE_ID =
+  process.env.PRINT_STORE_ID ?? process.env.NEXT_PUBLIC_PRINT_STORE_ID ?? "store";
 
 export const STORAGE_PATHS = {
   products: "products",

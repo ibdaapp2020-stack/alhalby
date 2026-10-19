@@ -22,7 +22,7 @@ import { UI_TRANSLATIONS_SEED } from "@/data/ui-translations-seed";
 import { LocaleHtmlSync } from "@/components/providers/locale-html-sync";
 import { applyLocaleFonts } from "@/lib/typography/locale-fonts";
 
-const STORAGE_KEY = "mishkat-locale";
+const STORAGE_KEY = "store-locale";
 
 type LocaleContextValue = {
   locale: Locale;

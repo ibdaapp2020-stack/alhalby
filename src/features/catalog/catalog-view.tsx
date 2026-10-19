@@ -12,7 +12,6 @@ import { ProductFiltersBar } from "@/features/catalog/product-filters-bar";
 import { ProductGrid } from "@/features/catalog/product-grid";
 import { ProductDetailDrawer } from "@/features/catalog/product-detail-drawer";
 import { CatalogModifierPreviewProvider } from "@/features/catalog/catalog-modifier-preview-context";
-import { CatalogSeeder } from "@/components/catalog/catalog-seeder";
 import { Input } from "@/components/ui/input";
 import { useProducts, useAllProducts, useCategories } from "@/hooks/useProducts";
 import { useT, useLocale } from "@/components/providers/locale-provider";
@@ -41,9 +40,18 @@ export function CatalogView() {
   });
   const bannerTargetApplied = useRef(false);
 
-  const { categories } = useCategories();
+  const { categories, loading: categoriesLoading } = useCategories();
   const { products: allProducts, loading: allLoading } = useAllProducts();
   const rootCategories = useMemo(() => getRootCategories(categories), [categories]);
+
+  // A truly empty storefront (no categories, no products) means the tenant
+  // hasn't configured a catalog yet. Show the friendly placeholder from the
+  // STORE-STARTER spec rather than an awkward blank layout.
+  const storefrontEmpty =
+    !categoriesLoading &&
+    !allLoading &&
+    categories.length === 0 &&
+    allProducts.length === 0;
 
   useEffect(() => {
     if (bannerTargetApplied.current || (categories.length === 0 && allProducts.length === 0)) return;
@@ -147,10 +155,33 @@ export function CatalogView() {
     hasSubcategories(categories, selectedCategoryId) &&
     !selectedSubcategoryId;
 
+  if (storefrontEmpty) {
+    return (
+      <CatalogModifierPreviewProvider>
+        <>
+          <SiteHeader />
+          <section className="mx-auto flex min-h-[60dvh] w-full max-w-md flex-col items-center justify-center gap-4 px-6 py-20 text-center">
+            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-ds-surface-muted text-ds-primary">
+              <Search className="h-8 w-8" strokeWidth={1.75} />
+            </div>
+            <h1 className="text-xl font-semibold text-ds-text" dir={dir}>
+              {t("catalog.emptyStoreTitle", "אנחנו מכינים את החנות בשבילכם")}
+            </h1>
+            <p className="text-sm text-ds-text-muted" dir={dir}>
+              {t(
+                "catalog.emptyStoreBody",
+                "בקרוב כאן יופיעו המוצרים והקטגוריות. חזרו בקרוב."
+              )}
+            </p>
+          </section>
+        </>
+      </CatalogModifierPreviewProvider>
+    );
+  }
+
   return (
     <CatalogModifierPreviewProvider>
     <>
-      <CatalogSeeder />
       <SiteHeader />
 
       {isHome && <HeroBanner />}

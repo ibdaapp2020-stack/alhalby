@@ -1,5 +1,10 @@
 /**
- * Server-side email configuration for MISHKAH CAFE.
+ * Server-side email configuration.
+ *
+ * Every string here is tenant-neutral: provider defaults, sender name, admin
+ * recipients and portal URL are read from environment variables so cloning
+ * this template never emails from the previous tenant's inbox.
+ *
  * Never import this module from client components.
  */
 
@@ -10,7 +15,7 @@ function env(name: string, fallback = ""): string {
 }
 
 export function getMailProvider(): MailProvider {
-  const value = env("MAIL_PROVIDER", "BREVO").toUpperCase();
+  const value = env("MAIL_PROVIDER", "NONE").toUpperCase();
   return value === "BREVO" ? "BREVO" : "NONE";
 }
 
@@ -18,15 +23,20 @@ export function getBrevoConfig() {
   return {
     apiKey: env("BREVO_API_KEY"),
     baseUrl: env("BREVO_BASE_URL", "https://api.brevo.com/v3").replace(/\/$/, ""),
-    senderName: env("BREVO_SENDER_NAME", "MISHKAH CAFE"),
-    senderEmail: env("BREVO_SENDER_EMAIL", "email@mishkatcafe.dev"),
-    replyTo: env("BREVO_REPLY_TO", "mishkahcaffe@gmail.com"),
+    senderName: env("BREVO_SENDER_NAME", "Store"),
+    senderEmail: env("BREVO_SENDER_EMAIL"),
+    replyTo: env("BREVO_REPLY_TO"),
   };
 }
 
-export function getMishkahNotificationEmails() {
-  const notification = env("MISHKAH_NOTIFICATION_EMAIL", "mishkahcaffe@gmail.com");
-  const admin = env("MISHKAH_ADMIN_EMAIL", "abulieltasneem23@gmail.com");
+/**
+ * Notification recipients configured per-tenant via environment variables.
+ * Returns an empty recipients array when neither var is set, so the sender
+ * fails fast instead of silently emailing a leftover address.
+ */
+export function getStoreNotificationEmails() {
+  const notification = env("STORE_NOTIFICATION_EMAIL");
+  const admin = env("STORE_ADMIN_EMAIL");
   const recipients = [notification, admin].filter(Boolean);
   return {
     notification,
@@ -36,23 +46,28 @@ export function getMishkahNotificationEmails() {
   };
 }
 
-/** Business order alerts — primary café inbox */
+/** Business order alerts — primary store inbox */
 export function getBusinessAlertRecipients(): string[] {
-  const { notification } = getMishkahNotificationEmails();
+  const { notification } = getStoreNotificationEmails();
   return notification ? [notification] : [];
 }
 
 export function getPublicSiteUrl(): string {
-  return env("NEXT_PUBLIC_SITE_URL", "https://mishkatcafe.dev").replace(/\/$/, "");
+  return env("NEXT_PUBLIC_SITE_URL", "http://localhost:3000").replace(/\/$/, "");
 }
 
 export function getPortalAdminOrderUrl(orderId: string): string {
+  const portalEnv = env("NEXT_PUBLIC_PORTAL_URL");
+  const portalHost = env("NEXT_PUBLIC_PORTAL_HOST");
   const portal =
-    env("NEXT_PUBLIC_PORTAL_URL") ||
-    `https://${env("NEXT_PUBLIC_PORTAL_HOST", "portal.mishkatcafe.dev")}`;
-  const base = `${portal.replace(/\/$/, "")}/orders`;
+    portalEnv ||
+    (portalHost ? `https://${portalHost}` : getPublicSiteUrl());
+  const base = `${portal.replace(/\/$/, "")}/admin/orders`;
   return orderId ? `${base}?order=${encodeURIComponent(orderId)}` : base;
 }
+
+/** @deprecated Use {@link getStoreNotificationEmails}. Alias for scripts. */
+export const getMishkahNotificationEmails = getStoreNotificationEmails;
 
 export function assertBrevoReady(): { ok: true } | { ok: false; error: string } {
   if (getMailProvider() !== "BREVO") {

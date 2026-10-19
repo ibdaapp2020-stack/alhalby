@@ -89,7 +89,7 @@ interface CartContextValue {
 }
 
 const CartContext = createContext<CartContextValue | null>(null);
-const CART_STORAGE_KEY = "mishkat-cart-v2";
+const CART_STORAGE_KEY = "store-cart-v2";
 
 function newLineId(
   product: Product,
@@ -290,7 +290,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const applyCoupon = useCallback((code: string) => {
     const normalized = code.trim().toUpperCase();
-    if (normalized === "MISHKAT10") {
+    if (normalized === "STORE10") {
       dispatch({ type: "SET_COUPON", code: normalized, discount: 0.1 });
       return true;
     }

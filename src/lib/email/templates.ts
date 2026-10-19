@@ -1,6 +1,25 @@
 import { BRAND_COLORS } from "@/lib/brand";
-import { getPublicSiteUrl } from "@/lib/email/config";
+import { getBrevoConfig, getPublicSiteUrl } from "@/lib/email/config";
 import type { OrderChange } from "@/lib/email/significant-diff";
+
+/**
+ * Resolve the brand name to use in email subjects, body text, and footer.
+ * Pulled from `BREVO_SENDER_NAME` (configured per-tenant) with a neutral
+ * fallback so cloned templates never leak a previous tenant's name.
+ */
+function brandName(): string {
+  return getBrevoConfig().senderName || "Store";
+}
+
+/**
+ * Resolve the brand logo URL. When the tenant has not uploaded a logo yet
+ * the public SVG store-icon ships as a safe placeholder.
+ */
+function brandLogoUrl(siteUrl: string): string {
+  const custom = process.env.BRAND_LOGO_URL?.trim();
+  if (custom) return custom;
+  return `${siteUrl}/brand/store-icon.svg`;
+}
 
 const COLORS = {
   primary: BRAND_COLORS.primary,
@@ -40,7 +59,8 @@ export function emailShell(opts: {
   bodyHtml: string;
 }): string {
   const siteUrl = getPublicSiteUrl();
-  const logoUrl = `${siteUrl}/logo-transparent.png`;
+  const logoUrl = brandLogoUrl(siteUrl);
+  const brand = brandName();
   const badge = opts.badge ? BADGE[opts.badge] : null;
   const preheader = opts.preheader
     ? `<div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent;">${escapeHtml(opts.preheader)}</div>`
@@ -61,8 +81,8 @@ export function emailShell(opts: {
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:${COLORS.warmWhite};border-radius:16px;overflow:hidden;border:1px solid ${COLORS.border};">
           <tr>
             <td style="background:${COLORS.primary};padding:22px 24px;text-align:center;">
-              <img src="${logoUrl}" alt="MISHKAH CAFE" width="72" height="63" style="display:inline-block;border:0;outline:none;max-width:72px;height:auto;" />
-              <div style="margin-top:10px;font-size:20px;font-weight:700;letter-spacing:0.04em;color:${COLORS.warmWhite};">MISHKAH CAFE</div>
+              <img src="${logoUrl}" alt="${escapeHtml(brand)}" width="72" height="63" style="display:inline-block;border:0;outline:none;max-width:72px;height:auto;" />
+              <div style="margin-top:10px;font-size:20px;font-weight:700;letter-spacing:0.04em;color:${COLORS.warmWhite};">${escapeHtml(brand)}</div>
               ${
                 badge
                   ? `<div style="margin-top:12px;display:inline-block;padding:6px 14px;border-radius:999px;background:${badge.bg};color:${badge.color};font-size:12px;font-weight:700;">${escapeHtml(badge.label)}</div>`
@@ -77,8 +97,7 @@ export function emailShell(opts: {
           </tr>
           <tr>
             <td style="padding:18px 24px;background:${COLORS.cream};border-top:1px solid ${COLORS.border};text-align:center;">
-              <div style="font-size:13px;font-weight:700;color:${COLORS.primary};">MISHKAH CAFE</div>
-              <div style="margin-top:4px;font-size:12px;color:${COLORS.muted};">Coffee • Crêpes • Desserts</div>
+              <div style="font-size:13px;font-weight:700;color:${COLORS.primary};">${escapeHtml(brand)}</div>
             </td>
           </tr>
         </table>
@@ -99,13 +118,14 @@ function ctaButton(url: string, label: string): string {
 }
 
 export function renderTestEmailHtml(): { subject: string; html: string; text: string } {
-  const subject = "MISHKAH CAFE — בדיקת מערכת המיילים";
+  const brand = brandName();
+  const subject = `${brand} — בדיקת מערכת המיילים`;
   const html = emailShell({
     title: subject,
     badge: "test",
     preheader: "מערכת המיילים מחוברת בהצלחה",
     bodyHtml: `
-      <h1 style="margin:0 0 12px;font-size:22px;line-height:1.3;color:${COLORS.primary};text-align:center;">MISHKAH CAFE</h1>
+      <h1 style="margin:0 0 12px;font-size:22px;line-height:1.3;color:${COLORS.primary};text-align:center;">${escapeHtml(brand)}</h1>
       <p style="margin:0 0 10px;font-size:16px;line-height:1.6;text-align:center;color:${COLORS.primary};">
         מערכת המיילים מחוברת בהצלחה.
       </p>
@@ -117,7 +137,7 @@ export function renderTestEmailHtml(): { subject: string; html: string; text: st
   return {
     subject,
     html,
-    text: "MISHKAH CAFE\n\nמערכת המיילים מחוברת בהצלחה.\nזהו מייל בדיקה שנשלח באמצעות Brevo.",
+    text: `${brand}\n\nמערכת המיילים מחוברת בהצלחה.\nזהו מייל בדיקה שנשלח באמצעות Brevo.`,
   };
 }
 
@@ -264,7 +284,8 @@ export function renderNewOrderEmail(payload: OrderEmailBase): {
   html: string;
   text: string;
 } {
-  const subject = `הזמנה חדשה #${payload.orderNumber} | MISHKAH CAFE`;
+  const brand = brandName();
+  const subject = `הזמנה חדשה #${payload.orderNumber} | ${brand}`;
   const html = emailShell({
     title: subject,
     badge: "new",
@@ -285,14 +306,15 @@ export function renderNewOrderEmail(payload: OrderEmailBase): {
   return {
     subject,
     html,
-    text: `MISHKAH CAFE\nהזמנה חדשה #${payload.orderNumber}\nלקוח: ${payload.customerName}\nסה״כ: ${formatIls(payload.total)}\n${payload.viewUrl}`,
+    text: `${brand}\nהזמנה חדשה #${payload.orderNumber}\nלקוח: ${payload.customerName}\nסה״כ: ${formatIls(payload.total)}\n${payload.viewUrl}`,
   };
 }
 
 export function renderOrderUpdatedEmail(
   payload: OrderEmailBase & { changes: OrderChange[] }
 ): { subject: string; html: string; text: string } {
-  const subject = `הזמנה #${payload.orderNumber} עודכנה | MISHKAH CAFE`;
+  const brand = brandName();
+  const subject = `הזמנה #${payload.orderNumber} עודכנה | ${brand}`;
   const changesHtml = payload.changes
     .map(
       (c) => `
@@ -327,14 +349,15 @@ export function renderOrderUpdatedEmail(
   return {
     subject,
     html,
-    text: `MISHKAH CAFE\nהזמנה #${payload.orderNumber} עודכנה\n${payload.changes.map((c) => `${c.label}: ${c.before} → ${c.after}`).join("\n")}`,
+    text: `${brand}\nהזמנה #${payload.orderNumber} עודכנה\n${payload.changes.map((c) => `${c.label}: ${c.before} → ${c.after}`).join("\n")}`,
   };
 }
 
 export function renderOrderCancelledEmail(
   payload: OrderEmailBase & { cancelReason?: string }
 ): { subject: string; html: string; text: string } {
-  const subject = `הזמנה #${payload.orderNumber} בוטלה | MISHKAH CAFE`;
+  const brand = brandName();
+  const subject = `הזמנה #${payload.orderNumber} בוטלה | ${brand}`;
   const reasonRow = payload.cancelReason
     ? `<div><strong>סיבת ביטול:</strong> ${escapeHtml(payload.cancelReason)}</div>`
     : "";
@@ -357,7 +380,7 @@ export function renderOrderCancelledEmail(
   return {
     subject,
     html,
-    text: `MISHKAH CAFE\nהזמנה #${payload.orderNumber} בוטלה\n${payload.cancelReason ?? ""}\n${payload.viewUrl}`,
+    text: `${brand}\nהזמנה #${payload.orderNumber} בוטלה\n${payload.cancelReason ?? ""}\n${payload.viewUrl}`,
   };
 }
 
@@ -366,7 +389,8 @@ export function renderCriticalCheckoutFailureEmail(payload: {
   code?: string;
   occurredAt: string;
 }): { subject: string; html: string; text: string } {
-  const subject = "תקלה בתהליך הזמנה | MISHKAH CAFE";
+  const brand = brandName();
+  const subject = `תקלה בתהליך הזמנה | ${brand}`;
   const { date, time } = formatDateHe(payload.occurredAt);
   const html = emailShell({
     title: subject,
@@ -387,6 +411,6 @@ export function renderCriticalCheckoutFailureEmail(payload: {
   return {
     subject,
     html,
-    text: `MISHKAH CAFE\nתקלה בתהליך הזמנה\n${payload.code ?? ""}\n${payload.message}`,
+    text: `${brand}\nתקלה בתהליך הזמנה\n${payload.code ?? ""}\n${payload.message}`,
   };
 }

@@ -41,13 +41,13 @@ export function PageOrganizer({
             key={page.id}
             draggable
             onDragStart={(e) => {
-              e.dataTransfer.setData("application/x-mishkat-page", String(index));
+              e.dataTransfer.setData("application/x-store-page", String(index));
               e.dataTransfer.effectAllowed = "move";
             }}
             onDragOver={(e) => e.preventDefault()}
             onDrop={(e) => {
               e.preventDefault();
-              const from = Number(e.dataTransfer.getData("application/x-mishkat-page"));
+              const from = Number(e.dataTransfer.getData("application/x-store-page"));
               if (!Number.isNaN(from)) onReorder(from, index);
             }}
             onClick={() => onSelectPage(page.id)}

@@ -34,7 +34,7 @@ export const DEFAULT_A11Y_SETTINGS: AccessibilitySettings = {
   keyboardNav: false,
 };
 
-export const A11Y_STORAGE_KEY = "mishkat-a11y-settings";
+export const A11Y_STORAGE_KEY = "store-a11y-settings";
 
 export function parseStoredSettings(raw: string | null): AccessibilitySettings {
   if (!raw) return { ...DEFAULT_A11Y_SETTINGS };

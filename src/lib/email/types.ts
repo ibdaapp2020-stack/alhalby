@@ -10,12 +10,15 @@ export type SendEmailResult =
   | { ok: true; messageId?: string; statusCode: number }
   | { ok: false; error: string; statusCode?: number; code?: string };
 
-export type MishkahEmailKind =
+export type StoreEmailKind =
   | "test"
   | "new_order"
   | "order_updated"
   | "order_cancelled"
   | "system";
+
+/** @deprecated Use {@link StoreEmailKind}. Retained as alias for backward compatibility with external scripts. */
+export type MishkahEmailKind = StoreEmailKind;
 
 export type NewOrderEmailStatus = "SENDING" | "SENT" | "FAILED";
 

@@ -1,7 +1,7 @@
 import type { ProductInput } from "@/lib/validation/schemas";
 import { isAllowedProductImageUrl } from "@/lib/menu/placeholders";
 
-export const PRODUCT_DRAFT_KEY = "mishkat-product-draft";
+export const PRODUCT_DRAFT_KEY = "store-product-draft";
 
 export type ProductFormTab = "details" | "images" | "modifiers" | "settings";
 

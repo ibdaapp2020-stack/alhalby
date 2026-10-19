@@ -4,6 +4,12 @@ import { parsePrintLocale } from "@/lib/print-jobs/ids";
 import type { FirestoreOrder, FirestoreOrderItem } from "@/types/firestore";
 import type { Order, OrderItem } from "@/types";
 
+/**
+ * Localized receipt copy. `brand` and `brandSecondary` default to empty so the
+ * caller (receiptService / print-jobs enqueue) can inject the live tenant name
+ * from Firestore `settings/app`. The renderer treats empty brand strings as
+ * "no header line" rather than printing a placeholder.
+ */
 const COPY: Record<
   PrintLocale,
   {
@@ -17,8 +23,8 @@ const COPY: Record<
   }
 > = {
   ar: {
-    brand: "مشكا",
-    brandSecondary: "MISHKAH CAFE",
+    brand: "",
+    brandSecondary: "",
     headline: "طلب جديد",
     cash: "نقداً",
     card: "بطاقة",
@@ -26,8 +32,8 @@ const COPY: Record<
     paymentUnknown: "غير محدد",
   },
   he: {
-    brand: "MISHKAH CAFE",
-    brandSecondary: "משכא",
+    brand: "",
+    brandSecondary: "",
     headline: "הזמנה חדשה",
     cash: "מזומן",
     card: "כרטיס",
@@ -35,8 +41,8 @@ const COPY: Record<
     paymentUnknown: "לא צוין",
   },
   en: {
-    brand: "MISHKAH CAFE",
-    brandSecondary: "مشكا",
+    brand: "",
+    brandSecondary: "",
     headline: "NEW ORDER",
     cash: "Cash",
     card: "Card",

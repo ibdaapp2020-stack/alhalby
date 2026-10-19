@@ -39,12 +39,12 @@ export async function POST() {
 }
 
 export async function GET() {
+  const { MASTER_MENU_STATS } = await import("@/data/master-menu");
   return NextResponse.json({
-    stats: {
-      categories: 12,
-      products: 105,
-      popular: 34,
-    },
+    stats: MASTER_MENU_STATS,
     source: "src/data/master-menu.ts",
+    note:
+      "STORE-STARTER ships with zero demo data. Populate scripts/data/products.json " +
+      "and run `npm run seed` to push a starter catalog to Firestore.",
   });
 }

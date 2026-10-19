@@ -80,19 +80,19 @@ export function createSmokeMenuExport(): { pages: MenuPage[]; template: PdfMenuT
     coverSettings: {
       ...DEFAULT_COVER_SETTINGS,
       enabled: true,
-      logoUrl: "/logo-transparent.png",
-      businessName: "MISHKAT CAFÉ",
+      logoUrl: "/brand/store-icon.svg",
+      businessName: "Store",
       subtitle: "القائمة",
-      phone: "050-000-0000",
-      instagram: "mishkat.cafe",
+      phone: "",
+      instagram: "",
       showQr: true,
-      qrUrl: "/logo-transparent.png",
+      qrUrl: "/brand/store-icon.svg",
     },
     footerSettings: {
       ...DEFAULT_FOOTER_SETTINGS,
       enabled: true,
-      businessName: "MISHKAT CAFÉ",
-      instagram: "mishkat.cafe",
+      businessName: "Store",
+      instagram: "",
       showPageNumber: true,
     },
     qrSettings: { ...DEFAULT_QR_SETTINGS, enabled: true },
@@ -110,7 +110,9 @@ export function createSmokeMenuExport(): { pages: MenuPage[]; template: PdfMenuT
     { id: "h7", name: "موكا", price: 18 },
   ], 50);
 
-  const broken = "https://firebasestorage.googleapis.com/v0/b/mshkah.firebasestorage.app/o/products%2Fmissing-broken.jpg?alt=media&token=dead";
+  // Deliberately broken URL used by the PDF smoke test to exercise the
+  // image-fallback path. Project id is a placeholder that will never resolve.
+  const broken = "https://firebasestorage.googleapis.com/v0/b/example-project.firebasestorage.app/o/products%2Fmissing-broken.jpg?alt=media&token=dead";
 
   const coffee = cat("coffee", "القهوة", [
     { id: "c1", name: "إسبريسو قصير", price: 10, image: broken },

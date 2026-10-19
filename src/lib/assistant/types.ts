@@ -64,10 +64,13 @@ export const BEVERAGE_CATEGORIES = [
 
 export const DEFAULT_ASSISTANT_CONFIG: AssistantConfig = {
   enabled: true,
+  // Generic greeting — the tenant can override via Admin → Assistant and the
+  // store brand name is injected at runtime by the assistant widget using
+  // useTenantBrand(), so this template never leaks a previous tenant's name.
   greeting: {
-    he: "שלום!\n\nאני העוזר של MISHKAT CAFÉ.\n\nאיך אפשר לעזור?\n\nאפשר לבחור אחת מהאפשרויות למטה.",
-    ar: "مرحباً!\n\nأنا مساعد MISHKAT CAFÉ.\n\nكيف يمكنني مساعدتك؟\n\nاختر أحد الخيارات أدناه.",
-    en: "Hello!\n\nI'm the MISHKAT CAFÉ assistant.\n\nHow can I help?\n\nChoose one of the options below.",
+    he: "שלום!\n\nאיך אפשר לעזור?\n\nאפשר לבחור אחת מהאפשרויות למטה.",
+    ar: "مرحباً!\n\nكيف يمكنني مساعدتك؟\n\nاختر أحد الخيارات أدناه.",
+    en: "Hello!\n\nHow can I help?\n\nChoose one of the options below.",
   },
   suggestedQuestions: [
     { he: "שעות פתיחה", ar: "ساعات العمل", en: "Opening hours" },

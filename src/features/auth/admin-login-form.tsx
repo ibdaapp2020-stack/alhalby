@@ -106,7 +106,7 @@ export function AdminLoginForm() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@mishkat.cafe"
+                placeholder="admin@example.com"
                 className="mt-1.5"
                 required
               />

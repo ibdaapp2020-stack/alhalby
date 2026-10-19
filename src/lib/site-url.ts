@@ -1,4 +1,10 @@
-export const PRODUCTION_SITE_URL = "https://mshkah.vercel.app";
+/**
+ * Fallback public URL used when `NEXT_PUBLIC_SITE_URL` is missing or invalid.
+ * Set `NEXT_PUBLIC_SITE_URL` in your deployment env to your live storefront
+ * origin so QR codes, emails, and OG links point at the right domain.
+ */
+export const PRODUCTION_SITE_URL =
+  process.env.NEXT_PUBLIC_PRODUCTION_FALLBACK_URL?.trim() || "https://example.com";
 
 function stripTrailingSlash(value: string): string {
   return value.replace(/\/+$/, "");
@@ -18,7 +24,11 @@ function isPrivateOrLocalHost(hostname: string): boolean {
 
 function isVercelPreviewHost(hostname: string): boolean {
   const host = hostname.toLowerCase();
-  if (host === "mshkah.vercel.app") return false;
+  // The production Vercel deployment hostname can be whitelisted via env so
+  // it isn't treated as a throwaway preview. All other *.vercel.app hosts
+  // are considered previews.
+  const prodHost = process.env.NEXT_PUBLIC_VERCEL_PROD_HOST?.trim().toLowerCase();
+  if (prodHost && host === prodHost) return false;
   return host.endsWith(".vercel.app");
 }
 

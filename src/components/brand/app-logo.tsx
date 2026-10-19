@@ -19,7 +19,7 @@ const SIZE_CLASS: Record<LogoSize, string> = {
 };
 
 /**
- * Single source of truth for the official Mishkat logo asset.
+ * Single source of truth for the active tenant's logo asset.
  * Uses `public/logo-transparent.png` (derived from `public/logo.png`).
  */
 export function AppLogo({

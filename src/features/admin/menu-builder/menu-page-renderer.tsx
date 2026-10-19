@@ -435,7 +435,7 @@ function CoverBody({
           lineHeight: 1.15,
         }}
       >
-        {cover?.businessName || "MISHKAT"}
+        {cover?.businessName || ""}
       </h1>
       <div
         style={{

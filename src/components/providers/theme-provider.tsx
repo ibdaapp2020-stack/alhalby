@@ -9,7 +9,7 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       attribute="class"
       defaultTheme="light"
       enableSystem
-      storageKey="mishkat-theme"
+      storageKey="store-theme"
       disableTransitionOnChange={false}
     >
       {children}

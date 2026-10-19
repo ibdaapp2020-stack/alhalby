@@ -8,8 +8,11 @@ export const PRINT_LOCALES = ["ar", "he", "en"] as const;
 export type PrintLocale = (typeof PRINT_LOCALES)[number];
 
 export const DEFAULT_PRINT_LOCALE: PrintLocale = "ar";
-export const PRINT_STORE_ID = "mishkah";
-export const PRINTER_DISPLAY_NAME = "MISHKAH Kitchen Printer";
+/** Logical store id for routing print jobs to the right local agent. */
+export const PRINT_STORE_ID = process.env.PRINT_STORE_ID ?? "store";
+/** Display label shown in Admin → Printer when no custom name is configured. */
+export const PRINTER_DISPLAY_NAME =
+  process.env.PRINTER_DISPLAY_NAME ?? "Kitchen Printer";
 
 export const MAX_PRINT_ATTEMPTS = 3;
 /** After attempt 1 fails wait 10s; after attempt 2 fails wait 30s; then FAILED. */

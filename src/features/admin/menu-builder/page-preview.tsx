@@ -125,18 +125,18 @@ export function PagePreview({
             )}
             draggable
             onDragStart={(e) => {
-              e.dataTransfer.setData("application/x-mishkat-page", String(currentIndex));
+              e.dataTransfer.setData("application/x-store-page", String(currentIndex));
             }}
             onDragOver={(e) => {
               e.preventDefault();
-              if (e.dataTransfer.types.includes("application/x-mishkat-category")) setDragOver(true);
+              if (e.dataTransfer.types.includes("application/x-store-category")) setDragOver(true);
             }}
             onDragLeave={() => setDragOver(false)}
             onDrop={(e) => {
               e.preventDefault();
               setDragOver(false);
-              const categoryId = e.dataTransfer.getData("application/x-mishkat-category");
-              const fromPage = e.dataTransfer.getData("application/x-mishkat-page");
+              const categoryId = e.dataTransfer.getData("application/x-store-category");
+              const fromPage = e.dataTransfer.getData("application/x-store-page");
               if (categoryId) onDropCategory(page.id, categoryId);
               else if (fromPage !== "") onReorderPages(Number(fromPage), currentIndex);
             }}

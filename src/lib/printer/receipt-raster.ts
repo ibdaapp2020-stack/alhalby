@@ -16,7 +16,7 @@ export const RECEIPT_WIDTH_PX = 576;
  */
 const FONT = {
   banner: 24, // "TEST PRINT" banner (test-only)
-  brandTitle: 56, // MISHKAH CAFE
+  brandTitle: 56, // Store brand (from tenant settings; blank-safe)
   brandSecondary: 30, // secondary script line under brand
   headline: 34, // "NEW ORDER" / "طلب جديد" / "הזמנה חדשה"
   orderNumber: 52, // #1234
@@ -112,8 +112,8 @@ export async function renderReceiptRaster(
   let fontFamily = "sans-serif";
   for (const path of FONT_CANDIDATES) {
     if (existsSync(path)) {
-      GlobalFonts.registerFromPath(path, "MishkahReceipt");
-      fontFamily = "MishkahReceipt";
+      GlobalFonts.registerFromPath(path, "StoreReceipt");
+      fontFamily = "StoreReceipt";
       break;
     }
   }
@@ -129,15 +129,19 @@ export async function renderReceiptRaster(
     ops.push(gap(SECTION_GAP_SMALL));
   }
 
-  // Header banner
+  // Header banner — brand lines are optional: when the tenant has not set a
+  // brand name in Firestore `settings/app` the renderer prints just the rule
+  // + headline, keeping the receipt clean rather than showing a placeholder.
   ops.push(rule(true));
   ops.push(gap(SECTION_GAP_SMALL));
-  ops.push(text(model.brand, FONT.brandTitle, { bold: true, align: "center" }));
-  if (model.brandSecondary) {
-    ops.push(gap(6));
-    ops.push(text(model.brandSecondary, FONT.brandSecondary, { align: "center" }));
+  if (model.brand?.trim()) {
+    ops.push(text(model.brand, FONT.brandTitle, { bold: true, align: "center" }));
+    if (model.brandSecondary?.trim()) {
+      ops.push(gap(6));
+      ops.push(text(model.brandSecondary, FONT.brandSecondary, { align: "center" }));
+    }
+    ops.push(gap(SECTION_GAP_MEDIUM));
   }
-  ops.push(gap(SECTION_GAP_MEDIUM));
   ops.push(text(model.headline, FONT.headline, { bold: true, align: "center" }));
   ops.push(gap(SECTION_GAP_SMALL));
   ops.push(

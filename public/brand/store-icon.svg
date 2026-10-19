@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Store">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#F2EDE6"/>
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="28" fill="url(#bg)"/>
+  <path
+    d="M30 50 L34 36 H94 L98 50"
+    fill="none"
+    stroke="#201D1A"
+    stroke-width="4"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+  <rect x="30" y="50" width="68" height="48" rx="4"
+    fill="#FFFFFF" stroke="#201D1A" stroke-width="4" stroke-linejoin="round"/>
+  <path
+    d="M34 50 V58 Q34 64 40 64 Q46 64 46 58 V50 M46 50 V58 Q46 64 52 64 Q58 64 58 58 V50 M58 50 V58 Q58 64 64 64 Q70 64 70 58 V50 M70 50 V58 Q70 64 76 64 Q82 64 82 58 V50 M82 50 V58 Q82 64 88 64 Q94 64 94 58 V50"
+    fill="none"
+    stroke="#201D1A"
+    stroke-width="3.5"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+  <rect x="54" y="76" width="20" height="22" rx="2"
+    fill="#C12C22" stroke="#201D1A" stroke-width="3" stroke-linejoin="round"/>
+  <circle cx="70" cy="87" r="1.6" fill="#FFFFFF"/>
+</svg>

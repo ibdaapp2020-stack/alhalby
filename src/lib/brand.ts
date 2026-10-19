@@ -1,41 +1,55 @@
-/** Central brand asset paths */
+/**
+ * Legacy brand constants — kept only as a thin bridge for existing imports.
+ *
+ * ⚠️ Do NOT reference these in new code. The source of truth is `useTenant()`
+ * (client) or `resolveFallbackPreset()` (server). This file resolves to the
+ * active tenant preset so legacy consumers keep working without re-wiring.
+ *
+ * To change store name, logo, tagline, or image, update the Firestore
+ * `settings/app` document (or Admin → Settings) — no code change required.
+ */
+
+import { resolveFallbackPreset } from "@/lib/tenant";
+
+const preset = resolveFallbackPreset();
+
 export const BRAND = {
-  /** Display logo — transparent PNG derived from logo.png */
-  logo: "/logo-transparent.png",
-  /** Original asset preserved in repo */
-  logoOriginal: "/logo.png",
-  /** width / height from public/logo.png */
-  logoAspect: 1059 / 931,
-  store: "/meskahphoto.png",
-  /** Local fallback when remote store image fails */
-  storeFallback: "/meskahphoto.png",
-  name: "MISHKAT CAFÉ",
-  nameShort: "Mishkat",
-  tagline: "Coffee • Crêpes • Desserts",
-  taglineAlt: "Where Light Meets Coffee",
+  /** Display logo — resolves from tenant preset. */
+  logo: preset.brand.logoUrl,
+  /** Alias kept for backward compatibility with legacy imports. */
+  logoOriginal: preset.brand.logoUrl,
+  /** Width / height ratio — generic 1:1 for SVG store icon. */
+  logoAspect: 1,
+  store: preset.brand.storeImageUrl,
+  /** Local fallback when remote store image fails to load. */
+  storeFallback: preset.brand.storeImageUrl,
+  name: preset.brand.name,
+  nameShort: preset.brand.nameShort ?? preset.brand.name,
+  tagline: preset.brand.tagline,
+  taglineAlt: preset.brand.tagline,
   welcome: "Welcome to",
 } as const;
 
-/** Sampled from official logo & storefront */
+/** Legacy color aliases — new code should read `useTenant().palette`. */
 export const BRAND_COLORS = {
-  primary: "#3D2B24",
-  primaryLight: "#5a4038",
-  secondary: "#D4A76A",
-  accent: "#007A80",
-  accentLight: "#0099a0",
-  cream: "#F8F3ED",
-  warmWhite: "#FFFEFB",
+  primary: preset.palette.primary,
+  primaryLight: preset.palette.primaryHover,
+  secondary: preset.palette.secondary,
+  accent: preset.palette.accent,
+  accentLight: preset.palette.accent,
+  cream: preset.palette.bg,
+  warmWhite: preset.palette.surface,
 } as const;
 
-/** Tiny blur placeholders for Next/Image */
+/** Tiny blur placeholders for Next/Image — generic 1×1 transparent PNG. */
 export const BLUR = {
   logo: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
-  store: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAn/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBEQCEAD8AVAX/AP/Z",
+  store: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==",
 } as const;
 
 export type LogoSize = "xs" | "sm" | "md" | "lg" | "xl";
 
-/** Logo display heights — mobile 38–48px, desktop 48–64px */
+/** Logo display heights — mobile 38–48px, desktop 48–64px. */
 export const LOGO_HEIGHT: Record<LogoSize, number> = {
   xs: 32,
   sm: 40,
@@ -44,13 +58,14 @@ export const LOGO_HEIGHT: Record<LogoSize, number> = {
   xl: 64,
 };
 
-/** Resolve hero/store image: Firestore settings URL → local file */
+/** Resolve hero/store image: Firestore settings URL → tenant preset default. */
 export function getStoreImageSrc(settingsUrl?: string | null): string {
   if (settingsUrl?.trim()) return settingsUrl.trim();
   return BRAND.store;
 }
 
-/** Official logo — always the local transparent asset */
-export function getLogoSrc(_settingsUrl?: string | null): string {
+/** Resolve logo: Firestore settings URL → tenant preset default. */
+export function getLogoSrc(settingsUrl?: string | null): string {
+  if (settingsUrl?.trim()) return settingsUrl.trim();
   return BRAND.logo;
 }

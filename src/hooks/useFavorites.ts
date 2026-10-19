@@ -6,7 +6,7 @@ export function useFavorites() {
   const [favorites, setFavorites] = useState<Set<string>>(new Set());
 
   useEffect(() => {
-    const stored = localStorage.getItem("mishkat-favorites");
+    const stored = localStorage.getItem("store-favorites");
     if (stored) {
       setFavorites(new Set(JSON.parse(stored)));
     }
@@ -21,7 +21,7 @@ export function useFavorites() {
         next.add(productId);
       }
       localStorage.setItem(
-        "mishkat-favorites",
+        "store-favorites",
         JSON.stringify([...next])
       );
       return next;

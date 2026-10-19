@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Store hero">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F5F0E8"/>
+      <stop offset="1" stop-color="#E9E2DA"/>
+    </linearGradient>
+    <linearGradient id="awning" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#C12C22"/>
+      <stop offset="1" stop-color="#A5241B"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="600" fill="url(#sky)"/>
+  <!-- Awning -->
+  <path d="M300 220 L900 220 L820 300 L380 300 Z" fill="url(#awning)"/>
+  <!-- Awning seam -->
+  <path d="M450 220 L430 300 M550 220 L540 300 M650 220 L650 300 M750 220 L760 300 M850 220 L870 300"
+    stroke="#8E1C14" stroke-width="2" opacity="0.6" fill="none"/>
+  <!-- Storefront -->
+  <rect x="340" y="300" width="520" height="260" fill="#FFFFFF" stroke="#D9D1C7" stroke-width="2"/>
+  <!-- Door -->
+  <rect x="560" y="380" width="80" height="180" fill="#201D1A"/>
+  <circle cx="628" cy="470" r="3" fill="#C27B42"/>
+  <!-- Windows -->
+  <rect x="380" y="340" width="140" height="150" fill="#F5F0E8" stroke="#201D1A" stroke-width="2"/>
+  <rect x="680" y="340" width="140" height="150" fill="#F5F0E8" stroke="#201D1A" stroke-width="2"/>
+  <!-- Sign -->
+  <rect x="500" y="340" width="200" height="30" rx="4" fill="#201D1A"/>
+  <!-- Floor shadow -->
+  <rect y="560" width="1200" height="40" fill="#D9D1C7" opacity="0.4"/>
+</svg>

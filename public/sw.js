@@ -1,9 +1,18 @@
-/* MSHKAH PWA service worker — static assets only; dynamic data stays network-first. */
-const SW_VERSION = "mshkah-pwa-1";
+/*
+ * STORE-STARTER PWA service worker — static assets only; dynamic data stays
+ * network-first. Bump SW_VERSION whenever precache contents or caching logic
+ * change so clients get the fresh shell on next load.
+ */
+const SW_VERSION = "store-pwa-2";
 const STATIC_CACHE = `${SW_VERSION}-static`;
 const PAGES_CACHE = `${SW_VERSION}-pages`;
 
-const PRECACHE_URLS = ["/offline", "/icons/icon-192.png", "/icons/icon-512.png"];
+const PRECACHE_URLS = [
+  "/offline",
+  "/icons/icon-192.png",
+  "/icons/icon-512.png",
+  "/brand/store-icon.svg",
+];
 
 function isApiRequest(url) {
   return url.pathname.startsWith("/api/");

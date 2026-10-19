@@ -32,6 +32,7 @@ import {
 import { kitchenTicketHtml, printKitchenTicket } from "@/lib/orders/kitchen-ticket";
 import { exportHtmlAsPdf } from "@/lib/export-pdf";
 import { useT } from "@/components/providers/locale-provider";
+import { useTenantBrand } from "@/components/providers/tenant-provider";
 import { useAuthFetch } from "@/lib/auth/auth-fetch";
 import { AdminPageHeader } from "./components/admin-page-header";
 import type { Order, OrderStatus, PaymentStatus } from "@/types";
@@ -44,6 +45,7 @@ export function OrdersAdmin() {
   const { user } = useAuth();
   const authFetch = useAuthFetch();
   const { orders, loading, error } = useOrders();
+  const brand = useTenantBrand();
   const [tab, setTab] = useState<OrdersTab>("active");
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
@@ -334,9 +336,9 @@ export function OrdersAdmin() {
                 status === "cancelled" ? setCancelOrder(order) : void changeStatus(order, status)
               }
               onCancel={() => setCancelOrder(order)}
-              onPrint={() => printKitchenTicket(order)}
+              onPrint={() => printKitchenTicket(order, brand.name)}
               onThermalReprint={() => void reprintThermal(order)}
-              onExportPdf={() => exportHtmlAsPdf(order.orderNumber, kitchenTicketHtml(order))}
+              onExportPdf={() => exportHtmlAsPdf(order.orderNumber, kitchenTicketHtml(order, brand.name))}
               onCopyNumber={() => {
                 void navigator.clipboard.writeText(order.orderNumber).then(
                   () => pushToast(t("admin.orders.numberCopied")),
@@ -376,7 +378,7 @@ export function OrdersAdmin() {
           status === "cancelled" ? setCancelOrder(order) : void changeStatus(order, status)
         }
         onCancel={setCancelOrder}
-        onPrint={printKitchenTicket}
+        onPrint={(order) => printKitchenTicket(order, brand.name)}
         onThermalReprint={(order) => void reprintThermal(order)}
       />
       <AdminToastStack

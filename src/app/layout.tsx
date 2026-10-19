@@ -14,6 +14,7 @@ import { ThemeProvider } from "@/components/providers/theme-provider";
 import { AccessibilityProvider } from "@/components/providers/accessibility-provider";
 import { TenantProvider } from "@/components/providers/tenant-provider";
 import { TenantBootstrap } from "@/components/providers/tenant-bootstrap";
+import { resolveFallbackPreset } from "@/lib/tenant";
 import { AccessibilityCenter } from "@/components/accessibility/accessibility-center";
 import { AssistantWidget } from "@/features/assistant/assistant-widget";
 import { ClientSiteFooter } from "@/components/layout/client-site-footer";
@@ -81,13 +82,19 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#F8F3ED",
+  // Resolves from the active tenant preset (see src/lib/tenant/*) so each
+  // tenant gets its own browser-chrome tint without touching code.
+  themeColor: resolveFallbackPreset().palette.bg,
 };
+
+const siteDescription =
+  [BRAND.taglineAlt, BRAND.tagline].filter(Boolean).join(" — ") ||
+  "Online store — browse, order, and checkout from any device.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
   title: BRAND.name,
-  description: `${BRAND.taglineAlt} — ${BRAND.tagline}`,
+  description: siteDescription,
   applicationName: PWA_APP_NAME,
   appleWebApp: {
     capable: true,
@@ -101,20 +108,20 @@ export const metadata: Metadata = {
     icon: [
       { url: PWA_ICONS.icon192, sizes: "192x192", type: "image/png" },
       { url: PWA_ICONS.icon512, sizes: "512x512", type: "image/png" },
-      { url: BRAND.logo, type: "image/png" },
+      { url: BRAND.logo, type: "image/svg+xml" },
     ],
     apple: [{ url: PWA_ICONS.appleTouch, sizes: "180x180", type: "image/png" }],
   },
   openGraph: {
     title: BRAND.name,
-    description: BRAND.taglineAlt,
-    images: [{ url: BRAND.logo, width: 1059, height: 931, alt: BRAND.name }],
+    description: siteDescription,
+    images: [{ url: BRAND.logo, alt: BRAND.name }],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: BRAND.name,
-    description: BRAND.taglineAlt,
+    description: siteDescription,
     images: [BRAND.logo],
   },
 };
@@ -135,7 +142,7 @@ export default function RootLayout({
         <TenantBootstrap />
         <LocaleHtmlScript />
       </head>
-      <body className="flex min-h-dvh flex-col overflow-x-hidden bg-cream pb-[calc(var(--mobile-bottom-nav-height)+env(safe-area-inset-bottom,0px)+12px)] has-[[data-admin]]:pb-0 has-[[data-menu-display]]:pb-0 md:pb-0">
+      <body className="flex min-h-dvh flex-col overflow-x-hidden bg-ds-bg text-ds-text pb-[calc(var(--mobile-bottom-nav-height)+env(safe-area-inset-bottom,0px)+12px)] has-[[data-admin]]:pb-0 has-[[data-menu-display]]:pb-0 md:pb-0">
         <BrandSplash />
         <ThemeProvider>
           <AccessibilityProvider>

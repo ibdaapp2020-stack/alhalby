@@ -9,7 +9,7 @@
 
 @theme {
   /* ─────────────────────────────────────────────────────────────────────
-   * Legacy brand tokens (Mishkat palette) — kept unchanged for backward
+   * Legacy brand tokens — kept unchanged for backward
    * compatibility with all pre-redesign screens. New screens should use
    * the "ds-*" semantic tokens below, which read tenant CSS variables set
    * by TenantProvider (see src/lib/tenant/*).

@@ -7,9 +7,11 @@ import { resolveAssistantIcon } from "@/lib/icons/assistant-icons";
 import { cn } from "@/lib/utils";
 import type { AssistantConfig } from "@/lib/assistant/types";
 import type { Locale } from "@/lib/i18n/types";
+import { useTenantBrand } from "@/components/providers/tenant-provider";
 
 export function AssistantManagerPreview({ config }: { config: AssistantConfig }) {
   const [locale, setLocale] = useState<Locale>("he");
+  const brand = useTenantBrand();
   const actions = [...config.quickActions]
     .filter((action) => action.enabled)
     .sort((a, b) => a.sortOrder - b.sortOrder)
@@ -21,7 +23,7 @@ export function AssistantManagerPreview({ config }: { config: AssistantConfig })
         <div className="flex items-center gap-3">
           <AssistantAvatar size="md" />
           <div>
-            <p className="font-display font-bold">MISHKAT CAFÉ</p>
+            <p className="font-display font-bold">{brand.name}</p>
             <p className="text-xs text-coffee/50">העוזר החכם</p>
           </div>
         </div>

@@ -3,14 +3,17 @@
  * Internal Next.js routes stay under /admin/* — portal URLs are rewritten in middleware.
  */
 
+// Fallbacks are placeholders so the template never leaks a prior tenant's
+// domain in logs or links when the env vars aren't set. In production you
+// MUST set NEXT_PUBLIC_PUBLIC_HOST / _PORTAL_HOST / _MENU_HOST.
 export const PUBLIC_HOST =
-  process.env.NEXT_PUBLIC_PUBLIC_HOST?.trim().toLowerCase() || "mishkatcafe.dev";
+  process.env.NEXT_PUBLIC_PUBLIC_HOST?.trim().toLowerCase() || "example.com";
 
 export const PORTAL_HOST =
-  process.env.NEXT_PUBLIC_PORTAL_HOST?.trim().toLowerCase() || "portal.mishkatcafe.dev";
+  process.env.NEXT_PUBLIC_PORTAL_HOST?.trim().toLowerCase() || "portal.example.com";
 
 export const MENU_HOST =
-  process.env.NEXT_PUBLIC_MENU_HOST?.trim().toLowerCase() || "menu.mishkatcafe.dev";
+  process.env.NEXT_PUBLIC_MENU_HOST?.trim().toLowerCase() || "menu.example.com";
 
 const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1", "::1"]);
 
@@ -24,7 +27,7 @@ export const CUSTOMER_ONLY_PATH_PREFIXES = [
   "/pdf-smoke",
 ] as const;
 
-/** Ordering paths blocked on menu.mishkatcafe.dev */
+/** Ordering paths blocked on the read-only MENU_HOST */
 export const ORDERING_PATH_PREFIXES = [
   "/cart",
   "/checkout",

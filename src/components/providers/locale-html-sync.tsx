@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { DEFAULT_LOCALE, LOCALE_META, type Locale } from "@/lib/i18n/types";
 import { applyLocaleFonts } from "@/lib/typography/locale-fonts";
 
-const STORAGE_KEY = "mishkat-locale";
+const STORAGE_KEY = "store-locale";
 
 /** Applies saved locale + fonts to <html> before paint to reduce flash */
 export function LocaleHtmlScript() {

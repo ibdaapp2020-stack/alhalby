@@ -18,11 +18,11 @@ export async function POST() {
     }
 
     const email =
-      process.env.ADMIN_BOOTSTRAP_EMAIL ?? "admin@mishkat.cafe";
+      process.env.ADMIN_BOOTSTRAP_EMAIL ?? "admin@example.com";
     const password =
-      process.env.ADMIN_BOOTSTRAP_PASSWORD ?? "MishkatAdmin2026!";
+      process.env.ADMIN_BOOTSTRAP_PASSWORD ?? "ChangeMe2026!";
     const displayName =
-      process.env.ADMIN_BOOTSTRAP_NAME ?? "MISHKAT Admin";
+      process.env.ADMIN_BOOTSTRAP_NAME ?? "Store Admin";
 
     let uid: string;
     try {

@@ -24,7 +24,7 @@ import { useAllProducts, useAllCategories } from "@/hooks/useProducts";
 import { getLocalizedName } from "@/lib/i18n/localized-content";
 import type { Locale } from "@/lib/i18n/types";
 
-const STORAGE_KEY = "mishkat-assistant-chat";
+const STORAGE_KEY = "store-assistant-chat";
 
 export interface AssistantMessage {
   id: string;
@@ -311,7 +311,7 @@ export function AssistantProvider({ children }: { children: ReactNode }) {
         });
         appendReply(response);
       } catch (err) {
-        console.error("[MISHKAT_ASSISTANT]", err);
+        console.error("[STORE_ASSISTANT]", err);
         const fallback = clientFallback(undefined, trimmed, locale, products, categories, config, settings);
         appendReply(fallback);
       } finally {
@@ -339,7 +339,7 @@ export function AssistantProvider({ children }: { children: ReactNode }) {
         });
         appendReply(response);
       } catch (err) {
-        console.error("[MISHKAT_ASSISTANT]", err);
+        console.error("[STORE_ASSISTANT]", err);
         const fallback = clientFallback(actionId, "", locale, products, categories, config, settings);
         appendReply(fallback);
       } finally {
