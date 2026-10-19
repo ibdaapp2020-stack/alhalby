@@ -12,6 +12,8 @@ import { FirebaseProvider } from "@/components/providers/firebase-provider";
 import { AuthProvider } from "@/components/providers/auth-provider";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { AccessibilityProvider } from "@/components/providers/accessibility-provider";
+import { TenantProvider } from "@/components/providers/tenant-provider";
+import { TenantBootstrap } from "@/components/providers/tenant-bootstrap";
 import { AccessibilityCenter } from "@/components/accessibility/accessibility-center";
 import { AssistantWidget } from "@/features/assistant/assistant-widget";
 import { ClientSiteFooter } from "@/components/layout/client-site-footer";
@@ -130,6 +132,7 @@ export default function RootLayout({
       className={`${inter.variable} ${playfair.variable} ${heebo.variable} ${assistant.variable} ${cairo.variable} ${tajawal.variable} ${atkinson.variable}`}
     >
       <head>
+        <TenantBootstrap />
         <LocaleHtmlScript />
       </head>
       <body className="flex min-h-dvh flex-col overflow-x-hidden bg-cream pb-[calc(var(--mobile-bottom-nav-height)+env(safe-area-inset-bottom,0px)+12px)] has-[[data-admin]]:pb-0 has-[[data-menu-display]]:pb-0 md:pb-0">
@@ -138,6 +141,7 @@ export default function RootLayout({
           <AccessibilityProvider>
             <LocaleProvider>
               <FirebaseProvider>
+                <TenantProvider>
                 <AuthProvider>
                   <CartProvider>
                     <main id="main-content" className="min-w-0 flex-1" tabIndex={-1}>
@@ -153,6 +157,7 @@ export default function RootLayout({
                     <AssistantWidget />
                   </CartProvider>
                 </AuthProvider>
+                </TenantProvider>
               </FirebaseProvider>
             </LocaleProvider>
           </AccessibilityProvider>
