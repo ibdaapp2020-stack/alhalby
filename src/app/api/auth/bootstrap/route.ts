@@ -55,6 +55,8 @@ export async function POST() {
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Bootstrap failed";
+    // Log server-side so a 500 isn't silent in dev or prod logs.
+    console.error("[api/auth/bootstrap] failed:", error);
     return Response.json({ error: message }, { status: 500 });
   }
 }
