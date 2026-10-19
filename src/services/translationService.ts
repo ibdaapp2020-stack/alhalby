@@ -10,6 +10,7 @@ import { getDb } from "@/lib/firebase";
 import { COLLECTIONS } from "@/lib/firebase/collections";
 import type { Locale, TranslationMap, UiTranslationsDoc } from "@/lib/i18n/types";
 import { UI_TRANSLATIONS_SEED } from "@/data/ui-translations-seed";
+import { isMockMode } from "@/lib/data-provider/mode";
 
 function docToMap(data: Record<string, unknown> | undefined): TranslationMap {
   if (!data?.strings || typeof data.strings !== "object") return {};
@@ -17,6 +18,7 @@ function docToMap(data: Record<string, unknown> | undefined): TranslationMap {
 }
 
 export async function fetchLocaleStrings(locale: Locale): Promise<TranslationMap> {
+  if (isMockMode()) return UI_TRANSLATIONS_SEED[locale] ?? {};
   try {
     const db = getDb();
     const snap = await getDoc(doc(db, COLLECTIONS.uiTranslations, locale));
@@ -31,6 +33,7 @@ export async function fetchLocaleStrings(locale: Locale): Promise<TranslationMap
 }
 
 export async function fetchAllLocaleStrings(): Promise<Record<Locale, TranslationMap>> {
+  if (isMockMode()) return UI_TRANSLATIONS_SEED;
   try {
     const db = getDb();
     const snap = await getDocs(collection(db, COLLECTIONS.uiTranslations));
@@ -57,6 +60,12 @@ export function subscribeToLocaleStrings(
   onData: (strings: TranslationMap) => void,
   onError?: (msg: string) => void
 ): Unsubscribe {
+  if (isMockMode()) {
+    queueMicrotask(() => onData(UI_TRANSLATIONS_SEED[locale] ?? {}));
+    return () => {};
+  }
+  // Mark onError as intentionally reserved for future retry handlers.
+  void onError;
   const db = getDb();
   return onSnapshot(
     doc(db, COLLECTIONS.uiTranslations, locale),

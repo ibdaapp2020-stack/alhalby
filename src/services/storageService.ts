@@ -7,6 +7,8 @@ import {
 import { getFirebaseStorage } from "@/lib/firebase";
 import { STORAGE_PATHS } from "@/lib/firebase/collections";
 import { type ServiceResult, success, failure } from "@/lib/errors";
+import { isMockMode } from "@/lib/data-provider/mode";
+import { mockStorage as mock } from "@/lib/data-provider/mock";
 
 export function storagePathFromUrl(url: string): string | null {
   try {
@@ -23,6 +25,7 @@ export async function uploadImageWithProgress(
   path: string,
   onProgress?: (percent: number) => void
 ): Promise<ServiceResult<string>> {
+  if (isMockMode()) return mock.uploadImageWithProgress(file, path, onProgress);
   try {
     const storage = getFirebaseStorage();
     const storageRef = ref(storage, path);
@@ -120,6 +123,7 @@ export async function uploadSettingsImage(
 export async function deleteImageByUrl(
   imageUrl: string
 ): Promise<ServiceResult<void>> {
+  if (isMockMode()) return mock.deleteImageByUrl(imageUrl);
   const path = storagePathFromUrl(imageUrl);
   if (!path) return success(undefined);
   try {
@@ -132,6 +136,7 @@ export async function deleteImageByUrl(
 }
 
 export async function deleteImage(path: string): Promise<ServiceResult<void>> {
+  if (isMockMode()) return mock.deleteImage(path);
   try {
     const storage = getFirebaseStorage();
     await deleteObject(ref(storage, path));
@@ -144,6 +149,7 @@ export async function deleteImage(path: string): Promise<ServiceResult<void>> {
 export async function uploadTestImage(): Promise<
   ServiceResult<{ url: string; path: string }>
 > {
+  if (isMockMode()) return mock.uploadTestImage();
   const testPath = `${STORAGE_PATHS.test}/connection-test-${Date.now()}.png`;
   const blob = new Blob(
     [

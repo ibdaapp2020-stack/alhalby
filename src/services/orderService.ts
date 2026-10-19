@@ -38,6 +38,8 @@ import {
 import { getLocalizedName } from "@/lib/i18n/localized-content";
 import type { Order, OrderStatus, OrderItem, CartItem, PaymentStatus } from "@/types";
 import type { FirestoreOrder, FirestoreOrderItem, FirestoreDoc } from "@/types/firestore";
+import { isMockMode } from "@/lib/data-provider/mode";
+import { mockOrders as mock } from "@/lib/data-provider/mock";
 
 const ORDER_SAVE_FAILED_CODE = "ORDER_SAVE_FAILED";
 
@@ -135,6 +137,7 @@ export async function getOrders(filters?: {
   search?: string;
   status?: OrderStatus | "all";
 }): Promise<Order[]> {
+  if (isMockMode()) return mock.getOrders(filters);
   try {
     const db = getDb();
     const q = query(
@@ -155,6 +158,7 @@ export async function getOrders(filters?: {
 }
 
 export async function getOrderById(id: string): Promise<Order | undefined> {
+  if (isMockMode()) return mock.getOrderById(id);
   try {
     const db = getDb();
     const snap = await getDoc(doc(db, COLLECTIONS.orders, id));
@@ -169,6 +173,7 @@ export async function getOrderById(id: string): Promise<Order | undefined> {
 }
 
 export async function getOrdersByCustomer(customerId: string): Promise<Order[]> {
+  if (isMockMode()) return mock.getOrdersByCustomer(customerId);
   try {
     const orders = await getOrders();
     return orders.filter((o) => o.customerId === customerId);
@@ -189,6 +194,7 @@ export async function getOrderStats(): Promise<{
   delivered: number;
   cancelled: number;
 }> {
+  if (isMockMode()) return mock.getOrderStats();
   try {
     const orders = await getOrders();
     return {
@@ -213,6 +219,7 @@ export function subscribeToOrders(
   onData: (orders: Order[]) => void,
   onError: (error: string) => void
 ): Unsubscribe {
+  if (isMockMode()) return mock.subscribeToOrders(filters, onData, onError);
   try {
     const db = getDb();
     const q = query(
@@ -236,6 +243,7 @@ export function subscribeToOrders(
 }
 
 export async function createOrder(input: OrderInput): Promise<ServiceResult<Order>> {
+  if (isMockMode()) return mock.createOrder(input);
   try {
     if (
       typeof window !== "undefined" &&
@@ -342,6 +350,7 @@ export async function updateOrder(
   id: string,
   input: Partial<OrderInput & { orderNumber?: string }>
 ): Promise<ServiceResult<Order>> {
+  if (isMockMode()) return mock.updateOrder(id, input);
   try {
     const db = getDb();
     const ref = doc(db, COLLECTIONS.orders, id);
@@ -363,6 +372,7 @@ export async function updateOrderStatus(
   status: OrderStatus,
   metadata?: { cancelReason?: string; cancelledBy?: string }
 ): Promise<ServiceResult<void>> {
+  if (isMockMode()) return mock.updateOrderStatus(id, status, metadata);
   try {
     const now = nowTimestamp();
     const patch: Record<string, unknown> = { status };
@@ -389,6 +399,7 @@ export async function updateOrderStatus(
 }
 
 export async function deleteOrder(id: string): Promise<ServiceResult<void>> {
+  if (isMockMode()) return mock.deleteOrder(id);
   try {
     const db = getDb();
     await deleteDoc(doc(db, COLLECTIONS.orders, id));
@@ -408,6 +419,7 @@ export async function updateOrderItemExtras(
     kitchenNotes?: string[];
   }
 ): Promise<ServiceResult<Order>> {
+  if (isMockMode()) return mock.updateOrderItemExtras(orderId, itemIndex, update);
   const order = await getOrderById(orderId);
   if (!order) {
     return failure(new ServiceError("Order not found", "NOT_FOUND"));

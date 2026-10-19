@@ -18,6 +18,8 @@ import {
 import { nowTimestamp } from "@/types/firestore";
 import type { ProductModifierGroup } from "@/types/modifiers";
 import type { PendingModifierChanges } from "@/features/admin/product-form/product-modifier-pending";
+import { isMockMode } from "@/lib/data-provider/mode";
+import { createProduct, updateProduct } from "@/services/productService";
 
 export interface ProductEditorSaveInput {
   productId: string | null;
@@ -42,6 +44,34 @@ export interface ProductEditorSaveResult {
 export async function saveProductEditorChanges(
   input: ProductEditorSaveInput
 ): Promise<ServiceResult<ProductEditorSaveResult>> {
+  if (isMockMode()) {
+    // Mock mode: save just the product (modifier groups are not persisted
+    // in the demo store). Routes through the existing productService shim.
+    try {
+      if (!input.productId) {
+        const created = await createProduct(input.productValues);
+        if (!created.success) return created;
+        return success({
+          productId: created.data.id,
+          writes: 1,
+          createdGroupIds: [],
+          links: [],
+        });
+      }
+      if (Object.keys(input.productPatch).length > 0) {
+        const updated = await updateProduct(input.productId, input.productPatch);
+        if (!updated.success) return updated;
+      }
+      return success({
+        productId: input.productId,
+        writes: 1,
+        createdGroupIds: [],
+        links: input.existingLinks,
+      });
+    } catch (error) {
+      return failure(error, "Failed to save product (mock)");
+    }
+  }
   try {
     const db = getDb();
     const batch = writeBatch(db);

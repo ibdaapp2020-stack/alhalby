@@ -13,6 +13,8 @@ import { nowTimestamp } from "@/types/firestore";
 import { ServiceError, type ServiceResult, success, failure } from "@/lib/errors";
 import type { FirestoreSettings } from "@/types/firestore";
 import { BRAND } from "@/lib/brand";
+import { isMockMode } from "@/lib/data-provider/mode";
+import { mockSettings as mock } from "@/lib/data-provider/mock";
 
 export interface AppSettings {
   storeName: string;
@@ -74,6 +76,7 @@ function mapSettings(data: FirestoreSettings | undefined): AppSettings {
 }
 
 export async function getSettings(): Promise<AppSettings> {
+  if (isMockMode()) return mock.getSettings();
   try {
     const db = getDb();
     const snap = await getDoc(doc(db, COLLECTIONS.settings, "app"));
@@ -91,6 +94,7 @@ export function subscribeToSettings(
   onData: (settings: AppSettings) => void,
   onError: (error: string) => void
 ): Unsubscribe {
+  if (isMockMode()) return mock.subscribeToSettings(onData, onError);
   try {
     const db = getDb();
     return onSnapshot(
@@ -109,6 +113,7 @@ export function subscribeToSettings(
 export async function updateSettings(
   input: Partial<AppSettings>
 ): Promise<ServiceResult<AppSettings>> {
+  if (isMockMode()) return mock.updateSettings(input);
   try {
     const db = getDb();
     const ref = doc(db, COLLECTIONS.settings, "app");

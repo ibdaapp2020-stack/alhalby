@@ -6,6 +6,7 @@ import { AlertTriangle, X } from "lucide-react";
 import { useT } from "@/components/providers/locale-provider";
 import { testFirebaseConnection, isConnectionHealthy } from "@/services/connectionService";
 import type { ConnectionTestResult } from "@/services/connectionService";
+import { isMockMode } from "@/lib/data-provider/mode";
 
 interface FirebaseContextValue {
   connected: boolean;
@@ -21,12 +22,16 @@ const FirebaseContext = createContext<FirebaseContextValue>({
 
 export function FirebaseProvider({ children }: { children: ReactNode }) {
   const t = useT();
-  const [connected, setConnected] = useState(false);
-  const [loading, setLoading] = useState(true);
+  // In mock mode we never try to touch Firebase — the "connection" is to the
+  // in-memory store and is always healthy.
+  const mockMode = isMockMode();
+  const [connected, setConnected] = useState(mockMode);
+  const [loading, setLoading] = useState(!mockMode);
   const [result, setResult] = useState<ConnectionTestResult | null>(null);
   const [showError, setShowError] = useState(false);
 
   useEffect(() => {
+    if (mockMode) return;
     let mounted = true;
 
     async function checkConnection() {
@@ -51,7 +56,7 @@ export function FirebaseProvider({ children }: { children: ReactNode }) {
     return () => {
       mounted = false;
     };
-  }, []);
+  }, [mockMode]);
 
   return (
     <FirebaseContext.Provider value={{ connected, loading, result }}>

@@ -13,6 +13,7 @@ import { readOneCategoryForTest } from "@/services/categoryService";
 import { readOneProductForTest } from "@/services/productService";
 import { uploadTestImage } from "@/services/storageService";
 import { type ServiceResult, success, failure } from "@/lib/errors";
+import { isMockMode } from "@/lib/data-provider/mode";
 
 export interface ConnectionTestResult {
   envValid: boolean;
@@ -27,6 +28,21 @@ export interface ConnectionTestResult {
 }
 
 export async function testFirebaseConnection(): Promise<ConnectionTestResult> {
+  // In mock mode the test is a no-op success — the "connection" is to the
+  // local store, which is always available.
+  if (isMockMode()) {
+    return {
+      envValid: true,
+      missingEnv: [],
+      initialized: true,
+      authReady: true,
+      categoryRead: true,
+      productRead: true,
+      writeTest: true,
+      storageReady: true,
+    };
+  }
+
   const envCheck = validateFirebaseEnv();
   const result: ConnectionTestResult = {
     envValid: envCheck.valid,
@@ -72,6 +88,7 @@ export async function testFirebaseConnection(): Promise<ConnectionTestResult> {
 }
 
 export async function runFirestoreWriteTest(): Promise<ServiceResult<boolean>> {
+  if (isMockMode()) return success(true);
   try {
     const db = getDb();
     const testId = `test-${Date.now()}`;

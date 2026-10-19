@@ -21,6 +21,8 @@ import { customerSchema, type CustomerInput } from "@/lib/validation/schemas";
 import { nowTimestamp } from "@/types/firestore";
 import type { Customer } from "@/types";
 import type { FirestoreCustomer, FirestoreDoc } from "@/types/firestore";
+import { isMockMode } from "@/lib/data-provider/mode";
+import { mockCustomers as mock } from "@/lib/data-provider/mock";
 
 function docToCustomer(id: string, data: DocumentData): FirestoreDoc<FirestoreCustomer> {
   return { id, ...(data as FirestoreCustomer) };
@@ -55,6 +57,7 @@ function filterCustomers(customers: Customer[], search?: string): Customer[] {
 }
 
 export async function getCustomers(search?: string): Promise<Customer[]> {
+  if (isMockMode()) return mock.getCustomers(search);
   try {
     const db = getDb();
     const q = query(
@@ -75,6 +78,7 @@ export async function getCustomers(search?: string): Promise<Customer[]> {
 }
 
 export async function getCustomerById(id: string): Promise<Customer | undefined> {
+  if (isMockMode()) return mock.getCustomerById(id);
   try {
     const db = getDb();
     const snap = await getDoc(doc(db, COLLECTIONS.customers, id));
@@ -89,6 +93,7 @@ export async function getCustomerById(id: string): Promise<Customer | undefined>
 }
 
 export async function getTopCustomers(limit = 5): Promise<Customer[]> {
+  if (isMockMode()) return mock.getTopCustomers(limit);
   const customers = await getCustomers();
   return customers.slice(0, limit);
 }
@@ -98,6 +103,7 @@ export function subscribeToCustomers(
   onData: (customers: Customer[]) => void,
   onError: (error: string) => void
 ): Unsubscribe {
+  if (isMockMode()) return mock.subscribeToCustomers(search, onData, onError);
   try {
     const db = getDb();
     const q = query(
@@ -121,6 +127,7 @@ export function subscribeToCustomers(
 }
 
 export async function createCustomer(input: CustomerInput): Promise<ServiceResult<Customer>> {
+  if (isMockMode()) return mock.createCustomer(input);
   try {
     const parsed = customerSchema.parse(input);
     const db = getDb();
@@ -142,6 +149,7 @@ export async function updateCustomer(
   id: string,
   input: Partial<CustomerInput>
 ): Promise<ServiceResult<Customer>> {
+  if (isMockMode()) return mock.updateCustomer(id, input);
   try {
     const db = getDb();
     const ref = doc(db, COLLECTIONS.customers, id);
@@ -157,6 +165,7 @@ export async function updateCustomer(
 }
 
 export async function deleteCustomer(id: string): Promise<ServiceResult<void>> {
+  if (isMockMode()) return mock.deleteCustomer(id);
   try {
     const db = getDb();
     await deleteDoc(doc(db, COLLECTIONS.customers, id));
@@ -167,6 +176,7 @@ export async function deleteCustomer(id: string): Promise<ServiceResult<void>> {
 }
 
 export async function getOrCreateGuestCustomer(): Promise<ServiceResult<Customer>> {
+  if (isMockMode()) return mock.getOrCreateGuestCustomer();
   try {
     const parsed = customerSchema.parse(GUEST_CUSTOMER_INPUT);
     const now = nowTimestamp();

@@ -1,8 +1,17 @@
 import { getAdminAuth, getAdminDb } from "@/lib/firebase/admin";
 import { COLLECTIONS } from "@/lib/firebase/collections";
 import { FieldValue } from "firebase-admin/firestore";
+import { isMockMode } from "@/lib/data-provider/mode";
 
 export async function POST() {
+  // In mock mode there is no Firebase Admin SDK to touch. The mock admin
+  // user lives in `src/lib/mock-data/users.ts` and is validated client-side.
+  // Return a success response so the client-side bootstrap-on-mount call
+  // doesn't log a scary 500 in the dev console.
+  if (isMockMode()) {
+    return Response.json({ bootstrapped: true, created: false, mode: "mock" });
+  }
+
   try {
     const db = getAdminDb();
     const auth = getAdminAuth();

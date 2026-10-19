@@ -1,6 +1,33 @@
 # STORE‑STARTER — Setup Guide
 
-A clean Firebase‑ready storefront + admin template. Clone it once, run through the five steps below, and you have a brand‑new store with its own data, logo, and theme — zero code changes.
+A clean, backend‑agnostic storefront + admin template. Clone it once and you can:
+
+- **Run instantly without any backend** using the built‑in mock data provider (default), or
+- **Connect to Firebase** for real‑time data, auth, and storage.
+
+Zero code changes between the two modes.
+
+---
+
+## Quick start — mock mode (zero config)
+
+```bash
+git clone <this-repo> my-store
+cd my-store
+npm install
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) — the storefront loads with 6 example products across 4 categories. The admin panel is at [`/admin`](http://localhost:3000/admin). Demo credentials:
+
+| Field | Value |
+| --- | --- |
+| Email | `admin@example.com` |
+| Password | `admin123` |
+
+All data lives in-memory with `localStorage` persistence. Nothing is sent to any server. You can edit products, categories, settings, place demo orders — everything round‑trips to the local store.
+
+> **Demo mode caveat:** data is per‑browser. If you want multi‑device sync, continue to the Firebase section below.
 
 ---
 
@@ -53,6 +80,14 @@ cp .env.example .env.local
 ```
 
 Open `.env.local` and fill in **four blocks** (everything else is optional).
+
+### 4.0 Switch to the Firebase data provider
+
+```env
+NEXT_PUBLIC_DATA_PROVIDER=firebase
+```
+
+(Or leave this empty — the app auto-detects `firebase` when all the client env vars below are present, and falls back to `mock` otherwise.)
 
 ### 4.1 Client SDK — from the web app config
 

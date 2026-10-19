@@ -4,6 +4,35 @@ import { requireAdminOnly, getAuthFromRequest } from "@/lib/auth/verify-admin";
 import { COLLECTIONS } from "@/lib/firebase/collections";
 import { FieldValue } from "firebase-admin/firestore";
 import { z } from "zod";
+import { isMockMode } from "@/lib/data-provider/mode";
+import { mockUsers, MOCK_ADMIN_USER } from "@/lib/mock-data";
+
+function mockUsersResponse() {
+  const now = new Date().toISOString();
+  return Response.json({
+    users: mockUsers.map((u) => ({
+      id: u.uid,
+      email: u.email,
+      displayName: u.displayName,
+      role: u.role,
+      active: u.active,
+      lastSignInAt: null,
+      createdAt: now,
+    })),
+    mode: "mock",
+  });
+}
+
+function mockWriteBlocked() {
+  return Response.json(
+    {
+      error:
+        "User management is read-only in mock mode. Connect a backend (Firebase / Supabase / custom) to enable write operations.",
+      mode: "mock",
+    },
+    { status: 403 }
+  );
+}
 
 const createUserSchema = z.object({
   email: z.string().email(),
@@ -22,6 +51,8 @@ const updateUserSchema = z.object({
 });
 
 export async function GET(request: NextRequest) {
+  if (isMockMode()) return mockUsersResponse();
+
   const auth = await requireAdminOnly(request);
   if (auth instanceof Response) return auth;
 
@@ -58,6 +89,11 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  if (isMockMode()) {
+    void MOCK_ADMIN_USER;
+    return mockWriteBlocked();
+  }
+
   const auth = await requireAdminOnly(request);
   if (auth instanceof Response) return auth;
 
@@ -105,6 +141,8 @@ export async function POST(request: NextRequest) {
 }
 
 export async function PATCH(request: NextRequest) {
+  if (isMockMode()) return mockWriteBlocked();
+
   const current = await getAuthFromRequest(request);
   if (!current) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -153,6 +191,8 @@ export async function PATCH(request: NextRequest) {
 }
 
 export async function DELETE(request: NextRequest) {
+  if (isMockMode()) return mockWriteBlocked();
+
   const auth = await requireAdminOnly(request);
   if (auth instanceof Response) return auth;
 

@@ -29,6 +29,8 @@ import { PwaManager } from "@/components/pwa/pwa-manager";
 import { BrandSplash } from "@/components/brand/brand-splash";
 import { BRAND } from "@/lib/brand";
 import { PWA_APP_NAME, PWA_ICONS } from "@/lib/pwa/config";
+import { RootErrorBoundary } from "@/components/layout/error-boundary";
+import { DemoModeBanner } from "@/components/layout/demo-mode-banner";
 import "./globals.css";
 
 const inter = Inter({
@@ -144,31 +146,34 @@ export default function RootLayout({
       </head>
       <body className="flex min-h-dvh flex-col overflow-x-hidden bg-ds-bg text-ds-text pb-[calc(var(--mobile-bottom-nav-height)+env(safe-area-inset-bottom,0px)+12px)] has-[[data-admin]]:pb-0 has-[[data-menu-display]]:pb-0 md:pb-0">
         <BrandSplash />
-        <ThemeProvider>
-          <AccessibilityProvider>
-            <LocaleProvider>
-              <FirebaseProvider>
-                <TenantProvider>
-                <AuthProvider>
-                  <CartProvider>
-                    <main id="main-content" className="min-w-0 flex-1" tabIndex={-1}>
-                      {children}
-                    </main>
-                    <ClientSiteFooter />
-                    <FloatingCartButton />
-                    <MobileCartBar />
-                    <CartDrawer />
-                    <BottomNav />
-                    <PwaManager />
-                    <AccessibilityCenter />
-                    <AssistantWidget />
-                  </CartProvider>
-                </AuthProvider>
-                </TenantProvider>
-              </FirebaseProvider>
-            </LocaleProvider>
-          </AccessibilityProvider>
-        </ThemeProvider>
+        <RootErrorBoundary>
+          <ThemeProvider>
+            <AccessibilityProvider>
+              <LocaleProvider>
+                <FirebaseProvider>
+                  <TenantProvider>
+                    <AuthProvider>
+                      <CartProvider>
+                        <DemoModeBanner />
+                        <main id="main-content" className="min-w-0 flex-1" tabIndex={-1}>
+                          {children}
+                        </main>
+                        <ClientSiteFooter />
+                        <FloatingCartButton />
+                        <MobileCartBar />
+                        <CartDrawer />
+                        <BottomNav />
+                        <PwaManager />
+                        <AccessibilityCenter />
+                        <AssistantWidget />
+                      </CartProvider>
+                    </AuthProvider>
+                  </TenantProvider>
+                </FirebaseProvider>
+              </LocaleProvider>
+            </AccessibilityProvider>
+          </ThemeProvider>
+        </RootErrorBoundary>
       </body>
     </html>
   );

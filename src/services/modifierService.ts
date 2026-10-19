@@ -71,6 +71,8 @@ import type {
   InventoryLink,
   ProductBuilderConfig,
 } from "@/types/modifiers";
+import { isMockMode } from "@/lib/data-provider/mode";
+import { mockModifiers as mock } from "@/lib/data-provider/mock";
 
 function docTo<T>(id: string, data: DocumentData): FirestoreDoc<T> {
   return { id, ...(data as T) };
@@ -79,6 +81,7 @@ function docTo<T>(id: string, data: DocumentData): FirestoreDoc<T> {
 // ─── Modifier Groups ───────────────────────────────────────────────
 
 export async function getModifierGroups(includeArchived = false): Promise<ModifierGroup[]> {
+  if (isMockMode()) return mock.getModifierGroups(includeArchived);
   const db = getDb();
   const snapshot = await getDocs(
     query(collection(db, COLLECTIONS.modifierGroups), orderBy("sortOrder", "asc"))
@@ -93,6 +96,7 @@ export function subscribeToModifierGroups(
   onError: (msg: string) => void,
   includeArchived = false
 ): Unsubscribe {
+  if (isMockMode()) return mock.subscribeToModifierGroups(onData, onError, includeArchived);
   const db = getDb();
   return onSnapshot(
     query(collection(db, COLLECTIONS.modifierGroups), orderBy("sortOrder", "asc")),
@@ -107,6 +111,7 @@ export function subscribeToModifierGroups(
 }
 
 export async function createModifierGroup(input: ModifierGroupInput): Promise<ServiceResult<ModifierGroup>> {
+  if (isMockMode()) return mock.createModifierGroup(input);
   try {
     const parsed = modifierGroupSchema.parse(normalizeModifierGroupInput(input));
     const db = getDb();
@@ -123,6 +128,7 @@ export async function updateModifierGroup(
   id: string,
   input: Partial<ModifierGroupInput>
 ): Promise<ServiceResult<ModifierGroup>> {
+  if (isMockMode()) return mock.updateModifierGroup(id, input);
   try {
     const db = getDb();
     const ref = doc(db, COLLECTIONS.modifierGroups, id);
@@ -157,6 +163,7 @@ export async function updateModifierGroup(
 }
 
 export async function deleteModifierGroup(id: string): Promise<ServiceResult<void>> {
+  if (isMockMode()) return mock.deleteModifierGroup(id);
   try {
     const db = getDb();
     await updateDoc(doc(db, COLLECTIONS.modifierGroups, id), {
@@ -171,6 +178,7 @@ export async function deleteModifierGroup(id: string): Promise<ServiceResult<voi
 }
 
 export async function duplicateModifierGroup(id: string): Promise<ServiceResult<ModifierGroup>> {
+  if (isMockMode()) return mock.duplicateModifierGroup(id);
   try {
     const db = getDb();
     const snap = await getDoc(doc(db, COLLECTIONS.modifierGroups, id));
@@ -212,6 +220,7 @@ export async function duplicateModifierGroup(id: string): Promise<ServiceResult<
 }
 
 export async function reorderModifierGroups(ids: string[]): Promise<ServiceResult<void>> {
+  if (isMockMode()) return mock.reorderModifierGroups(ids);
   try {
     const db = getDb();
     await Promise.all(
@@ -231,6 +240,7 @@ export async function reorderModifierGroups(ids: string[]): Promise<ServiceResul
 // ─── Modifier Options ──────────────────────────────────────────────
 
 export async function getModifierOptions(groupId?: string): Promise<ModifierOption[]> {
+  if (isMockMode()) return mock.getModifierOptions(groupId);
   const db = getDb();
   const q = groupId
     ? query(
@@ -250,6 +260,7 @@ export function subscribeToModifierOptions(
   onData: (options: ModifierOption[]) => void,
   onError: (msg: string) => void
 ): Unsubscribe {
+  if (isMockMode()) return mock.subscribeToModifierOptions(groupId, onData, onError);
   const db = getDb();
   const q = groupId
     ? query(
@@ -268,6 +279,7 @@ export function subscribeToModifierOptions(
 }
 
 export async function createModifierOption(input: ModifierOptionInput): Promise<ServiceResult<ModifierOption>> {
+  if (isMockMode()) return mock.createModifierOption(input);
   try {
     const parsed = modifierOptionSchema.parse(normalizeModifierOptionInput(input));
     const db = getDb();
@@ -284,6 +296,7 @@ export async function updateModifierOption(
   id: string,
   input: Partial<ModifierOptionInput>
 ): Promise<ServiceResult<ModifierOption>> {
+  if (isMockMode()) return mock.updateModifierOption(id, input);
   try {
     const db = getDb();
     const ref = doc(db, COLLECTIONS.modifierOptions, id);
@@ -318,6 +331,7 @@ export async function updateModifierOption(
 }
 
 export async function deleteModifierOption(id: string): Promise<ServiceResult<void>> {
+  if (isMockMode()) return mock.deleteModifierOption(id);
   try {
     const db = getDb();
     await updateDoc(doc(db, COLLECTIONS.modifierOptions, id), {
@@ -332,6 +346,7 @@ export async function deleteModifierOption(id: string): Promise<ServiceResult<vo
 }
 
 export async function reorderModifierOptions(ids: string[]): Promise<ServiceResult<void>> {
+  if (isMockMode()) return mock.reorderModifierOptions(ids);
   try {
     const db = getDb();
     await Promise.all(
@@ -351,6 +366,7 @@ export async function reorderModifierOptions(ids: string[]): Promise<ServiceResu
 // ─── Product Modifier Groups ───────────────────────────────────────
 
 export async function getProductModifierGroups(productId?: string): Promise<ProductModifierGroup[]> {
+  if (isMockMode()) return mock.getProductModifierGroups(productId);
   const db = getDb();
   const q = productId
     ? query(
@@ -373,6 +389,7 @@ export function subscribeToProductModifierGroups(
   onData: (links: ProductModifierGroup[]) => void,
   onError: (msg: string) => void
 ): Unsubscribe {
+  if (isMockMode()) return mock.subscribeToProductModifierGroups(productId, onData, onError);
   const db = getDb();
   return onSnapshot(
     query(
@@ -398,6 +415,7 @@ export function subscribeToAllProductModifierGroups(
   onData: (links: ProductModifierGroup[]) => void,
   onError: (msg: string) => void
 ): Unsubscribe {
+  if (isMockMode()) return mock.subscribeToAllProductModifierGroups(onData, onError);
   const db = getDb();
   return onSnapshot(
     collection(db, COLLECTIONS.productModifierGroups),
@@ -416,6 +434,7 @@ export function subscribeToAllProductModifierGroups(
 export async function linkProductModifierGroup(
   input: ProductModifierGroupInput
 ): Promise<ServiceResult<ProductModifierGroup>> {
+  if (isMockMode()) return mock.linkProductModifierGroup(input);
   try {
     const parsed = productModifierGroupSchema.parse(input);
     const db = getDb();
@@ -440,6 +459,7 @@ export async function updateProductModifierGroup(
   id: string,
   input: Partial<ProductModifierGroupInput>
 ): Promise<ServiceResult<ProductModifierGroup>> {
+  if (isMockMode()) return mock.updateProductModifierGroup(id, input);
   try {
     const db = getDb();
     const ref = doc(db, COLLECTIONS.productModifierGroups, id);
@@ -453,6 +473,7 @@ export async function updateProductModifierGroup(
 }
 
 export async function unlinkProductModifierGroup(id: string): Promise<ServiceResult<void>> {
+  if (isMockMode()) return mock.unlinkProductModifierGroup(id);
   try {
     const db = getDb();
     await deleteDoc(doc(db, COLLECTIONS.productModifierGroups, id));
@@ -472,6 +493,12 @@ export async function syncProductModifierLinks(
     >
   >
 ): Promise<ServiceResult<void>> {
+  if (isMockMode()) {
+    return mock.syncProductModifierLinks(
+      productId,
+      desiredLinks.map((link) => link.groupId)
+    );
+  }
   try {
     const db = getDb();
     const existingSnap = await getDocs(
@@ -546,6 +573,7 @@ export async function reorderProductModifierGroups(
   productId: string,
   ids: string[]
 ): Promise<ServiceResult<void>> {
+  if (isMockMode()) return mock.reorderProductModifierGroups(ids);
   try {
     const db = getDb();
     await Promise.all(
@@ -562,6 +590,7 @@ export async function reorderProductModifierGroups(
 // ─── Product Modifier Options ──────────────────────────────────────
 
 export async function getProductModifierOptions(productId: string): Promise<ProductModifierOption[]> {
+  if (isMockMode()) return mock.getProductModifierOptions(productId);
   const db = getDb();
   const snapshot = await getDocs(
     query(
@@ -577,6 +606,7 @@ export async function getProductModifierOptions(productId: string): Promise<Prod
 export async function upsertProductModifierOption(
   input: ProductModifierOptionInput
 ): Promise<ServiceResult<ProductModifierOption>> {
+  if (isMockMode()) return mock.upsertProductModifierOption(input);
   try {
     const parsed = productModifierOptionSchema.parse(input);
     const db = getDb();
@@ -592,6 +622,7 @@ export async function upsertProductModifierOption(
 // ─── Business Rules ────────────────────────────────────────────────
 
 export async function getBusinessRules(): Promise<BusinessRule[]> {
+  if (isMockMode()) return mock.getBusinessRules();
   const db = getDb();
   const snapshot = await getDocs(
     query(collection(db, COLLECTIONS.businessRules), orderBy("priority", "asc"))
@@ -603,6 +634,7 @@ export function subscribeToBusinessRules(
   onData: (rules: BusinessRule[]) => void,
   onError: (msg: string) => void
 ): Unsubscribe {
+  if (isMockMode()) return mock.subscribeToBusinessRules(onData, onError);
   const db = getDb();
   return onSnapshot(
     query(collection(db, COLLECTIONS.businessRules), orderBy("priority", "asc")),
@@ -614,6 +646,7 @@ export function subscribeToBusinessRules(
 }
 
 export async function createBusinessRule(input: BusinessRuleInput): Promise<ServiceResult<BusinessRule>> {
+  if (isMockMode()) return mock.createBusinessRule(input);
   try {
     const parsed = businessRuleSchema.parse(input);
     const db = getDb();
@@ -630,6 +663,10 @@ export async function updateBusinessRule(
   id: string,
   input: Partial<BusinessRuleInput>
 ): Promise<ServiceResult<void>> {
+  if (isMockMode()) {
+    const result = await mock.updateBusinessRule(id, input);
+    return result.success ? success(undefined) : result;
+  }
   try {
     const db = getDb();
     const ref = doc(db, COLLECTIONS.businessRules, id);
@@ -641,6 +678,7 @@ export async function updateBusinessRule(
 }
 
 export async function deleteBusinessRule(id: string): Promise<ServiceResult<void>> {
+  if (isMockMode()) return mock.deleteBusinessRule(id);
   try {
     const db = getDb();
     await deleteDoc(doc(db, COLLECTIONS.businessRules, id));
@@ -653,6 +691,7 @@ export async function deleteBusinessRule(id: string): Promise<ServiceResult<void
 // ─── Suggestions ───────────────────────────────────────────────────
 
 export async function getProductSuggestions(triggerProductId?: string): Promise<ProductSuggestion[]> {
+  if (isMockMode()) return mock.getProductSuggestions(triggerProductId);
   const db = getDb();
   const q = triggerProductId
     ? query(
@@ -671,6 +710,7 @@ export function subscribeToSuggestions(
   onData: (suggestions: ProductSuggestion[]) => void,
   onError: (msg: string) => void
 ): Unsubscribe {
+  if (isMockMode()) return mock.subscribeToSuggestions(onData, onError);
   const db = getDb();
   return onSnapshot(
     query(collection(db, COLLECTIONS.suggestions), orderBy("sortOrder", "asc")),
@@ -684,6 +724,7 @@ export function subscribeToSuggestions(
 export async function createProductSuggestion(
   input: ProductSuggestionInput
 ): Promise<ServiceResult<ProductSuggestion>> {
+  if (isMockMode()) return mock.createProductSuggestion(input);
   try {
     const parsed = productSuggestionSchema.parse(input);
     const db = getDb();
@@ -698,6 +739,7 @@ export async function updateProductSuggestion(
   id: string,
   input: Partial<ProductSuggestionInput>
 ): Promise<ServiceResult<ProductSuggestion>> {
+  if (isMockMode()) return mock.updateProductSuggestion(id, input);
   try {
     const db = getDb();
     const ref = doc(db, COLLECTIONS.suggestions, id);
@@ -711,6 +753,7 @@ export async function updateProductSuggestion(
 }
 
 export async function deleteProductSuggestion(id: string): Promise<ServiceResult<void>> {
+  if (isMockMode()) return mock.deleteProductSuggestion(id);
   try {
     const db = getDb();
     await deleteDoc(doc(db, COLLECTIONS.suggestions, id));
@@ -723,6 +766,7 @@ export async function deleteProductSuggestion(id: string): Promise<ServiceResult
 // ─── Inventory Links ───────────────────────────────────────────────
 
 export async function getInventoryLinks(): Promise<InventoryLink[]> {
+  if (isMockMode()) return mock.getInventoryLinks();
   const db = getDb();
   const snapshot = await getDocs(collection(db, COLLECTIONS.inventoryLinks));
   return snapshot.docs.map((d) => mapInventoryLink(docTo<FirestoreInventoryLink>(d.id, d.data())));
@@ -732,6 +776,7 @@ export function subscribeToInventoryLinks(
   onData: (links: InventoryLink[]) => void,
   onError: (msg: string) => void
 ): Unsubscribe {
+  if (isMockMode()) return mock.subscribeToInventoryLinks(onData, onError);
   const db = getDb();
   return onSnapshot(collection(db, COLLECTIONS.inventoryLinks), (snap) => {
     onData(snap.docs.map((d) => mapInventoryLink(docTo<FirestoreInventoryLink>(d.id, d.data()))));
@@ -742,6 +787,7 @@ export async function upsertInventoryLink(
   input: InventoryLinkInput,
   id?: string
 ): Promise<ServiceResult<InventoryLink>> {
+  if (isMockMode()) return mock.upsertInventoryLink(input);
   try {
     const parsed = inventoryLinkSchema.parse(input);
     const db = getDb();
@@ -759,6 +805,7 @@ export async function upsertInventoryLink(
 // ─── Product Builder Config ────────────────────────────────────────
 
 export async function loadProductBuilderConfig(productId: string): Promise<ProductBuilderConfig> {
+  if (isMockMode()) return mock.loadProductBuilderConfig(productId);
   const db = getDb();
   const [
     groupsSnap,
@@ -827,6 +874,7 @@ export function subscribeToProductBuilderConfig(
   onData: (config: ProductBuilderConfig) => void,
   onError: (msg: string) => void
 ): Unsubscribe {
+  if (isMockMode()) return mock.subscribeToProductBuilderConfig(productId, onData, onError);
   let cache: {
     groups: ModifierGroup[];
     options: ModifierOption[];

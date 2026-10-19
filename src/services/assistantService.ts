@@ -15,8 +15,10 @@ import {
   type AssistantConfig,
 } from "@/lib/assistant/types";
 import { parseAssistantConfig } from "@/lib/assistant/parse-config";
+import { isMockMode } from "@/lib/data-provider/mode";
 
 export async function getAssistantConfig(): Promise<AssistantConfig> {
+  if (isMockMode()) return { ...DEFAULT_ASSISTANT_CONFIG };
   try {
     const db = getDb();
     const snap = await getDoc(doc(db, COLLECTIONS.assistant, ASSISTANT_DOC_ID));
@@ -34,6 +36,11 @@ export function subscribeToAssistantConfig(
   onData: (config: AssistantConfig) => void,
   onError: (error: string) => void
 ): Unsubscribe {
+  if (isMockMode()) {
+    queueMicrotask(() => onData({ ...DEFAULT_ASSISTANT_CONFIG }));
+    return () => {};
+  }
+  void onError;
   try {
     const db = getDb();
     return onSnapshot(
@@ -52,6 +59,12 @@ export function subscribeToAssistantConfig(
 export async function updateAssistantConfig(
   input: Partial<AssistantConfig>
 ): Promise<ServiceResult<void>> {
+  if (isMockMode()) {
+    // Mock mode doesn't persist assistant config changes — keep it a
+    // no-op so admin UI buttons that save don't throw.
+    void input;
+    return success(undefined);
+  }
   try {
     const db = getDb();
     const ref = doc(db, COLLECTIONS.assistant, ASSISTANT_DOC_ID);

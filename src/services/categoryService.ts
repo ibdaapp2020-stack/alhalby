@@ -21,12 +21,15 @@ import { categorySchema, type CategoryInput } from "@/lib/validation/schemas";
 import { sanitizeFirestoreData } from "@/lib/firebase/sanitize-firestore-data";
 import type { Category } from "@/types";
 import type { FirestoreCategory, FirestoreDoc } from "@/types/firestore";
+import { isMockMode } from "@/lib/data-provider/mode";
+import { mockCategories as mock } from "@/lib/data-provider/mock";
 
 function docToCategory(id: string, data: DocumentData): FirestoreDoc<FirestoreCategory> {
   return { id, ...(data as FirestoreCategory) };
 }
 
 export async function getCategories(options?: { includeInactive?: boolean }): Promise<Category[]> {
+  if (isMockMode()) return mock.getCategories(options);
   try {
     const db = getDb();
     const q = query(
@@ -47,6 +50,7 @@ export async function getCategories(options?: { includeInactive?: boolean }): Pr
 
 /** Every category, including inactive. No orderBy so docs without sortOrder are not dropped. */
 export async function getAllCategoriesForExport(): Promise<Category[]> {
+  if (isMockMode()) return mock.getAllCategoriesForExport();
   try {
     const db = getDb();
     const snapshot = await getDocs(collection(db, COLLECTIONS.categories));
@@ -62,6 +66,7 @@ export async function getAllCategoriesForExport(): Promise<Category[]> {
 }
 
 export async function getCategoryById(id: string): Promise<Category | undefined> {
+  if (isMockMode()) return mock.getCategoryById(id);
   try {
     const db = getDb();
     const snap = await getDoc(doc(db, COLLECTIONS.categories, id));
@@ -80,6 +85,7 @@ export function subscribeToCategories(
   onError: (error: string) => void,
   options?: { includeInactive?: boolean }
 ): Unsubscribe {
+  if (isMockMode()) return mock.subscribeToCategories(onData, onError, options);
   try {
     const db = getDb();
     const q = query(
@@ -103,6 +109,7 @@ export function subscribeToCategories(
 }
 
 export async function createCategory(input: CategoryInput): Promise<ServiceResult<Category>> {
+  if (isMockMode()) return mock.createCategory(input);
   try {
     const parsed = categorySchema.parse(input);
     const data = sanitizeFirestoreData({
@@ -122,6 +129,7 @@ export async function updateCategory(
   id: string,
   input: Partial<CategoryInput>
 ): Promise<ServiceResult<Category>> {
+  if (isMockMode()) return mock.updateCategory(id, input);
   try {
     const db = getDb();
     const ref = doc(db, COLLECTIONS.categories, id);
@@ -140,6 +148,7 @@ export async function updateCategory(
 }
 
 export async function deleteCategory(id: string): Promise<ServiceResult<void>> {
+  if (isMockMode()) return mock.deleteCategory(id);
   try {
     const db = getDb();
     await deleteDoc(doc(db, COLLECTIONS.categories, id));
@@ -152,6 +161,7 @@ export async function deleteCategory(id: string): Promise<ServiceResult<void>> {
 export async function reorderCategories(
   orderedIds: string[]
 ): Promise<ServiceResult<void>> {
+  if (isMockMode()) return mock.reorderCategories(orderedIds);
   try {
     const db = getDb();
     await Promise.all(
@@ -166,6 +176,7 @@ export async function reorderCategories(
 }
 
 export async function readOneCategoryForTest(): Promise<ServiceResult<Category | null>> {
+  if (isMockMode()) return mock.readOneCategoryForTest();
   try {
     const categories = await getCategories();
     return success(categories[0] ?? null);

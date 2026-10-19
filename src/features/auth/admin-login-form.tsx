@@ -5,7 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { safeAdminReturnPath } from "@/lib/domains/host-routing";
 import { useAdminPath } from "@/hooks/useAdminPath";
 import { motion } from "framer-motion";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { Eye, EyeOff, Loader2, Info } from "lucide-react";
 import { useAuth } from "@/components/providers/auth-provider";
 import { Logo } from "@/components/brand/logo";
 import { BRAND } from "@/lib/brand";
@@ -14,6 +14,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { StoreImage } from "@/components/brand/store-image";
 import { useT } from "@/components/providers/locale-provider";
+import { isMockMode } from "@/lib/data-provider/mode";
+import { MOCK_ADMIN_USER } from "@/lib/mock-data";
 
 export function AdminLoginForm() {
   const t = useT();
@@ -165,6 +167,21 @@ export function AdminLoginForm() {
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : t("admin.signIn")}
             </Button>
           </form>
+          {isMockMode() ? (
+            <div className="mt-4 flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900">
+              <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" strokeWidth={2} />
+              <div className="min-w-0 flex-1">
+                <p className="font-semibold">Demo credentials</p>
+                <p>
+                  Email:{" "}
+                  <code className="font-mono">{MOCK_ADMIN_USER.email}</code>
+                  <br />
+                  Password:{" "}
+                  <code className="font-mono">{MOCK_ADMIN_USER.password}</code>
+                </p>
+              </div>
+            </div>
+          ) : null}
         </motion.div>
       </div>
     </div>

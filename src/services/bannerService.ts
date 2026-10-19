@@ -21,12 +21,15 @@ import type { BannerSlide } from "@/types";
 import type { FirestoreBanner, FirestoreDoc } from "@/types/firestore";
 import { sanitizeFirestoreData } from "@/lib/firebase/sanitize-firestore-data";
 import { normalizeImageUrl } from "@/lib/menu/placeholders";
+import { isMockMode } from "@/lib/data-provider/mode";
+import { mockBanners as mock } from "@/lib/data-provider/mock";
 
 function docToBanner(id: string, data: DocumentData): FirestoreDoc<FirestoreBanner> {
   return { id, ...(data as FirestoreBanner) };
 }
 
 export async function getBanners(): Promise<BannerSlide[]> {
+  if (isMockMode()) return mock.getBanners();
   try {
     const db = getDb();
     const q = query(
@@ -49,6 +52,7 @@ export function subscribeToBanners(
   onData: (banners: BannerSlide[]) => void,
   onError: (error: string) => void
 ): Unsubscribe {
+  if (isMockMode()) return mock.subscribeToBanners(onData, onError);
   try {
     const db = getDb();
     const q = query(
@@ -75,6 +79,7 @@ export function subscribeToAllBanners(
   onData: (banners: BannerSlide[]) => void,
   onError: (error: string) => void
 ): Unsubscribe {
+  if (isMockMode()) return mock.subscribeToAllBanners(onData, onError);
   try {
     const db = getDb();
     const q = query(
@@ -100,6 +105,7 @@ export function subscribeToAllBanners(
 export async function reorderBanners(
   orderedIds: string[]
 ): Promise<ServiceResult<void>> {
+  if (isMockMode()) return mock.reorderBanners(orderedIds);
   try {
     const db = getDb();
     const batch = writeBatch(db);
@@ -114,6 +120,7 @@ export async function reorderBanners(
 }
 
 export async function createBanner(input: BannerInput): Promise<ServiceResult<BannerSlide>> {
+  if (isMockMode()) return mock.createBanner(input);
   try {
     const parsed = bannerSchema.parse(input);
     if (parsed.imageUrl) parsed.imageUrl = normalizeImageUrl(parsed.imageUrl) ?? parsed.imageUrl;
@@ -131,6 +138,7 @@ export async function updateBanner(
   id: string,
   input: Partial<BannerInput>
 ): Promise<ServiceResult<void>> {
+  if (isMockMode()) return mock.updateBanner(id, input);
   try {
     if (input.imageUrl) input.imageUrl = normalizeImageUrl(input.imageUrl) ?? input.imageUrl;
     if (input.mobileImageUrl) input.mobileImageUrl = normalizeImageUrl(input.mobileImageUrl) ?? input.mobileImageUrl;
@@ -143,6 +151,7 @@ export async function updateBanner(
 }
 
 export async function deleteBanner(id: string): Promise<ServiceResult<void>> {
+  if (isMockMode()) return mock.deleteBanner(id);
   try {
     const db = getDb();
     await deleteDoc(doc(db, COLLECTIONS.banners, id));

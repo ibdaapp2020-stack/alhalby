@@ -24,6 +24,17 @@ import {
   DEFAULT_FOOTER_SETTINGS,
   DEFAULT_QR_SETTINGS,
 } from "@/types/pdf-menu";
+import { isMockMode } from "@/lib/data-provider/mode";
+
+/**
+ * PDF-menu is a feature behind {@link TenantFeatures.pdfMenuBuilder}, which
+ * is disabled on the BASE/mock preset. The mock implementations below return
+ * safe no-op values so admin screens that open the module see an empty state
+ * rather than a thrown error.
+ */
+function mockId(): string {
+  return `pdf-${Date.now().toString(36)}${Math.random().toString(36).slice(2, 8)}`;
+}
 
 const COLLECTIONS = {
   templates: APP_COLLECTIONS.pdfMenuTemplates,
@@ -33,6 +44,7 @@ const COLLECTIONS = {
 };
 
 export async function getTemplates(): Promise<PdfMenuTemplate[]> {
+  if (isMockMode()) return [];
   const db = getDb();
   const snap = await getDocs(collection(db, COLLECTIONS.templates));
   return snap.docs
@@ -45,6 +57,7 @@ export async function getTemplates(): Promise<PdfMenuTemplate[]> {
 }
 
 export async function getTemplate(id: string): Promise<PdfMenuTemplate | null> {
+  if (isMockMode()) return null;
   const db = getDb();
   const snap = await getDoc(doc(db, COLLECTIONS.templates, id));
   if (!snap.exists()) return null;
@@ -52,6 +65,22 @@ export async function getTemplate(id: string): Promise<PdfMenuTemplate | null> {
 }
 
 export async function createTemplate(name: string): Promise<PdfMenuTemplate> {
+  if (isMockMode()) {
+    const now = new Date().toISOString();
+    return {
+      id: mockId(),
+      name,
+      active: true,
+      language: "ar",
+      direction: "rtl",
+      arrangeMode: "auto",
+      coverSettings: DEFAULT_COVER_SETTINGS,
+      footerSettings: DEFAULT_FOOTER_SETTINGS,
+      qrSettings: DEFAULT_QR_SETTINGS,
+      createdAt: now,
+      updatedAt: now,
+    } as PdfMenuTemplate;
+  }
   const db = getDb();
   const ref = doc(collection(db, COLLECTIONS.templates));
   const data = {
@@ -79,6 +108,11 @@ export async function updateTemplate(
   id: string,
   updates: Partial<Omit<PdfMenuTemplate, "id" | "createdAt">>
 ): Promise<void> {
+  if (isMockMode()) {
+    void id;
+    void updates;
+    return;
+  }
   const db = getDb();
   await updateDoc(doc(db, COLLECTIONS.templates, id), sanitizeFirestoreData({
     ...updates,
@@ -95,6 +129,10 @@ async function deleteByTemplateId(collectionName: string, templateId: string): P
 }
 
 export async function deleteTemplate(id: string): Promise<void> {
+  if (isMockMode()) {
+    void id;
+    return;
+  }
   const db = getDb();
   await deleteDoc(doc(db, COLLECTIONS.templates, id));
   await Promise.all([
@@ -143,6 +181,10 @@ export async function duplicateTemplate(sourceId: string, newName: string): Prom
 }
 
 export async function getCategorySettings(templateId: string): Promise<PdfMenuCategorySetting[]> {
+  if (isMockMode()) {
+    void templateId;
+    return [];
+  }
   const db = getDb();
   const snap = await getDocs(
     query(
@@ -156,6 +198,7 @@ export async function getCategorySettings(templateId: string): Promise<PdfMenuCa
 }
 
 export async function saveCategorySetting(setting: PdfMenuCategorySetting): Promise<string> {
+  if (isMockMode()) return setting.id || mockId();
   const db = getDb();
   const payload = sanitizeFirestoreData({ ...setting, id: undefined });
   if (setting.id) {
@@ -174,6 +217,10 @@ export async function saveCategorySettings(settings: PdfMenuCategorySetting[]): 
 }
 
 export async function getProductSettings(templateId: string): Promise<PdfMenuProductSetting[]> {
+  if (isMockMode()) {
+    void templateId;
+    return [];
+  }
   const db = getDb();
   const snap = await getDocs(
     query(collection(db, COLLECTIONS.productSettings), where("templateId", "==", templateId))
@@ -182,6 +229,7 @@ export async function getProductSettings(templateId: string): Promise<PdfMenuPro
 }
 
 export async function saveProductSetting(setting: PdfMenuProductSetting): Promise<string> {
+  if (isMockMode()) return setting.id || mockId();
   const db = getDb();
   const payload = sanitizeFirestoreData({ ...setting, id: undefined });
   if (setting.id) {
@@ -194,6 +242,10 @@ export async function saveProductSetting(setting: PdfMenuProductSetting): Promis
 }
 
 export async function getMenuPages(templateId: string): Promise<PdfMenuPageRecord[]> {
+  if (isMockMode()) {
+    void templateId;
+    return [];
+  }
   const db = getDb();
   const snap = await getDocs(
     query(collection(db, COLLECTIONS.pages), where("templateId", "==", templateId))
@@ -205,6 +257,7 @@ export async function getMenuPages(templateId: string): Promise<PdfMenuPageRecor
 
 export async function saveMenuPages(pages: PdfMenuPageRecord[]): Promise<void> {
   if (pages.length === 0) return;
+  if (isMockMode()) return;
   const db = getDb();
   const templateId = pages[0]!.templateId;
   const existing = await getDocs(

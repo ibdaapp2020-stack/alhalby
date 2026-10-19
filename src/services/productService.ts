@@ -21,6 +21,8 @@ import { sanitizeFirestoreData } from "@/lib/firebase/sanitize-firestore-data";
 import { nowTimestamp } from "@/types/firestore";
 import type { Product, ProductFilters } from "@/types";
 import type { FirestoreProduct, FirestoreDoc } from "@/types/firestore";
+import { isMockMode } from "@/lib/data-provider/mode";
+import { mockProducts as mock } from "@/lib/data-provider/mock";
 
 function docToProduct(id: string, data: DocumentData): FirestoreDoc<FirestoreProduct> {
   return { id, ...(data as FirestoreProduct) };
@@ -113,6 +115,7 @@ async function fetchAllProducts(): Promise<Product[]> {
 
 /** Every product in the collection, including hidden/inactive. No orderBy so docs without sortOrder are not dropped. */
 export async function getAllProductsForExport(): Promise<Product[]> {
+  if (isMockMode()) return mock.getAllProductsForExport();
   try {
     const db = getDb();
     const snapshot = await getDocs(collection(db, COLLECTIONS.products));
@@ -128,6 +131,7 @@ export async function getAllProductsForExport(): Promise<Product[]> {
 }
 
 export async function getProducts(filters?: ProductFilters): Promise<Product[]> {
+  if (isMockMode()) return mock.getProducts(filters);
   try {
     const products = await fetchAllProducts();
     return applyFilters(products, filters);
@@ -140,6 +144,7 @@ export async function getProducts(filters?: ProductFilters): Promise<Product[]> 
 }
 
 export async function getProductById(id: string): Promise<Product | undefined> {
+  if (isMockMode()) return mock.getProductById(id);
   try {
     const db = getDb();
     const snap = await getDoc(doc(db, COLLECTIONS.products, id));
@@ -154,6 +159,7 @@ export async function getProductById(id: string): Promise<Product | undefined> {
 }
 
 export async function getPopularProducts(limit = 6): Promise<Product[]> {
+  if (isMockMode()) return mock.getPopularProducts(limit);
   const products = await getProducts({ isPopular: true, available: true });
   return products.slice(0, limit);
 }
@@ -163,6 +169,7 @@ export function subscribeToProducts(
   onData: (products: Product[]) => void,
   onError: (error: string) => void
 ): Unsubscribe {
+  if (isMockMode()) return mock.subscribeToProducts(filters, onData, onError);
   try {
     const db = getDb();
     const q = query(
@@ -190,6 +197,7 @@ export function subscribeToProducts(
 }
 
 export async function createProduct(input: ProductInput): Promise<ServiceResult<Product>> {
+  if (isMockMode()) return mock.createProduct(input);
   try {
     const parsed = productSchema.parse(input);
     const db = getDb();
@@ -219,6 +227,7 @@ export async function updateProduct(
   id: string,
   input: Partial<ProductInput>
 ): Promise<ServiceResult<Product>> {
+  if (isMockMode()) return mock.updateProduct(id, input);
   try {
     const db = getDb();
     const ref = doc(db, COLLECTIONS.products, id);
@@ -234,6 +243,7 @@ export async function updateProduct(
 }
 
 export async function deleteProduct(id: string): Promise<ServiceResult<void>> {
+  if (isMockMode()) return mock.deleteProduct(id);
   try {
     const db = getDb();
     await deleteDoc(doc(db, COLLECTIONS.products, id));
@@ -246,6 +256,7 @@ export async function deleteProduct(id: string): Promise<ServiceResult<void>> {
 export async function reorderProducts(
   orderedIds: string[]
 ): Promise<ServiceResult<void>> {
+  if (isMockMode()) return mock.reorderProducts(orderedIds);
   try {
     const db = getDb();
     await Promise.all(
@@ -260,6 +271,7 @@ export async function reorderProducts(
 }
 
 export async function readOneProductForTest(): Promise<ServiceResult<Product | null>> {
+  if (isMockMode()) return mock.readOneProductForTest();
   try {
     const products = await fetchAllProducts();
     return success(products[0] ?? null);

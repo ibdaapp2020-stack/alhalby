@@ -22,6 +22,8 @@ import { doc, getDoc } from "firebase/firestore";
 import { getFirebaseAuth, getDb } from "@/lib/firebase";
 import { COLLECTIONS } from "@/lib/firebase/collections";
 import type { UserRole } from "@/lib/auth/roles";
+import { isMockMode } from "@/lib/data-provider/mode";
+import { mockAuth } from "@/lib/data-provider/mock";
 
 interface AuthUser {
   uid: string;
@@ -56,7 +58,74 @@ async function fetchUserProfile(uid: string): Promise<AuthUser | null> {
   };
 }
 
-export function AuthProvider({ children }: { children: ReactNode }) {
+/** Mock-mode variant — mirrors the real AuthProvider contract. */
+function MockAuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const unsub = mockAuth.subscribeSession((session) => {
+      if (session) {
+        setUser({
+          uid: session.uid,
+          email: session.email,
+          displayName: session.displayName,
+          role: session.role as UserRole,
+        });
+      } else {
+        setUser(null);
+      }
+      setLoading(false);
+    });
+    return () => unsub();
+  }, []);
+
+  const login = useCallback(
+    async (email: string, password: string, _remember = true) => {
+      void _remember;
+      const session = await mockAuth.signIn(email, password);
+      setUser({
+        uid: session.uid,
+        email: session.email,
+        displayName: session.displayName,
+        role: session.role as UserRole,
+      });
+    },
+    []
+  );
+
+  const logout = useCallback(async () => {
+    await mockAuth.signOut();
+    setUser(null);
+  }, []);
+
+  const resetPassword = useCallback(async (email: string) => {
+    await mockAuth.sendPasswordReset(email);
+  }, []);
+
+  const getIdToken = useCallback(async () => {
+    return mockAuth.getIdToken();
+  }, []);
+
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        firebaseUser: null,
+        loading,
+        login,
+        logout,
+        resetPassword,
+        getIdToken,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+/** Firebase-backed AuthProvider — original implementation. */
+function FirebaseAuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [firebaseUser, setFirebaseUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -64,7 +133,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     fetch("/api/auth/bootstrap", { method: "POST" }).catch(() => {});
 
-    const auth = getFirebaseAuth();
+    let auth;
+    try {
+      auth = getFirebaseAuth();
+    } catch (error) {
+      // Firebase env is missing — don't crash the whole tree. Mark auth as
+      // ready-but-anonymous and bail out of the subscription.
+      console.warn("[AuthProvider] Firebase auth unavailable:", error);
+      setLoading(false);
+      return;
+    }
     const authTimeout = window.setTimeout(() => {
       console.error("[AuthProvider] authentication state timed out");
       setLoading(false);
@@ -132,6 +210,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       {children}
     </AuthContext.Provider>
   );
+}
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  if (isMockMode()) {
+    return <MockAuthProvider>{children}</MockAuthProvider>;
+  }
+  return <FirebaseAuthProvider>{children}</FirebaseAuthProvider>;
 }
 
 export function useAuth() {

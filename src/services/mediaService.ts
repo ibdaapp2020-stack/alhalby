@@ -2,6 +2,7 @@ import { listAll, ref, getDownloadURL } from "firebase/storage";
 import { getFirebaseStorage } from "@/lib/firebase";
 import { STORAGE_PATHS } from "@/lib/firebase/collections";
 import { type ServiceResult, success, failure } from "@/lib/errors";
+import { isMockMode } from "@/lib/data-provider/mode";
 
 export interface MediaFile {
   name: string;
@@ -39,6 +40,7 @@ async function listFolder(prefix: string): Promise<MediaFile[]> {
 }
 
 export async function listMediaFiles(): Promise<ServiceResult<MediaFile[]>> {
+  if (isMockMode()) return success([]);
   try {
     const folders = Object.values(STORAGE_PATHS).filter((f) => f !== "test");
     const all = await Promise.all(folders.map((f) => listFolder(f)));
