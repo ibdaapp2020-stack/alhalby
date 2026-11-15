@@ -50,7 +50,20 @@ export function AdminLoginForm() {
       await login(email, password, remember);
       router.replace(afterLoginPath);
     } catch (err) {
-      setError(err instanceof Error ? err.message : t("error.generic"));
+      const code = err && typeof err === "object" && "code" in err ? String(err.code) : "";
+      const message = err instanceof Error ? err.message : "";
+      if (
+        code.includes("invalid-credential") ||
+        code.includes("wrong-password") ||
+        code.includes("user-not-found") ||
+        code.includes("invalid-email")
+      ) {
+        setError(t("admin.loginFailed"));
+      } else if (message.includes("profile not found") || message.includes("inactive")) {
+        setError(t("admin.profileMissing"));
+      } else {
+        setError(message || t("error.generic"));
+      }
     } finally {
       setLoading(false);
     }
