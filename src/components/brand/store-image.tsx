@@ -36,6 +36,15 @@ export function StoreImage({
     });
   };
 
+  if (!src || src === "/logo.png") {
+    return (
+      <div
+        className={cn("relative h-full w-full overflow-hidden bg-[#6E2132]", className)}
+        aria-hidden
+      />
+    );
+  }
+
   return (
     <div className={cn("relative h-full w-full overflow-hidden", className)}>
       <Image

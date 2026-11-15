@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { useLocale } from "@/components/providers/locale-provider";
 import { cn } from "@/lib/utils";
 import { normalizeImageUrl } from "@/lib/menu/placeholders";
+import { BrandHeroPanel, isDecorativeHeroImage } from "@/features/catalog/brand-hero-panel";
 import type { BannerSlide } from "@/types";
 
 function localizedBanner(banner: BannerSlide, locale: "he" | "ar" | "en") {
@@ -56,12 +57,22 @@ export function BannerHero({
   const content = localizedBanner(banner, locale);
   const mobile = device === "mobile";
   const rawImage = mobile ? banner.mobileImage || banner.image : banner.image;
-  let image = normalizeImageUrl(rawImage) || "/meskahphoto.png";
-  if (image === "/store.jpg") image = "/meskahphoto.png";
+  const image = normalizeImageUrl(rawImage);
   const x = mobile ? banner.mobilePositionX : banner.desktopPositionX;
   const y = mobile ? banner.mobilePositionY : banner.desktopPositionY;
   const zoom = mobile ? banner.mobileZoom : banner.desktopZoom;
   const showButton = banner.ctaAction !== "none" && Boolean(content.button);
+  if (!image || isDecorativeHeroImage(image)) {
+    return (
+      <BrandHeroPanel
+        eyebrow={content.title}
+        title={content.subtitle || content.title}
+        cta={showButton ? content.button : undefined}
+        href={interactive && showButton ? bannerHref(banner) : undefined}
+        compact={mobile}
+      />
+    );
+  }
 
   const hero = (
     <div

@@ -3,12 +3,13 @@
 import Link from "next/link";
 import { Phone, MapPin, MessageCircle, Clock } from "lucide-react";
 import { Logo } from "@/components/brand/logo";
-import { useT } from "@/components/providers/locale-provider";
+import { useLocale, useT } from "@/components/providers/locale-provider";
 import { useSettings } from "@/hooks/useSettings";
-import { BRAND } from "@/lib/brand";
+import { displayStoreName } from "@/lib/brand";
 
 export function SiteFooter() {
   const t = useT();
+  const { locale } = useLocale();
   const { settings } = useSettings();
 
   const phone = settings?.phone ?? "";
@@ -110,7 +111,7 @@ export function SiteFooter() {
 
         <div className="mt-8 border-t border-beige-dark/12 pt-6 text-center sm:text-start">
           <p className="text-caption">
-            © {new Date().getFullYear()} {settings?.storeName ?? BRAND.name}. {t("footer.rights")}
+            © {new Date().getFullYear()} {displayStoreName(locale, settings?.storeName)}. {t("footer.rights")}
           </p>
         </div>
       </div>

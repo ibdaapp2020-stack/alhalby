@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 720" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Store hero">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#087F83"/>
+      <stop offset="0.6" stop-color="#0A9094"/>
+      <stop offset="1" stop-color="#F2A341"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="78%" cy="20%" r="55%">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="veil" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#000000" stop-opacity="0.35"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0"/>
+    </linearGradient>
+    <pattern id="dots" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.4" fill="#FFFFFF" fill-opacity="0.08"/>
+    </pattern>
+  </defs>
+
+  <rect width="1440" height="720" fill="url(#bg)"/>
+  <rect width="1440" height="720" fill="url(#glow)"/>
+  <rect width="1440" height="720" fill="url(#dots)"/>
+
+  <!-- Floating produce circles -->
+  <g opacity="0.9">
+    <circle cx="1100" cy="360" r="150" fill="#F2A341" fill-opacity="0.45"/>
+    <circle cx="1240" cy="520" r="100" fill="#FFFFFF" fill-opacity="0.3"/>
+    <circle cx="980" cy="520" r="70" fill="#FFFFFF" fill-opacity="0.2"/>
+    <circle cx="1180" cy="200" r="55" fill="#FFFFFF" fill-opacity="0.25"/>
+  </g>
+
+  <!-- Bag silhouette -->
+  <g transform="translate(1030,310)" opacity="0.85">
+    <path d="M30 60 L170 60 L185 230 L15 230 Z" fill="#FFFFFF" opacity="0.9"/>
+    <path d="M70 60 C70 25, 130 25, 130 60" stroke="#FFFFFF" stroke-width="8" fill="none"/>
+    <circle cx="100" cy="150" r="26" fill="#087F83" opacity="0.4"/>
+    <rect x="60" y="190" width="80" height="6" rx="3" fill="#087F83" opacity="0.25"/>
+  </g>
+
+  <rect y="420" width="1440" height="300" fill="url(#veil)"/>
+</svg>

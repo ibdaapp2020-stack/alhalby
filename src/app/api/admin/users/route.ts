@@ -1,11 +1,34 @@
 import { NextRequest } from "next/server";
-import { getAdminAuth, getAdminDb } from "@/lib/firebase/admin";
-import { requireAdminOnly, getAuthFromRequest } from "@/lib/auth/verify-admin";
-import { COLLECTIONS } from "@/lib/firebase/collections";
-import { FieldValue } from "firebase-admin/firestore";
 import { z } from "zod";
 import { isMockMode } from "@/lib/data-provider/mode";
 import { mockUsers, MOCK_ADMIN_USER } from "@/lib/mock-data";
+
+// Force dynamic rendering so Next doesn't try to statically evaluate the
+// Firebase Admin SDK at build time (which can trigger initialization errors
+// before env vars / credentials are available). Mirrors the pattern used by
+// the printer admin routes.
+export const runtime = "nodejs";
+export const dynamic = "force-dynamic";
+
+// NOTE: firebase-admin + verify-admin are imported lazily inside each handler
+// so Next.js can finish "Collecting page data" without initializing the
+// Admin SDK (which would fail if credentials aren't present at build time).
+async function loadServerDeps() {
+  const [admin, verify, collections, firestore] = await Promise.all([
+    import("@/lib/firebase/admin"),
+    import("@/lib/auth/verify-admin"),
+    import("@/lib/firebase/collections"),
+    import("firebase-admin/firestore"),
+  ]);
+  return {
+    getAdminAuth: admin.getAdminAuth,
+    getAdminDb: admin.getAdminDb,
+    requireAdminOnly: verify.requireAdminOnly,
+    getAuthFromRequest: verify.getAuthFromRequest,
+    COLLECTIONS: collections.COLLECTIONS,
+    FieldValue: firestore.FieldValue,
+  };
+}
 
 function mockUsersResponse() {
   const now = new Date().toISOString();
@@ -53,6 +76,8 @@ const updateUserSchema = z.object({
 export async function GET(request: NextRequest) {
   if (isMockMode()) return mockUsersResponse();
 
+  const { getAdminAuth, getAdminDb, requireAdminOnly, COLLECTIONS } =
+    await loadServerDeps();
   const auth = await requireAdminOnly(request);
   if (auth instanceof Response) return auth;
 
@@ -94,6 +119,13 @@ export async function POST(request: NextRequest) {
     return mockWriteBlocked();
   }
 
+  const {
+    getAdminAuth,
+    getAdminDb,
+    requireAdminOnly,
+    COLLECTIONS,
+    FieldValue,
+  } = await loadServerDeps();
   const auth = await requireAdminOnly(request);
   if (auth instanceof Response) return auth;
 
@@ -143,6 +175,13 @@ export async function POST(request: NextRequest) {
 export async function PATCH(request: NextRequest) {
   if (isMockMode()) return mockWriteBlocked();
 
+  const {
+    getAdminAuth,
+    getAdminDb,
+    getAuthFromRequest,
+    COLLECTIONS,
+    FieldValue,
+  } = await loadServerDeps();
   const current = await getAuthFromRequest(request);
   if (!current) return Response.json({ error: "Unauthorized" }, { status: 401 });
 
@@ -193,6 +232,8 @@ export async function PATCH(request: NextRequest) {
 export async function DELETE(request: NextRequest) {
   if (isMockMode()) return mockWriteBlocked();
 
+  const { getAdminAuth, getAdminDb, requireAdminOnly, COLLECTIONS } =
+    await loadServerDeps();
   const auth = await requireAdminOnly(request);
   if (auth instanceof Response) return auth;
 

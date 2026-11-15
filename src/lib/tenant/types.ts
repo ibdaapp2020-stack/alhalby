@@ -4,8 +4,8 @@
  * instead of hard-coded constants.
  *
  * The BASE ships with safe defaults ({@link BASE_TENANT_DEFAULTS}). A tenant
- * overrides any subset of these via Firestore `settings/app`. Legacy "mishkat"
- * values live in {@link MISHKAT_PRESET} as seed data, not as code constants.
+ * overrides any subset of these via Firestore `settings/app`. This project
+ * boots from the Al Halabi preset.
  */
 
 export type TenantPaletteKey =

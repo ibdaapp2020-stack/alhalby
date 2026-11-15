@@ -68,7 +68,7 @@ async function verifyFirestoreAccess(useAdmin: boolean) {
         (error.message.includes("timed out") || error.message.includes("permission")))
     ) {
       process.stderr.write(
-        `\nCannot write to Firestore for project 'mshkah'.\n\n` +
+        `\nCannot write to Firestore. Check NEXT_PUBLIC_FIREBASE_PROJECT_ID.\n\n` +
           `Option A — Admin SDK (recommended for seed):\n` +
           `  Set FIREBASE_ADMIN_CLIENT_EMAIL + FIREBASE_ADMIN_PRIVATE_KEY in .env\n\n` +
           `Option B — Client SDK:\n` +
@@ -211,7 +211,7 @@ async function importMasterMenu() {
     await batch.commit();
 
     await db.collection(COLLECTIONS.settings).doc("app").set({
-      storeName: "MISHKAT CAFÉ",
+      storeName: "حلويات الحلبي",
       currency: "ILS",
       menuVersion: "catalog-reset-2026-08",
       categoriesCount: MASTER_MENU_STATS.categories,
@@ -273,7 +273,7 @@ async function importMasterMenu() {
     await batch.commit();
 
     await setDoc(doc(db, COLLECTIONS.settings, "app"), {
-      storeName: "MISHKAT CAFÉ",
+      storeName: "حلويات الحلبي",
       currency: "ILS",
       menuVersion: "catalog-reset-2026-08",
       categoriesCount: MASTER_MENU_STATS.categories,

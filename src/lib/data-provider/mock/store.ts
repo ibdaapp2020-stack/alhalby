@@ -47,7 +47,7 @@ export interface MockDatabase {
   settings: AppSettings;
 }
 
-const STORAGE_KEY = "store-mock-db-v1";
+const STORAGE_KEY = "store-mock-db-v3";
 const PERSIST_DEBOUNCE_MS = 100;
 
 /**

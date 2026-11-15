@@ -91,7 +91,7 @@ export const viewport: Viewport = {
 
 const siteDescription =
   [BRAND.taglineAlt, BRAND.tagline].filter(Boolean).join(" — ") ||
-  "Online store — browse, order, and checkout from any device.";
+  "בקלאווה, כנאפה ומתוקים באיכות מובחרת";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"),
@@ -110,7 +110,7 @@ export const metadata: Metadata = {
     icon: [
       { url: PWA_ICONS.icon192, sizes: "192x192", type: "image/png" },
       { url: PWA_ICONS.icon512, sizes: "512x512", type: "image/png" },
-      { url: BRAND.logo, type: "image/svg+xml" },
+      { url: BRAND.logo, type: "image/png" },
     ],
     apple: [{ url: PWA_ICONS.appleTouch, sizes: "180x180", type: "image/png" }],
   },
@@ -144,7 +144,7 @@ export default function RootLayout({
         <TenantBootstrap />
         <LocaleHtmlScript />
       </head>
-      <body className="flex min-h-dvh flex-col overflow-x-hidden bg-ds-bg text-ds-text pb-[calc(var(--mobile-bottom-nav-height)+env(safe-area-inset-bottom,0px)+12px)] has-[[data-admin]]:pb-0 has-[[data-menu-display]]:pb-0 md:pb-0">
+      <body className="flex min-h-dvh flex-col bg-ds-bg text-ds-text pb-[calc(var(--mobile-bottom-nav-height)+env(safe-area-inset-bottom,0px)+12px)] has-[[data-admin]]:pb-0 has-[[data-menu-display]]:pb-0 md:pb-0">
         <BrandSplash />
         <RootErrorBoundary>
           <ThemeProvider>

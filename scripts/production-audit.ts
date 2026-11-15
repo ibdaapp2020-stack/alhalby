@@ -1,5 +1,5 @@
 /**
- * MISHKAT CAFÉ — Final Production Audit
+ * Al Halabi Sweets — Final Production Audit
  * Runs build checks, Firebase probes, performance timing, and security review.
  */
 import { config } from "dotenv";
@@ -263,7 +263,7 @@ async function auditGoLive() {
 
 async function run() {
   process.stdout.write("\n╔══════════════════════════════════════════════════╗\n");
-  process.stdout.write("║     MISHKAT CAFÉ — Final Production Audit        ║\n");
+  process.stdout.write("║     Al Halabi Sweets — Final Production Audit        ║\n");
   process.stdout.write("╚══════════════════════════════════════════════════╝\n\n");
 
   await auditEnv();

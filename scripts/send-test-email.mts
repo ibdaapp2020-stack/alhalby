@@ -1,5 +1,5 @@
 /**
- * Safe Brevo test email sender for MISHKAH CAFE.
+ * Safe Brevo test email sender for Al Halabi Sweets.
  * Usage: npm run email:test
  *
  * Never prints BREVO_API_KEY or other secrets.
@@ -18,7 +18,7 @@ async function main() {
   const cfg = getBrevoConfig();
   const recipients = getMishkahNotificationEmails().recipients;
 
-  console.log("=== MISHKAH CAFE — Brevo email test ===");
+  console.log("=== Al Halabi Sweets — Brevo email test ===");
   console.log(`MAIL_PROVIDER: ${process.env.MAIL_PROVIDER ?? "(unset)"}`);
   console.log(`Sender name: ${cfg.senderName}`);
   console.log(`Sender email: ${cfg.senderEmail || "(missing)"}`);

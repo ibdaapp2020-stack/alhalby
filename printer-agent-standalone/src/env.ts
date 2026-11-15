@@ -2,8 +2,8 @@ import { existsSync, readFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 
 export function agentHome(): string {
-  if (process.env.MISHKAH_PRINTER_HOME?.trim()) {
-    return process.env.MISHKAH_PRINTER_HOME.trim();
+  if (process.env.PRINT_AGENT_HOME?.trim()) {
+    return process.env.PRINT_AGENT_HOME.trim();
   }
   return process.cwd();
 }
@@ -45,14 +45,14 @@ export function requiredEnv(name: string): string {
 }
 
 export function apiBase(): string {
-  return (process.env.PRINT_AGENT_API_URL?.trim() || "https://mishkatcafe.dev").replace(
+  return (process.env.PRINT_AGENT_API_URL?.trim() || "http://localhost:3000").replace(
     /\/$/,
     ""
   );
 }
 
 export function getPrinterHost(): string {
-  return process.env.PRINTER_IP?.trim() || "192.168.1.87";
+  return process.env.PRINTER_IP?.trim() || "";
 }
 
 export function getPrinterPort(): number {

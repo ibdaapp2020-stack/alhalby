@@ -199,6 +199,12 @@ export interface FirestoreSettings {
   mapsUrl?: string;
   faviconUrl?: string;
   showProductThumbnails?: boolean;
+  /** Optional HAAT-style homepage layout controls (admin-editable). */
+  homepage?: {
+    sections?: string[];
+    categoryVariant?: "card" | "circle" | "horizontal";
+    productCardVariant?: "haat" | "classic";
+  };
   updatedAt: Timestamp;
 }
 

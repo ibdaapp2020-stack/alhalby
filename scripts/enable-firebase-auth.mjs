@@ -8,7 +8,10 @@ const token = JSON.parse(
   )
 ).tokens.access_token;
 
-const projectId = "mshkah";
+const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID?.trim();
+if (!projectId) {
+  throw new Error("Set NEXT_PUBLIC_FIREBASE_PROJECT_ID before enabling Auth.");
+}
 
 async function enableEmailAuth() {
   const init = await fetch(

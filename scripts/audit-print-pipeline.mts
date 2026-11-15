@@ -95,7 +95,7 @@ async function main() {
     autoPrintEnabled: isAutoPrintNewOrdersEnabled(),
     storeId: getPrintStoreId(),
     PRINT_AGENT_TOKEN_present: Boolean(process.env.PRINT_AGENT_TOKEN?.trim()),
-    PRINTER_IP: process.env.PRINTER_IP ?? "(default 192.168.1.87)",
+    PRINTER_IP: process.env.PRINTER_IP ?? "(unset)",
     PRINTER_PORT: process.env.PRINTER_PORT ?? "(default 9100)",
     NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL ?? "(missing)",
   };

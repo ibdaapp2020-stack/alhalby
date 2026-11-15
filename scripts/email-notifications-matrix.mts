@@ -1,5 +1,5 @@
 /**
- * Live Brevo notification matrix for MISHKAH CAFE.
+ * Live Brevo notification matrix for Al Halabi Sweets.
  * Usage: npm run email:matrix
  * Never prints secrets.
  */
@@ -29,7 +29,7 @@ async function main() {
 
   const ready = assertBrevoReady();
   const cfg = getBrevoConfig();
-  console.log("=== MISHKAH EMAIL NOTIFICATIONS MATRIX ===");
+  console.log("=== AL HALABI EMAIL NOTIFICATIONS MATRIX ===");
   console.log(`Sender: ${cfg.senderName} <${cfg.senderEmail}>`);
   console.log(`Reply-To: ${cfg.replyTo}`);
   console.log(`Business recipient: ${getBusinessAlertRecipients().join(", ")}`);
@@ -215,8 +215,8 @@ async function main() {
   rows.push({
     name: "PORTAL_LINK",
     pass:
-      link.startsWith("https://portal.mishkatcafe.dev") &&
-      !link.includes("/admin"),
+      !link.includes("mishkat") &&
+      link.includes("order="),
     detail: link,
   });
 

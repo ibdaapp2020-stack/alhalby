@@ -20,7 +20,7 @@ const SIZE_CLASS: Record<LogoSize, string> = {
 
 /**
  * Single source of truth for the active tenant's logo asset.
- * Uses `public/logo-transparent.png` (derived from `public/logo.png`).
+ * Uses `public/logo.png`.
  */
 export function AppLogo({
   size = "md",

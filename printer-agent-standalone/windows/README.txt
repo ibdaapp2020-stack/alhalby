@@ -1,4 +1,4 @@
-MISHKAH Print Agent — café PC
+Al Halabi Print Agent — shop PC
 ==============================
 
 This folder is the ONLY thing that belongs on the kitchen computer.
@@ -8,7 +8,7 @@ Install
 -------
 1. Copy this whole folder to:
 
-   C:\MISHKAH-PRINTER
+   C:\ALHALABI-PRINTER
 
 2. Copy .env.example to .env
 
@@ -37,7 +37,7 @@ verify.cmd
 
 Logs
 ----
-C:\MISHKAH-PRINTER\logs\print-agent.log
+C:\ALHALABI-PRINTER\logs\print-agent.log
 
 Uninstall
 ---------
@@ -45,7 +45,7 @@ Right-click uninstall.cmd → Run as administrator.
 
 Do not put on this PC
 ---------------------
-- full MISHKAH GitHub repo
+- the website repository
 - FIREBASE_ADMIN_PRIVATE_KEY
 - FIREBASE_ADMIN_CLIENT_EMAIL
 - website / admin / checkout source

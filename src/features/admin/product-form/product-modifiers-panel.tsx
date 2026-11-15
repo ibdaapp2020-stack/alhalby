@@ -1100,6 +1100,8 @@ export const ProductModifiersPanel = forwardRef<
       map.set(override.optionId, override.active);
     }
     return map;
+    // overrideTick refreshes this map when the ref-backed overrides change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loadedOptionOverrides, overrideTick]);
 
   const getLinkSettings = useCallback(
@@ -1117,6 +1119,8 @@ export const ProductModifiersPanel = forwardRef<
       const active = pending?.active ?? existing?.active ?? true;
       return { selectionType, requirement, active };
     },
+    // overrideTick refreshes settings when the ref-backed overrides change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [existingLinks, overrideTick]
   );
 

@@ -1,9 +1,17 @@
 /*
- * STORE-STARTER PWA service worker — static assets only; dynamic data stays
- * network-first. Bump SW_VERSION whenever precache contents or caching logic
- * change so clients get the fresh shell on next load.
+ * IBDA / STORE-STARTER PWA service worker.
+ *
+ *   • Static assets: cache-first.
+ *   • Storefront navigations: network-first with cached fallback and a real
+ *     offline HTML fallback (never a bare "Offline" string).
+ *   • /admin, /api and /offline navigations: ALWAYS go to network. We never
+ *     serve a cached version of /admin because stale caches once produced a
+ *     white "Offline" screen when the admin shell wasn't reachable.
+ *
+ * Bump SW_VERSION whenever precache contents or caching logic change so
+ * clients get the fresh shell on next load.
  */
-const SW_VERSION = "store-pwa-2";
+const SW_VERSION = "store-pwa-3";
 const STATIC_CACHE = `${SW_VERSION}-static`;
 const PAGES_CACHE = `${SW_VERSION}-pages`;
 
@@ -16,6 +24,10 @@ const PRECACHE_URLS = [
 
 function isApiRequest(url) {
   return url.pathname.startsWith("/api/");
+}
+
+function isAdminRequest(url) {
+  return url.pathname === "/admin" || url.pathname.startsWith("/admin/");
 }
 
 function isStaticAsset(url) {
@@ -47,6 +59,37 @@ async function staleWhileRevalidate(request) {
   return cached || network;
 }
 
+/** Minimal self-contained offline HTML. Used as a last-resort fallback so
+ *  we never return a raw "Offline" string in the body. */
+function offlineHtmlResponse() {
+  const body = `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Offline</title>
+  <style>
+    body{margin:0;min-height:100dvh;display:flex;align-items:center;justify-content:center;background:#FAF9F6;color:#242424;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;}
+    main{max-width:360px;padding:32px;text-align:center;}
+    h1{font-size:20px;margin:16px 0 8px;}
+    p{color:#5B544C;line-height:1.5;margin:0 0 20px;font-size:14px;}
+    button{appearance:none;border:none;background:#087F83;color:#fff;font:inherit;padding:10px 20px;border-radius:9999px;cursor:pointer;}
+  </style>
+</head>
+<body>
+  <main>
+    <h1>You're offline</h1>
+    <p>Check your connection and try again.</p>
+    <button onclick="location.reload()">Reload</button>
+  </main>
+</body>
+</html>`;
+  return new Response(body, {
+    status: 200,
+    headers: { "Content-Type": "text/html; charset=utf-8" },
+  });
+}
+
 async function networkFirstNavigation(request) {
   const cache = await caches.open(PAGES_CACHE);
   try {
@@ -58,7 +101,7 @@ async function networkFirstNavigation(request) {
     if (cached) return cached;
     const offline = await cache.match("/offline");
     if (offline) return offline;
-    return new Response("Offline", { status: 503, statusText: "Offline" });
+    return offlineHtmlResponse();
   }
 }
 
@@ -70,7 +113,12 @@ self.addEventListener("message", (event) => {
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(STATIC_CACHE).then((cache) => cache.addAll(PRECACHE_URLS)).then(() => self.skipWaiting())
+    caches
+      .open(STATIC_CACHE)
+      .then((cache) => cache.addAll(PRECACHE_URLS))
+      // Precache failing (e.g. /offline not yet built) shouldn't block install.
+      .catch(() => undefined)
+      .then(() => self.skipWaiting())
   );
 });
 
@@ -94,7 +142,16 @@ self.addEventListener("fetch", (event) => {
   const url = new URL(request.url);
   if (url.origin !== self.location.origin) return;
 
+  // Never intercept API calls — always let the network handle them.
   if (isApiRequest(url)) return;
+
+  // Never intercept the admin dashboard. A stale SW previously returned a
+  // bare "Offline" fallback for /admin, producing a white screen with the
+  // single word "Offline". Admin pages must always come from the server.
+  if (isAdminRequest(url)) return;
+
+  // Don't intercept the offline page itself.
+  if (url.pathname === "/offline") return;
 
   if (url.pathname.startsWith("/_next/static/")) {
     event.respondWith(cacheFirst(request));

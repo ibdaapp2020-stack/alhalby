@@ -23,7 +23,7 @@ export function getBrevoConfig() {
   return {
     apiKey: env("BREVO_API_KEY"),
     baseUrl: env("BREVO_BASE_URL", "https://api.brevo.com/v3").replace(/\/$/, ""),
-    senderName: env("BREVO_SENDER_NAME", "Store"),
+    senderName: env("BREVO_SENDER_NAME", "حلويات الحلبي"),
     senderEmail: env("BREVO_SENDER_EMAIL"),
     replyTo: env("BREVO_REPLY_TO"),
   };

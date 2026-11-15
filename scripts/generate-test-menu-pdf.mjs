@@ -14,7 +14,7 @@ const CHROME_CANDIDATES = [
 
 const ARABIC_SAMPLES = ["مشروبات ساخنة", "نسكافيه", "إسبريسو", "الشوكولاتة الساخنة", "القهوة", "الشاي"];
 
-function chromePath(): string {
+function chromePath() {
   for (const candidate of CHROME_CANDIDATES) {
     try {
       accessSync(candidate, constants.X_OK);
@@ -35,7 +35,7 @@ async function main() {
   const root = process.cwd();
   const htmlPath = path.join(root, "tests/fixtures/menu-pdf-smoke.html");
   const outDir = path.join(root, "tests/output");
-  const outPath = path.join(outDir, "mishkat-menu-2026-08-18.pdf");
+  const outPath = path.join(outDir, "alhalabi-menu-2026-08-18.pdf");
   await mkdir(outDir, { recursive: true });
 
   const fileUrl = `file:///${htmlPath.replace(/\\/g, "/")}`;

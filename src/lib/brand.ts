@@ -13,13 +13,39 @@ import { resolveFallbackPreset } from "@/lib/tenant";
 
 const preset = resolveFallbackPreset();
 
+/** Official names. Arabic is the default storefront language. */
+export const BRAND_NAMES = {
+  he: "ממתקי אלחלבי",
+  ar: "حلويات الحلبي",
+  en: "Al Halabi Sweets",
+} as const;
+
+const KNOWN_BRAND_NAMES = new Set<string>([
+  ...Object.values(BRAND_NAMES),
+  "My Store",
+  "Store",
+  "MISHKAT CAFÉ",
+  "MISHKAH CAFE",
+  "MISHKAH CAFÉ",
+]);
+
+/** Locale name, unless the admin saved a custom store name. */
+export function displayStoreName(
+  locale: "he" | "ar" | "en",
+  settingsName?: string | null
+): string {
+  const custom = settingsName?.trim() ?? "";
+  if (!custom || KNOWN_BRAND_NAMES.has(custom)) return BRAND_NAMES[locale];
+  return custom;
+}
+
 export const BRAND = {
   /** Display logo — resolves from tenant preset. */
   logo: preset.brand.logoUrl,
   /** Alias kept for backward compatibility with legacy imports. */
   logoOriginal: preset.brand.logoUrl,
-  /** Width / height ratio — generic 1:1 for SVG store icon. */
-  logoAspect: 1,
+  /** Width / height of public/logo.png (333×585). */
+  logoAspect: 333 / 585,
   store: preset.brand.storeImageUrl,
   /** Local fallback when remote store image fails to load. */
   storeFallback: preset.brand.storeImageUrl,

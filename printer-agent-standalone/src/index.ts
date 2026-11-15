@@ -1,6 +1,6 @@
 /**
- * MISHKAH standalone kitchen print agent.
- * Café PC only. Talks to https://mishkatcafe.dev print APIs and LAN 192.168.1.87:9100.
+ * Al Halabi standalone kitchen print agent.
+ * Shop PC only. Talks to PRINT_AGENT_API_URL and the LAN printer in PRINTER_IP.
  * No Firebase Admin. No website source.
  */
 import { hostname as osHostname } from "node:os";
@@ -31,7 +31,7 @@ type ClaimResponse = {
 };
 
 function agentId(): string {
-  return process.env.PRINT_AGENT_ID?.trim() || `mishkah-${osHostname()}`;
+  return process.env.PRINT_AGENT_ID?.trim() || `alhalabi-${osHostname()}`;
 }
 
 function agentHeaders(): HeadersInit {
@@ -219,7 +219,7 @@ async function main() {
   const home = loadAgentEnv();
   const verify = process.argv.includes("--verify");
 
-  log.info("[MISHKAH Print Agent]", VERSION);
+  log.info("[Al Halabi Print Agent]", VERSION);
   log.info("Home", home);
 
   if (process.env.PRINT_AGENT_ENABLED !== "true") {

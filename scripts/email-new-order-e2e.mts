@@ -21,7 +21,7 @@ async function main() {
 
   const ready = assertBrevoReady();
   const cfg = getBrevoConfig();
-  console.log("=== MISHKAH CAFE — new order email e2e ===");
+  console.log("=== Al Halabi Sweets — new order email e2e ===");
   console.log(`Sender: ${cfg.senderName} <${cfg.senderEmail}>`);
   console.log(`BREVO_API_KEY: ${cfg.apiKey ? "SET" : "MISSING"}`);
   if (!ready.ok) {

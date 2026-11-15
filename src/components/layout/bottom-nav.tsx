@@ -60,19 +60,19 @@ export function BottomNav() {
                 <Icon
                   className={cn(
                     "h-5 w-5 shrink-0 transition-colors",
-                    isActive ? "text-turquoise" : "text-coffee/45"
+                    isActive ? "text-ds-primary" : "text-ds-text-muted"
                   )}
                   strokeWidth={1.75}
                 />
                 {itemCount > 0 && (
-                  <span className="absolute top-1.5 end-[calc(50%-18px)] flex h-4 min-w-4 items-center justify-center rounded-full bg-turquoise px-1 text-[9px] font-bold text-warm-white">
+                  <span className="absolute top-1.5 end-[calc(50%-18px)] flex h-4 min-w-4 items-center justify-center rounded-full bg-ds-primary px-1 text-[9px] font-bold text-ds-text-on-primary">
                     {itemCount}
                   </span>
                 )}
                 <span
                   className={cn(
                     "text-[10px] font-medium leading-none",
-                    isActive ? "text-turquoise" : "text-coffee/45"
+                    isActive ? "text-ds-primary" : "text-ds-text-muted"
                   )}
                 >
                   {label}
@@ -91,21 +91,21 @@ export function BottomNav() {
               <span
                 aria-hidden
                 className={cn(
-                  "absolute top-0 h-0.5 w-8 rounded-full bg-turquoise transition-opacity",
+                  "absolute top-0 h-0.5 w-8 rounded-full bg-ds-primary transition-opacity",
                   isActive ? "opacity-100" : "opacity-0"
                 )}
               />
               <Icon
                 className={cn(
                   "h-5 w-5 shrink-0 transition-colors",
-                  isActive ? "text-turquoise" : "text-coffee/45"
+                  isActive ? "text-ds-primary" : "text-ds-text-muted"
                 )}
                 strokeWidth={1.75}
               />
               <span
                 className={cn(
                   "text-[10px] font-medium leading-none",
-                  isActive ? "text-turquoise" : "text-coffee/45"
+                  isActive ? "text-ds-primary" : "text-ds-text-muted"
                 )}
               >
                 {label}

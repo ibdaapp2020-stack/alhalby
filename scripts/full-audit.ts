@@ -36,7 +36,7 @@ function step(n: number, name: string, passed: boolean, detail: string, duration
 
 async function run() {
   process.stdout.write("\n╔══════════════════════════════════════════╗\n");
-  process.stdout.write("║   MISHKAT CAFÉ — Full Firebase Audit    ║\n");
+  process.stdout.write("║   Al Halabi Sweets — Full Firebase Audit    ║\n");
   process.stdout.write("╚══════════════════════════════════════════╝\n\n");
 
   // ── 1. Firebase App configuration ──
@@ -66,7 +66,7 @@ async function run() {
   step(
     2,
     "Current projectId",
-    projectId === "mshkah" && projectId.length > 0,
+    projectId.length > 0,
     `projectId="${projectId}"`,
     Date.now() - t2
   );

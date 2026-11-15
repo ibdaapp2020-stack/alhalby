@@ -1,6 +1,6 @@
-# MISHKAH local print agent
+# Al Halabi local print agent
 
-This process runs on the **restaurant Windows PC**. It is the only component that opens TCP `PRINTER_IP:9100`.
+This process runs on the **shop Windows PC**. It is the only component that opens TCP `PRINTER_IP:9100`.
 
 Do **not** run it on Vercel. The cloud only creates `PrintJob` documents.
 
@@ -11,10 +11,10 @@ Copy this file to `printer-agent/.env` (or add the same keys to the repo `.env`)
 ```
 PRINT_AGENT_ENABLED=true
 PRINT_AGENT_TOKEN=replace-with-a-long-random-secret
-PRINT_AGENT_API_URL=https://mishkatcafe.dev
-PRINT_AGENT_ID=mishkah-kitchen-pc
+PRINT_AGENT_API_URL=http://localhost:3000
+PRINT_AGENT_ID=alhalabi-kitchen-pc
 
-PRINTER_IP=192.168.1.87
+PRINTER_IP=
 PRINTER_PORT=9100
 PRINTER_TIMEOUT_MS=8000
 PRINTER_AUTO_CUT=true
@@ -35,7 +35,7 @@ From the repo root, on the restaurant PC:
 npm run print-agent
 ```
 
-The PC must be on the same LAN as `192.168.1.87`.
+The PC must be on the same LAN as the printer address in `PRINTER_IP`.
 
 ## 3. Test
 

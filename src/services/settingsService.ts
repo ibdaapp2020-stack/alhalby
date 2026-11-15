@@ -1,10 +1,8 @@
 import {
-  collection,
   doc,
   getDoc,
   onSnapshot,
   setDoc,
-  updateDoc,
   type Unsubscribe,
 } from "firebase/firestore";
 import { getDb } from "@/lib/firebase";
@@ -15,6 +13,25 @@ import type { FirestoreSettings } from "@/types/firestore";
 import { BRAND } from "@/lib/brand";
 import { isMockMode } from "@/lib/data-provider/mode";
 import { mockSettings as mock } from "@/lib/data-provider/mock";
+import {
+  DEFAULT_HOMEPAGE_CONFIG,
+  sanitizeHomepageConfig,
+  type HomepageConfig,
+} from "@/services/homepage-config";
+
+// Re-export the lightweight homepage config module so existing consumers
+// that import from "@/services/settingsService" keep working.
+export {
+  DEFAULT_HOMEPAGE_SECTIONS,
+  DEFAULT_HOMEPAGE_CONFIG,
+  sanitizeHomepageConfig,
+} from "@/services/homepage-config";
+export type {
+  HomepageSection,
+  CategoryVariant,
+  ProductCardVariant,
+  HomepageConfig,
+} from "@/services/homepage-config";
 
 export interface AppSettings {
   storeName: string;
@@ -34,6 +51,8 @@ export interface AppSettings {
   social: { instagram: string; facebook: string; whatsapp: string };
   mapsUrl: string;
   faviconUrl: string;
+  /** Optional HAAT-style homepage layout controls (admin-editable). */
+  homepage?: HomepageConfig;
 }
 
 const DEFAULT_SETTINGS: AppSettings = {
@@ -54,6 +73,7 @@ const DEFAULT_SETTINGS: AppSettings = {
   social: { instagram: "", facebook: "", whatsapp: "" },
   mapsUrl: "",
   faviconUrl: BRAND.logo,
+  homepage: DEFAULT_HOMEPAGE_CONFIG,
 };
 
 function mapSettings(data: FirestoreSettings | undefined): AppSettings {
@@ -72,6 +92,7 @@ function mapSettings(data: FirestoreSettings | undefined): AppSettings {
     social: data.social ?? DEFAULT_SETTINGS.social,
     mapsUrl: data.mapsUrl ?? "",
     faviconUrl: data.faviconUrl ?? DEFAULT_SETTINGS.faviconUrl,
+    homepage: sanitizeHomepageConfig(data.homepage),
   };
 }
 

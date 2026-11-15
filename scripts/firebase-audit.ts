@@ -262,7 +262,7 @@ async function testCustomersCrud() {
   const created = await createCustomer({
     name: "Audit Customer",
     phone: `audit-${Date.now()}`,
-    email: "audit@mishkat.local",
+    email: "audit@example.local",
     address: "Test Address",
     favoriteProducts: [],
     notes: "",
@@ -366,7 +366,7 @@ async function testDataIntegrity() {
 }
 
 async function runAudit() {
-  process.stdout.write("\n=== MISHKAT CAFÉ — Firebase Audit ===\n\n");
+  process.stdout.write("\n=== Al Halabi Sweets — Firebase Audit ===\n\n");
 
   const initOk = await testInitialization();
   if (!initOk) {

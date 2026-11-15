@@ -15,6 +15,7 @@ import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { formatPrice, cn } from "@/lib/utils";
+import { isMockMode } from "@/lib/data-provider/mode";
 import { useT, useLocale } from "@/components/providers/locale-provider";
 import { useLocalizedProduct } from "@/hooks/useLocalizedContent";
 import { useCart } from "@/features/cart/cart-context";
@@ -23,6 +24,7 @@ import { useProducts } from "@/hooks/useProducts";
 import { useProductBuilderConfig } from "@/hooks/useModifiers";
 import { useIsMobile } from "@/hooks/useIsMobile";
 import { getProductImage } from "@/lib/menu/placeholders";
+import { getLocalizedDescription, getProductDisplayName } from "@/lib/i18n/localized-content";
 import {
   calculateLineTotal,
   productHasBuilder,
@@ -196,10 +198,13 @@ function ProductDetailContent({
         <div className="flex min-h-0 flex-1 flex-col bg-warm-white">
           <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5 py-5 sm:px-6 sm:py-6 lg:px-7 lg:py-7">
             <div className="space-y-1.5">
-              <h2 className="font-display text-2xl font-bold sm:text-[1.75rem]" dir={localized.dir}>
+              <h2 className="font-display text-2xl font-bold text-ds-primary sm:text-[1.75rem]" dir={localized.dir}>
                 {localized.name}
               </h2>
-              <p className="text-2xl font-bold text-turquoise">{formatPrice(product.price)}</p>
+              <p className="text-2xl font-bold text-ds-primary">{formatPrice(product.price)}</p>
+              {isMockMode() ? (
+                <p className="text-xs font-medium text-[#A89B68]">{t("catalog.demoPrice", "מחיר הדגמה")}</p>
+              ) : null}
             </div>
 
             {localized.description && (
@@ -303,6 +308,7 @@ export function ProductDetailDrawer({
 }: ProductDetailDrawerProps) {
   const isPhone = useIsMobile(768);
   const t = useT();
+  const { locale } = useLocale();
 
   const closeButton = (
     <button
@@ -318,10 +324,8 @@ export function ProductDetailDrawer({
   const body = product ? (
     <>
       <DialogHeader className="sr-only">
-        <DialogTitle>{product.name_he || product.name_en}</DialogTitle>
-        <DialogDescription>
-          {product.description_he || product.description_en}
-        </DialogDescription>
+        <DialogTitle>{getProductDisplayName(product, locale)}</DialogTitle>
+        <DialogDescription>{getLocalizedDescription(product, locale)}</DialogDescription>
       </DialogHeader>
       <ProductDetailContent
         key={product.id}

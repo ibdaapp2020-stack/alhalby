@@ -2,7 +2,7 @@
   "name": "mishkah-print-agent",
   "version": "1.0.0",
   "private": true,
-  "description": "Standalone MISHKAH kitchen print agent. Café PC only — no website source.",
+  "description": "Standalone Al Halabi kitchen print agent. Shop PC only — no website source.",
   "type": "commonjs",
   "engines": {
     "node": ">=20"

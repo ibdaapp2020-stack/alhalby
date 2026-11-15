@@ -1,62 +1,80 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { X, Info } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { Info } from "lucide-react";
 import { isMockMode } from "@/lib/data-provider/mode";
 
 /**
- * A thin banner that appears on every page while the app runs with the
- * mock data provider. Explains that changes aren't synced across devices
- * so admins don't mistake the demo for a real deployment.
+ * HAAT-style demo indicator — a tiny, unobtrusive badge that only appears
+ * while running on the mock data provider. The old full-width banner
+ * (which took up prime storefront real-estate) has been removed; a richer
+ * notice is shown inside the Admin via {@link DemoModeAdminNotice}.
  *
- * Dismissed banner state is kept in localStorage for the current browser.
+ * - Customer-facing: a small floating "Demo" chip in the corner, dismissible.
+ * - Admin pages (`/admin/*`): the chip is suppressed because the admin UI
+ *   already surfaces its own notice (see admin-shell).
  */
-const DISMISS_KEY = "store-demo-mode-banner-dismissed-v1";
+const DISMISS_KEY = "store-demo-badge-dismissed-v2";
 
 export function DemoModeBanner() {
   const [visible, setVisible] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const pathname = usePathname();
   const mock = isMockMode();
 
   useEffect(() => {
+    setMounted(true);
     if (!mock) return;
     try {
-      const dismissed = window.localStorage.getItem(DISMISS_KEY);
+      const dismissed = window.sessionStorage.getItem(DISMISS_KEY);
       if (!dismissed) setVisible(true);
     } catch {
       setVisible(true);
     }
   }, [mock]);
 
-  if (!mock || !visible) return null;
+  if (!mounted || !mock || !visible) return null;
+  if (pathname?.startsWith("/admin")) return null;
 
   const dismiss = () => {
     setVisible(false);
     try {
-      window.localStorage.setItem(DISMISS_KEY, "1");
+      window.sessionStorage.setItem(DISMISS_KEY, "1");
     } catch {
       /* ignore */
     }
   };
 
   return (
-    <div className="sticky top-0 z-[60] w-full border-b border-amber-200/70 bg-amber-50/95 text-amber-900 backdrop-blur">
-      <div className="mx-auto flex max-w-[1280px] items-center gap-3 px-4 py-2 text-xs sm:text-sm">
-        <Info className="h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
-        <p className="flex-1 leading-snug">
-          <strong className="font-semibold">Demo mode.</strong>{" "}
-          <span>
-            This store is running with sample data. Changes you make are saved
-            locally to this browser only and are not shared with other devices.
-          </span>
-        </p>
-        <button
-          type="button"
-          onClick={dismiss}
-          aria-label="Dismiss demo mode banner"
-          className="rounded-full p-1 hover:bg-amber-200/60"
-        >
-          <X className="h-3.5 w-3.5" strokeWidth={2} aria-hidden />
-        </button>
+    <button
+      type="button"
+      onClick={dismiss}
+      aria-label="Demo mode — tap to dismiss"
+      className="pointer-events-auto fixed bottom-[calc(var(--mobile-bottom-nav-height)+env(safe-area-inset-bottom,0px)+12px)] end-3 z-[55] inline-flex items-center gap-1.5 rounded-full border border-amber-300/70 bg-amber-50/95 px-2.5 py-1 text-[11px] font-semibold text-amber-900 shadow-sm backdrop-blur transition-opacity hover:opacity-80 md:bottom-4"
+    >
+      <Info className="h-3 w-3" strokeWidth={2.2} aria-hidden />
+      Demo
+    </button>
+  );
+}
+
+/**
+ * Richer notice shown inside the admin shell so operators understand that
+ * mock data is local to the current browser. Mounted in admin pages only.
+ */
+export function DemoModeAdminNotice() {
+  if (!isMockMode()) return null;
+  return (
+    <div className="mb-4 flex items-start gap-3 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+      <Info className="mt-0.5 h-4 w-4 shrink-0" strokeWidth={2} aria-hidden />
+      <div className="flex-1 leading-snug">
+        <strong className="font-semibold">Demo mode.</strong>{" "}
+        <span>
+          This installation is running with mock data. Products, orders, and
+          settings you edit here are saved to this browser only — they are not
+          synced to any backend or shared across devices.
+        </span>
       </div>
     </div>
   );

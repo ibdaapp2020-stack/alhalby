@@ -18,7 +18,7 @@ function brandName(): string {
 function brandLogoUrl(siteUrl: string): string {
   const custom = process.env.BRAND_LOGO_URL?.trim();
   if (custom) return custom;
-  return `${siteUrl}/brand/store-icon.svg`;
+  return `${siteUrl}/logo.png`;
 }
 
 const COLORS = {

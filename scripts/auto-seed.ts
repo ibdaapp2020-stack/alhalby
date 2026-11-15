@@ -12,7 +12,7 @@ import { resolve } from "path";
 const ROOT = resolve(".");
 const RULES = resolve(ROOT, "firestore.rules");
 const RULES_BACKUP = resolve(ROOT, "firestore.rules.backup");
-const PROJECT = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ?? "mshkah";
+const PROJECT = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID?.trim() ?? "";
 
 const SEED_RULES = `rules_version = '2';
 
@@ -32,7 +32,7 @@ function run(cmd: string) {
 }
 
 async function main() {
-  process.stdout.write("\n=== MISHKAT CAFÉ — Auto Seed ===\n\n");
+  process.stdout.write("\n=== Al Halabi Sweets — Auto Seed ===\n\n");
 
   try {
     execSync("npx firebase login:list", { cwd: ROOT, stdio: "pipe" });

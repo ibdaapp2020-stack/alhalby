@@ -50,7 +50,7 @@ function audit() {
     }
   }
 
-  process.stdout.write("\n=== MISHKAT CAFÉ — Master Menu Audit ===\n\n");
+  process.stdout.write("\n=== Al Halabi Sweets — Master Menu Audit ===\n\n");
   process.stdout.write(`Categories: ${MASTER_MENU_STATS.categories}\n`);
   process.stdout.write(`Products:   ${MASTER_MENU_STATS.products}\n`);
   process.stdout.write(`Popular:    ${MASTER_MENU_STATS.popular}\n\n`);

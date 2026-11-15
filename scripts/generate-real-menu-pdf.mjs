@@ -10,7 +10,7 @@ async function main() {
   const root = process.cwd();
   const outDir = path.join(root, "tests/output");
   await mkdir(outDir, { recursive: true });
-  const outPath = path.join(outDir, "mishkat-menu-2026-08-18-design.pdf");
+  const outPath = path.join(outDir, "alhalabi-menu-2026-08-18-design.pdf");
 
   const browser = await chromium.launch({
     executablePath: CHROME,

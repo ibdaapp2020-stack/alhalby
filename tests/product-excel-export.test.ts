@@ -159,7 +159,7 @@ describe("product excel mapping", () => {
     expect(exportImageUrl("https://firebasestorage.googleapis.com/v0/b/x/o/a.jpg")).toContain("https://");
     expect(exportImageUrl("blob:http://localhost/1")).toBe("");
     expect(exportImageUrl("data:image/png;base64,xx")).toBe("");
-    expect(exportImageUrl("/logo.png", "https://mishkat.example")).toBe("https://mishkat.example/logo.png");
+    expect(exportImageUrl("/logo.png", "https://example.com")).toBe("https://example.com/logo.png");
   });
 
   it("does not mutate source products", () => {
@@ -169,8 +169,8 @@ describe("product excel mapping", () => {
   });
 
   it("builds a dated filename", () => {
-    expect(productExcelFileName("MISHKAT CAFÉ", new Date("2026-08-18T12:00:00.000Z"))).toBe(
-      "mishkat-cafe-products-2026-08-18.xlsx"
+    expect(productExcelFileName("Al Halabi Sweets", new Date("2026-08-18T12:00:00.000Z"))).toBe(
+      "al-halabi-sweets-products-2026-08-18.xlsx"
     );
     expect(productExcelFileName("", new Date("2026-08-18T12:00:00.000Z"))).toBe("products-2026-08-18.xlsx");
   });

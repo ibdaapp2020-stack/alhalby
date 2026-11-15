@@ -115,7 +115,7 @@ export function PrinterAdmin() {
         title={t("admin.printer.title", "מדפסת מטבח")}
         subtitle={t(
           "admin.printer.subtitle",
-          "הדפסה דרך סוכן מקומי במחשב המסעדה — לא ישירות מהענן"
+          "הדפסה דרך סוכן מקומי במחשב החנות — לא ישירות מהענן"
         )}
         actions={
           <Button type="button" variant="outline" onClick={() => void load()} disabled={Boolean(busy)}>
@@ -232,7 +232,7 @@ export function PrinterAdmin() {
         <p className="mt-4 text-xs leading-relaxed text-coffee/60">
           {t(
             "admin.printer.hintAgent",
-            "המדפסת מחוברת רק דרך הסוכן המקומי במחשב המסעדה. הפעילו npm run print-agent על המחשב המקומי."
+            "המדפסת מחוברת רק דרך הסוכן המקומי במחשב החנות. הפעילו npm run print-agent על המחשב המקומי."
           )}
         </p>
         <p className="mt-1 text-xs text-coffee/55">

@@ -1,6 +1,7 @@
 "use client";
 
 import { Component, type ErrorInfo, type ReactNode } from "react";
+import Link from "next/link";
 
 interface Props {
   children: ReactNode;
@@ -69,12 +70,12 @@ export class RootErrorBoundary extends Component<Props, State> {
           >
             Try again
           </button>
-          <a
+          <Link
             href="/"
             className="rounded-full border border-ds-border bg-ds-surface px-4 py-2 text-sm font-semibold text-ds-text hover:bg-ds-surface-muted"
           >
             Go home
-          </a>
+          </Link>
         </div>
       </div>
     );

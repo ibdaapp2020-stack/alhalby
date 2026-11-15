@@ -1,5 +1,5 @@
 {
-  "name": "store-starter",
+  "name": "alhalabi-sweets",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -19,7 +19,7 @@
     "menu:audit": "tsx scripts/menu-audit.ts",
     "firebase:audit": "tsx scripts/firebase-audit.ts",
     "firebase:full-audit": "tsx scripts/full-audit.ts",
-    "firebase:deploy-rules": "firebase deploy --only firestore:rules --project mshkah",
+    "firebase:deploy-rules": "firebase deploy --only firestore:rules",
     "email:test": "tsx scripts/send-test-email.mts",
     "email:e2e-order": "tsx scripts/email-new-order-e2e.mts",
     "email:matrix": "tsx scripts/email-notifications-matrix.mts",

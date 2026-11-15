@@ -1,5 +1,5 @@
 /**
- * MISHKAH local print agent.
+ * Al Halabi local print agent.
  * Runs on the restaurant Windows PC. Polls cloud print jobs and sends ESC/POS
  * to the LAN thermal printer. Never run this in Vercel.
  *
@@ -50,7 +50,7 @@ function apiBase(): string {
 }
 
 function agentId(): string {
-  return process.env.PRINT_AGENT_ID?.trim() || `mishkah-${osHostname()}`;
+  return process.env.PRINT_AGENT_ID?.trim() || `alhalabi-${osHostname()}`;
 }
 
 function agentHeaders(): HeadersInit {
@@ -195,7 +195,7 @@ async function claimAndPrint(): Promise<boolean> {
 
 async function main() {
   console.info("");
-  console.info("[MISHKAH Print Agent]");
+  console.info("[Al Halabi Print Agent]");
   console.info("");
 
   if (process.env.PRINT_AGENT_ENABLED !== "true") {

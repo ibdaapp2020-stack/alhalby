@@ -5,3 +5,4 @@ export { mockOrders } from "./orders";
 export { mockCustomers } from "./customers";
 export { mockSettings } from "./settings";
 export { mockUsers, MOCK_ADMIN_USER, type MockUser } from "./users";
+export { mockCoupons, type MockCoupon, type CouponType } from "./coupons";

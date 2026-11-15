@@ -38,6 +38,11 @@ export async function withPrinterSocket(
 ): Promise<{ host: string; port: number; bytesSent: number }> {
   const host = options.host ?? getPrinterHost();
   const port = options.port ?? getPrinterPort();
+  if (!host) {
+    return Promise.reject(
+      new PrinterConnectionError("PRINTER_IP is not configured")
+    );
+  }
   const timeoutMs = options.timeoutMs ?? getPrinterTimeoutMs();
   const data = options.data;
 

@@ -109,7 +109,7 @@ export async function loadAssistantContext(locale: Locale): Promise<AssistantCon
     settings: {
       phone: settingsData?.phone ?? "",
       address: settingsData?.address ?? "",
-      hours: settingsData?.hours ?? "Sun–Thu 7:00–22:00",
+      hours: settingsData?.hours ?? "كل يوم 09:00–22:00",
       whatsapp: settingsData?.social?.whatsapp ?? settingsData?.phone ?? "",
       mapsUrl: settingsData?.mapsUrl ?? "",
     },

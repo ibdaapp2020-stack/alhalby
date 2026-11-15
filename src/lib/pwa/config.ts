@@ -16,7 +16,7 @@ export const PWA_SHORT_NAME = preset.brand.nameShort ?? preset.brand.name;
 
 export const PWA_DESCRIPTION =
   preset.brand.tagline ||
-  "Online store — browse, order, and checkout from any device.";
+  "בקלאווה, כנאפה ומתוקים באיכות מובחרת";
 
 /** Customer menu home — same as storefront catalog */
 export const PWA_START_URL = "/";
@@ -28,7 +28,7 @@ export const PWA_THEME_COLOR = preset.palette.bg;
 export const PWA_BACKGROUND_COLOR = preset.palette.bg;
 
 /** Bump when service worker caching strategy or precache list changes. */
-export const PWA_SW_VERSION = "store-pwa-1";
+export const PWA_SW_VERSION = "store-pwa-3";
 
 export const PWA_ICONS = {
   icon192: "/icons/icon-192.png",

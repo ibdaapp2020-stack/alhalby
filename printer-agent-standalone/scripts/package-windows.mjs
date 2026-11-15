@@ -1,6 +1,6 @@
 /**
  * Builds a copy-ready café folder:
- *   printer-agent-standalone/release/MISHKAH-PRINTER/
+ *   printer-agent-standalone/release/ALHALABI-PRINTER/
  *
  * Contains portable Node, WinSW service exe, bundled agent, canvas native, scripts.
  */
@@ -13,7 +13,7 @@ import { createRequire } from "node:module";
 
 const require = createRequire(import.meta.url);
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const release = resolve(root, "release", "MISHKAH-PRINTER");
+const release = resolve(root, "release", "ALHALABI-PRINTER");
 const vendor = resolve(root, "vendor");
 const NODE_VERSION = "22.17.0";
 const NODE_ZIP = `node-v${NODE_VERSION}-win-x64.zip`;

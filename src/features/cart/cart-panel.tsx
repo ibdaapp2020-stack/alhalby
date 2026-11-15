@@ -15,6 +15,7 @@ import { ProductImage } from "@/components/catalog/product-image";
 import { AddonsWizard } from "@/features/catalog/addons-wizard";
 import { useProductBuilderConfig } from "@/hooks/useModifiers";
 import { calculateLineTotal } from "@/lib/product-builder/engine";
+import { isMockMode } from "@/lib/data-provider/mode";
 import type { CartItem } from "@/types";
 import type { ProductBuilderConfig } from "@/types/modifiers";
 
@@ -234,13 +235,16 @@ export function CartPanel({ compact, onCheckout, className }: CartPanelProps) {
             </p>
             <div className="flex justify-between border-t border-beige-dark/15 pt-2">
               <span className="font-semibold text-dark-brown">{t("cart.total")}</span>
-              <span className="text-price text-xl">{formatPrice(total)}</span>
+              <span className="text-xl font-bold text-ds-primary">{formatPrice(total)}</span>
             </div>
+            {isMockMode() ? (
+              <p className="text-[11px] font-medium text-[#A89B68]">{t("catalog.demoPrice", "מחיר הדגמה")}</p>
+            ) : null}
           </div>
 
           <Link href="/checkout" onClick={onCheckout}>
             <Button
-              variant="turquoise"
+              variant="default"
               size="lg"
               className="mt-4 h-12 w-full rounded-xl text-base transition-transform hover:scale-[1.01]"
             >

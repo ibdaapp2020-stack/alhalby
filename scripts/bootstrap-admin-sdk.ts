@@ -5,9 +5,9 @@ import { getAdminAuth, getAdminDb } from "../src/lib/firebase/admin";
 import { COLLECTIONS } from "../src/lib/firebase/collections";
 import { FieldValue } from "firebase-admin/firestore";
 
-const EMAIL = process.env.ADMIN_BOOTSTRAP_EMAIL ?? "admin@mishkat.cafe";
-const PASSWORD = process.env.ADMIN_BOOTSTRAP_PASSWORD ?? "MishkatAdmin2026!";
-const NAME = process.env.ADMIN_BOOTSTRAP_NAME ?? "MISHKAT Admin";
+const EMAIL = process.env.ADMIN_BOOTSTRAP_EMAIL ?? "admin@example.com";
+const PASSWORD = process.env.ADMIN_BOOTSTRAP_PASSWORD ?? "ChangeMe2026!";
+const NAME = process.env.ADMIN_BOOTSTRAP_NAME ?? "Al Halabi Admin";
 
 async function main() {
   const auth = getAdminAuth();

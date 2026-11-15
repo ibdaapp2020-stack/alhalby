@@ -4,6 +4,10 @@
  * object stored in `localStorage`.
  */
 import type { AppSettings } from "@/services/settingsService";
+// Import homepage defaults from the lightweight module to avoid pulling the
+// full settingsService (and the client Firebase SDK it transitively imports)
+// into mock-data consumers like server-side API routes.
+import { DEFAULT_HOMEPAGE_SECTIONS } from "@/services/homepage-config";
 import { resolveFallbackPreset } from "@/lib/tenant";
 
 const preset = resolveFallbackPreset();
@@ -29,4 +33,9 @@ export const mockSettings: AppSettings = {
   social: { instagram: "", facebook: "", whatsapp: "" },
   mapsUrl: "",
   faviconUrl: preset.brand.faviconUrl ?? preset.brand.logoUrl,
+  homepage: {
+    sections: DEFAULT_HOMEPAGE_SECTIONS,
+    categoryVariant: "card",
+    productCardVariant: "haat",
+  },
 };

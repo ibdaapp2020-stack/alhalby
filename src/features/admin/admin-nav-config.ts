@@ -4,17 +4,11 @@ import {
   Package,
   Tags,
   Layers,
-  Link2,
-  GitBranch,
   ClipboardList,
   Users,
   ImageIcon,
-  MessageSquare,
-  UserCog,
   Settings,
-  FileText,
-  Printer,
-  QrCode,
+  Ticket,
 } from "lucide-react";
 import { adminPath, toInternalAdminPath } from "@/lib/domains/host-routing";
 import type { AdminSurface } from "@/lib/domains/host-routing";
@@ -34,10 +28,23 @@ export type AdminNavGroup = {
   items: AdminNavItem[];
 };
 
+/**
+ * IBDA Store Base — simplified admin navigation.
+ *
+ * The nine spec-mandated entries, grouped only loosely so the dark sidebar
+ * stays readable. Hidden technical pages (product-builder, business-rules,
+ * menu-builder, qr, media, assistant, printer, printer-test, users,
+ * ai-assistant) still exist under /admin/* for deep links and advanced
+ * tooling, but they're intentionally not surfaced here to keep the admin
+ * focused on day-to-day storefront operation.
+ */
 export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
   {
     labelKey: "admin.nav.group.overview",
-    items: [{ segment: "", labelKey: "admin.dashboard", icon: LayoutDashboard, exact: true }],
+    items: [
+      { segment: "", labelKey: "admin.dashboard", icon: LayoutDashboard, exact: true },
+      { segment: "orders", labelKey: "admin.orders", icon: ClipboardList },
+    ],
   },
   {
     labelKey: "admin.nav.group.catalog",
@@ -45,31 +52,19 @@ export const ADMIN_NAV_GROUPS: AdminNavGroup[] = [
       { segment: "products", labelKey: "admin.products", icon: Package },
       { segment: "categories", labelKey: "admin.categories", icon: Tags },
       { segment: "modifier-groups", labelKey: "admin.modifierManagement", icon: Layers },
-      { segment: "product-builder", labelKey: "admin.productAssignments", icon: Link2 },
-      { segment: "business-rules", labelKey: "admin.selectionRules", icon: GitBranch },
     ],
   },
   {
-    labelKey: "admin.nav.group.sales",
+    labelKey: "admin.nav.group.audience",
     items: [
-      { segment: "orders", labelKey: "admin.orders", icon: ClipboardList },
       { segment: "customers", labelKey: "admin.customers", icon: Users },
+      { segment: "coupons", labelKey: "admin.coupons", icon: Ticket },
     ],
   },
   {
-    labelKey: "admin.nav.group.content",
+    labelKey: "admin.nav.group.store",
     items: [
-      { segment: "banners", labelKey: "admin.banners", icon: ImageIcon },
-      { segment: "menu-builder", labelKey: "admin.menuBuilder", icon: FileText },
-      { segment: "qr", labelKey: "admin.qr", icon: QrCode },
-    ],
-  },
-  {
-    labelKey: "admin.nav.group.system",
-    items: [
-      { segment: "assistant", labelKey: "admin.assistantManager", icon: MessageSquare },
-      { segment: "printer", labelKey: "admin.printer", icon: Printer },
-      { segment: "users", labelKey: "admin.users", icon: UserCog, adminOnly: true },
+      { segment: "banners", labelKey: "admin.bannersDesign", icon: ImageIcon },
       { segment: "settings", labelKey: "admin.settings", icon: Settings },
     ],
   },
@@ -93,7 +88,8 @@ export const ADMIN_PAGE_TITLES: Record<string, string> = {
   "/admin/business-rules": "admin.selectionRules",
   "/admin/orders": "admin.orders.title",
   "/admin/customers": "admin.customers.title",
-  "/admin/banners": "admin.banners.title",
+  "/admin/coupons": "admin.coupons",
+  "/admin/banners": "admin.bannersDesign",
   "/admin/menu-builder": "admin.menuBuilder",
   "/admin/qr": "admin.qr.title",
   "/admin/media": "admin.media.title",

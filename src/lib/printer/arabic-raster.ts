@@ -33,13 +33,13 @@ export async function buildArabicRasterTestPayload(): Promise<Buffer> {
   }
 
   const lines = [
-    "مشكا",
+    "حلويات الحلبي",
     "اختبار الطابعة",
     "",
     "طلب رقم 123",
     "",
-    "2 × قهوة",
-    "1 × كعكة",
+    "2 × بقلاوة",
+    "1 × كنافة",
     "",
     "المجموع: 30 ₪",
   ];

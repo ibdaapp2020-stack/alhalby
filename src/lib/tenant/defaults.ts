@@ -39,12 +39,12 @@ export const BASE_TENANT_DEFAULTS: TenantConfig = {
     // Neutral placeholder — override via Admin → Settings or Firestore
     // `settings/app`. Localized name shown in the UI falls back to the
     // "brand.defaultName" translation key when this is left as the default.
-    name: "My Store",
-    nameShort: "Store",
-    tagline: "",
-    logoUrl: "/brand/store-icon.svg",
-    faviconUrl: "/brand/store-icon.svg",
-    storeImageUrl: "/brand/store-hero.svg",
+    name: "حلويات الحلبي",
+    nameShort: "الحلبي",
+    tagline: "حلويات شرقية بطعم التراث",
+    logoUrl: "/logo.png",
+    faviconUrl: "/logo.png",
+    storeImageUrl: "",
   },
   palette: BASE_PALETTE,
   typography: {

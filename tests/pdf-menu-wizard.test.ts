@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import type { Category, Product } from "@/types";
 import { DEFAULT_PDF_DRAFT, type PdfMenuDraft } from "@/types/pdf-menu";
 import {
@@ -67,8 +67,8 @@ const products: Product[] = [
 ];
 
 const settings: AppSettings = {
-  storeName: "MISHKAT CAFÉ",
-  logoUrl: "/logo-transparent.png",
+  storeName: "حلويات الحلبي",
+  logoUrl: "/logo.png",
   storeImageUrl: "",
   showProductThumbnails: true,
   phone: "",
@@ -164,7 +164,7 @@ describe("wizard design + pages", () => {
     const rose = buildWizardPages(draft({ colorThemeId: "rose-cream" }), packed, settings, "", "");
     const gold = buildWizardPages(draft({ colorThemeId: "black-gold" }), packed, settings, "", "");
     expect(rose.pages[0]?.customSettings.backgroundColor).not.toBe(gold.pages[0]?.customSettings.backgroundColor);
-    expect(rose.menuTemplate.coverSettings.logoUrl).toBe("/logo-transparent.png");
+    expect(rose.menuTemplate.coverSettings.logoUrl).toBe("/logo.png");
     expect(filterExportPages(rose.pages).every((p) => p.pageKind === "cover" || p.categories.length > 0)).toBe(true);
   });
 
@@ -192,6 +192,18 @@ describe("wizard design + pages", () => {
 
 describe("wizard draft persistence", () => {
   it("restores step, exclusions, and page order", () => {
+    const memory = new Map<string, string>();
+    const storage = {
+      getItem: (key: string) => memory.get(key) ?? null,
+      setItem: (key: string, value: string) => {
+        memory.set(key, value);
+      },
+      removeItem: (key: string) => {
+        memory.delete(key);
+      },
+    };
+    vi.stubGlobal("localStorage", storage);
+    Object.defineProperty(window, "localStorage", { value: storage, configurable: true });
     const d = draft({
       currentStep: 3,
       layoutMode: "manual",

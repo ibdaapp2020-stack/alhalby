@@ -3,7 +3,7 @@ setlocal
 cd /d "%~dp0"
 
 echo.
-echo MISHKAH Print Agent — install
+echo Al Halabi Print Agent — install
 echo Install folder: %CD%
 echo.
 
@@ -55,7 +55,7 @@ echo [4/4] Finished.
 echo.
 echo Service: MishkahPrintAgent  (Automatic, no login, no window)
 echo Logs:    %CD%\logs\print-agent.log
-echo Printer: 192.168.1.87:9100
-echo Backend: https://mishkatcafe.dev
+echo Printer: PRINTER_IP from .env
+echo Backend: PRINT_AGENT_API_URL from .env
 echo.
 endlocal

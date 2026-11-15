@@ -8,17 +8,18 @@ import { motion } from "framer-motion";
 import { Eye, EyeOff, Loader2, Info } from "lucide-react";
 import { useAuth } from "@/components/providers/auth-provider";
 import { Logo } from "@/components/brand/logo";
-import { BRAND } from "@/lib/brand";
+import { BRAND, displayStoreName } from "@/lib/brand";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { StoreImage } from "@/components/brand/store-image";
-import { useT } from "@/components/providers/locale-provider";
+import { useLocale, useT } from "@/components/providers/locale-provider";
 import { isMockMode } from "@/lib/data-provider/mode";
 import { MOCK_ADMIN_USER } from "@/lib/mock-data";
 
 export function AdminLoginForm() {
   const t = useT();
+  const { locale } = useLocale();
+  const storeName = displayStoreName(locale, BRAND.name);
   const { login, resetPassword, user, loading: authLoading } = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -71,18 +72,19 @@ export function AdminLoginForm() {
 
   return (
     <div className="flex min-h-screen">
-      <div className="relative hidden w-1/2 lg:block">
-        <StoreImage priority imageClassName="object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-br from-dark-brown/80 via-dark-brown/50 to-turquoise/30" />
-        <div className="absolute inset-0 flex flex-col justify-end p-12">
+      <div className="relative hidden w-1/2 items-center justify-center overflow-hidden bg-[#6E2132] lg:flex">
+        <div aria-hidden className="absolute -top-24 -start-16 h-72 w-72 rounded-full bg-[#C9A35D]/25 blur-3xl" />
+        <div aria-hidden className="absolute -bottom-20 end-0 h-64 w-64 rounded-full bg-black/20 blur-3xl" />
+        <div className="relative z-10 flex max-w-sm flex-col items-center px-10 text-center">
+          <Logo size="xl" href={null} className="h-40 w-auto rounded-3xl bg-[#FFFCF7] p-4" />
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="font-display text-4xl font-bold text-warm-white"
+            className="mt-8 font-display text-4xl font-bold text-[#F8F3EA]"
           >
-            {BRAND.name}
+            {storeName}
           </motion.h1>
-          <p className="mt-2 text-warm-white/80">{t("admin.signInHint")}</p>
+          <p className="mt-3 text-[#EFE4D1]">{BRAND.tagline}</p>
         </div>
       </div>
 
@@ -163,7 +165,7 @@ export function AdminLoginForm() {
               <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">{error}</p>
             )}
 
-            <Button type="submit" variant="turquoise" size="lg" className="w-full" disabled={loading}>
+            <Button type="submit" size="lg" className="w-full rounded-full" disabled={loading}>
               {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : t("admin.signIn")}
             </Button>
           </form>
