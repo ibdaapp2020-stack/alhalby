@@ -12,6 +12,7 @@ import { ProductFiltersBar } from "@/features/catalog/product-filters-bar";
 import { ProductDetailDrawer } from "@/features/catalog/product-detail-drawer";
 import { CatalogModifierPreviewProvider } from "@/features/catalog/catalog-modifier-preview-context";
 import { useProducts, useAllProducts, useCategories } from "@/hooks/useProducts";
+import { CatalogAccessError, isCatalogAccessError } from "@/features/catalog/catalog-access-error";
 import { useT, useLocale } from "@/components/providers/locale-provider";
 import { useLocalizedCategory } from "@/hooks/useLocalizedContent";
 import {
@@ -47,8 +48,8 @@ export function CatalogView() {
   });
   const deepLinkApplied = useRef(false);
 
-  const { categories, loading: categoriesLoading } = useCategories();
-  const { products: allProducts, loading: allLoading } = useAllProducts();
+  const { categories, loading: categoriesLoading, error: categoriesError } = useCategories();
+  const { products: allProducts, loading: allLoading, error: productsError } = useAllProducts();
   const rootCategories = useMemo(() => getRootCategories(categories), [categories]);
 
   const storefrontEmpty =
@@ -157,6 +158,16 @@ export function CatalogView() {
   const handleSubcategorySelect = useCallback((subcategoryId: string) => {
     setSelectedSubcategoryId(subcategoryId);
   }, []);
+
+  const accessError = productsError || categoriesError;
+  if (
+    !categoriesLoading &&
+    !allLoading &&
+    accessError &&
+    (isCatalogAccessError(accessError) || storefrontEmpty)
+  ) {
+    return <CatalogAccessError />;
+  }
 
   if (storefrontEmpty) {
     return (

@@ -27,6 +27,64 @@ export interface ConnectionTestResult {
   error?: string;
 }
 
+/** Storefront check: catalog reads only. Does not write and does not upload. */
+export async function testPublicCatalogAccess(): Promise<ConnectionTestResult> {
+  if (isMockMode()) {
+    return {
+      envValid: true,
+      missingEnv: [],
+      initialized: true,
+      authReady: true,
+      categoryRead: true,
+      productRead: true,
+      writeTest: true,
+      storageReady: true,
+    };
+  }
+
+  const envCheck = validateFirebaseEnv();
+  const result: ConnectionTestResult = {
+    envValid: envCheck.valid,
+    missingEnv: envCheck.missing,
+    initialized: false,
+    authReady: false,
+    categoryRead: false,
+    productRead: false,
+    writeTest: false,
+    storageReady: false,
+  };
+
+  if (!envCheck.valid) {
+    result.error = `Missing environment variables: ${envCheck.missing.join(", ")}`;
+    return result;
+  }
+
+  try {
+    result.initialized = isFirebaseInitialized();
+    getFirebaseAuth();
+    result.authReady = true;
+
+    const categoryResult = await readOneCategoryForTest();
+    result.categoryRead = categoryResult.success;
+    const productResult = await readOneProductForTest();
+    result.productRead = productResult.success;
+
+    if (!categoryResult.success && categoryResult.error) {
+      result.error = categoryResult.error;
+    } else if (!productResult.success && productResult.error) {
+      result.error = productResult.error;
+    }
+  } catch (error) {
+    result.error = error instanceof Error ? error.message : "Connection test failed";
+  }
+
+  return result;
+}
+
+export function isPublicCatalogReachable(result: ConnectionTestResult): boolean {
+  return result.envValid && result.initialized && result.categoryRead && result.productRead;
+}
+
 export async function testFirebaseConnection(): Promise<ConnectionTestResult> {
   // In mock mode the test is a no-op success — the "connection" is to the
   // local store, which is always available.

@@ -22,6 +22,7 @@ export const COLLECTIONS = {
   pdfMenuPages: "pdfMenuPages",
   printJobs: "printJobs",
   printAgentHeartbeats: "printAgentHeartbeats",
+  coupons: "coupons",
 } as const;
 
 /**

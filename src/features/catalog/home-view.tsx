@@ -14,6 +14,7 @@ import { ProductDetailDrawer } from "@/features/catalog/product-detail-drawer";
 import { CatalogModifierPreviewProvider } from "@/features/catalog/catalog-modifier-preview-context";
 import { useT } from "@/components/providers/locale-provider";
 import { useAllProducts, useCategories } from "@/hooks/useProducts";
+import { CatalogAccessError, isCatalogAccessError } from "@/features/catalog/catalog-access-error";
 import { useSettings } from "@/hooks/useSettings";
 import {
   DEFAULT_HOMEPAGE_SECTIONS,
@@ -36,8 +37,8 @@ const SECTION_LIMIT = 8;
 export function HomeView() {
   const t = useT();
   const router = useRouter();
-  const { products: allProducts, loading: allLoading } = useAllProducts();
-  const { categories, loading: categoriesLoading } = useCategories();
+  const { products: allProducts, loading: allLoading, error: productsError } = useAllProducts();
+  const { categories, loading: categoriesLoading, error: categoriesError } = useCategories();
   const { settings } = useSettings();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 
@@ -75,6 +76,16 @@ export function HomeView() {
     () => activeProducts.filter((p) => p.isNew),
     [activeProducts]
   );
+
+  const accessError = productsError || categoriesError;
+  if (
+    !categoriesLoading &&
+    !allLoading &&
+    accessError &&
+    (isCatalogAccessError(accessError) || (categories.length === 0 && allProducts.length === 0))
+  ) {
+    return <CatalogAccessError />;
+  }
 
   if (storefrontEmpty) {
     return <EmptyStorefront />;

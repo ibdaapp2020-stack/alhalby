@@ -1,4 +1,5 @@
 import { BRAND } from "@/lib/brand";
+import { storageUrlBelongsToCurrentProject } from "@/lib/firebase/storage-url";
 
 /**
  * Normalizes any image value into a usable URL:
@@ -48,8 +49,9 @@ export function isAllowedProductImageUrl(url: string): boolean {
   if (!normalized) return false;
   if (/unsplash\.com|images\.unsplash\.com/i.test(normalized)) return false;
   if (normalized.startsWith("/")) return true;
-  if (normalized.includes("firebasestorage.googleapis.com")) return true;
-  if (normalized.includes("firebasestorage.app")) return true;
+  if (normalized.includes("firebasestorage.googleapis.com") || normalized.includes("firebasestorage.app")) {
+    return storageUrlBelongsToCurrentProject(normalized);
+  }
   return false;
 }
 

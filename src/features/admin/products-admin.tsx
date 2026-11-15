@@ -226,6 +226,9 @@ export function ProductsAdmin() {
           className="rounded-xl border border-red-200 bg-red-50 px-4 py-4 text-sm text-red-800 dark:border-red-900/40 dark:bg-red-950/30 dark:text-red-200"
         >
           <p className="font-medium">{t("admin.products.loadError")}</p>
+          {(error || categoriesError) && (
+            <p className="mt-1 text-xs opacity-80">{error || categoriesError}</p>
+          )}
           {isIndexError && (
             <p className="mt-1 text-xs opacity-80">{t("admin.products.indexErrorHint")}</p>
           )}

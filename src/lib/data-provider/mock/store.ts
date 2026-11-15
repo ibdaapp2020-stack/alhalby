@@ -92,8 +92,12 @@ class MockStore {
       const parsed = JSON.parse(raw) as Partial<MockDatabase>;
       // Merge parsed values on top of seed so new seed items also appear
       // after a localStorage reset.
-      if (Array.isArray(parsed.products)) this.db.products = parsed.products;
-      if (Array.isArray(parsed.categories)) this.db.categories = parsed.categories;
+      if (Array.isArray(parsed.products) && parsed.products.length > 0) {
+        this.db.products = parsed.products;
+      }
+      if (Array.isArray(parsed.categories) && parsed.categories.length > 0) {
+        this.db.categories = parsed.categories;
+      }
       if (Array.isArray(parsed.orders)) this.db.orders = parsed.orders;
       if (Array.isArray(parsed.customers)) this.db.customers = parsed.customers;
       if (Array.isArray(parsed.banners)) this.db.banners = parsed.banners;

@@ -19,13 +19,13 @@ service cloud.firestore {
     }
 
     match /categories/{id} {
-      allow read: if true;
-      allow write: if isStaff();
+      allow read: if resource.data.active == true || isStaff();
+      allow create, update, delete: if isStaff();
     }
 
     match /products/{id} {
-      allow read: if true;
-      allow write: if isStaff();
+      allow read: if resource.data.active == true || isStaff();
+      allow create, update, delete: if isStaff();
     }
 
     match /customers/{id} {
@@ -67,7 +67,13 @@ service cloud.firestore {
     }
 
     match /connection-test/{id} {
-      allow read, write: if true;
+      allow read, write: if isStaff();
+    }
+
+    match /coupons/{id} {
+      allow get: if resource.data.active == true || isStaff();
+      allow list: if isStaff();
+      allow create, update, delete: if isStaff();
     }
 
     match /modifier_groups/{id} {

@@ -5,11 +5,14 @@ import { getAdminAuth, getAdminDb } from "../src/lib/firebase/admin";
 import { COLLECTIONS } from "../src/lib/firebase/collections";
 import { FieldValue } from "firebase-admin/firestore";
 
-const EMAIL = process.env.ADMIN_BOOTSTRAP_EMAIL ?? "admin@example.com";
-const PASSWORD = process.env.ADMIN_BOOTSTRAP_PASSWORD ?? "ChangeMe2026!";
-const NAME = process.env.ADMIN_BOOTSTRAP_NAME ?? "Al Halabi Admin";
+const EMAIL = process.env.ADMIN_BOOTSTRAP_EMAIL?.trim() ?? "";
+const PASSWORD = process.env.ADMIN_BOOTSTRAP_PASSWORD ?? "";
+const NAME = process.env.ADMIN_BOOTSTRAP_NAME?.trim() || "מנהל אלחלבי";
 
 async function main() {
+  if (!EMAIL || PASSWORD.length < 12 || PASSWORD === "Halabi1234") {
+    throw new Error("Set ADMIN_BOOTSTRAP_EMAIL and a unique ADMIN_BOOTSTRAP_PASSWORD of at least 12 characters. Do not use the demo password.");
+  }
   const auth = getAdminAuth();
   const db = getAdminDb();
 

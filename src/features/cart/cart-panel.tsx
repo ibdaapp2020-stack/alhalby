@@ -154,8 +154,9 @@ export function CartPanel({ compact, onCheckout, className }: CartPanelProps) {
 
   const handleCoupon = () => {
     if (!couponInput.trim()) return;
-    const ok = applyCoupon(couponInput);
-    setCouponError(ok ? null : t("error.generic", "Invalid coupon code"));
+    void applyCoupon(couponInput).then((ok) => {
+      setCouponError(ok ? null : t("cart.invalidCoupon", "Invalid coupon code"));
+    });
   };
 
   return (

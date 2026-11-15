@@ -24,8 +24,8 @@ export function AdminLoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const adminPath = useAdminPath();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState(isMockMode() ? MOCK_ADMIN_USER.email : "");
+  const [password, setPassword] = useState(isMockMode() ? MOCK_ADMIN_USER.password : "");
   const [remember, setRemember] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -110,7 +110,7 @@ export function AdminLoginForm() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@example.com"
+                placeholder="admin@alhalabi.com"
                 className="mt-1.5"
                 required
               />

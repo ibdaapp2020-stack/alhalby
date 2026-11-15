@@ -19,9 +19,9 @@ export interface MockUser {
 
 export const MOCK_ADMIN_USER: MockUser = {
   uid: "mock-admin",
-  email: "admin@example.com",
-  password: "admin123",
-  displayName: "Demo Admin",
+  email: "admin@alhalabi.com",
+  password: "Halabi1234",
+  displayName: "מנהל אלחלבי",
   role: "Admin",
   active: true,
 };

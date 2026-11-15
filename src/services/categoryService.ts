@@ -9,7 +9,7 @@ import {
   deleteDoc,
   onSnapshot,
   query,
-  orderBy,
+  where,
   type Unsubscribe,
   type DocumentData,
 } from "firebase/firestore";
@@ -32,14 +32,14 @@ export async function getCategories(options?: { includeInactive?: boolean }): Pr
   if (isMockMode()) return mock.getCategories(options);
   try {
     const db = getDb();
-    const q = query(
-      collection(db, COLLECTIONS.categories),
-      orderBy("sortOrder", "asc")
-    );
+    const base = collection(db, COLLECTIONS.categories);
+    const q = options?.includeInactive
+      ? query(base)
+      : query(base, where("active", "==", true));
     const snapshot = await getDocs(q);
     return snapshot.docs
-      .filter((d) => options?.includeInactive || (d.data() as FirestoreCategory).active !== false)
-      .map((d) => mapCategory(docToCategory(d.id, d.data())));
+      .map((d) => mapCategory(docToCategory(d.id, d.data())))
+      .sort((a, b) => a.sortOrder - b.sortOrder);
   } catch (error) {
     throw new ServiceError(
       error instanceof Error ? error.message : "Failed to fetch categories",
@@ -88,19 +88,23 @@ export function subscribeToCategories(
   if (isMockMode()) return mock.subscribeToCategories(onData, onError, options);
   try {
     const db = getDb();
-    const q = query(
-      collection(db, COLLECTIONS.categories),
-      orderBy("sortOrder", "asc")
-    );
+    const base = collection(db, COLLECTIONS.categories);
+    const q = options?.includeInactive
+      ? query(base)
+      : query(base, where("active", "==", true));
     return onSnapshot(
       q,
       (snapshot) => {
         const categories = snapshot.docs
-          .filter((d) => options?.includeInactive || (d.data() as FirestoreCategory).active !== false)
-          .map((d) => mapCategory(docToCategory(d.id, d.data())));
+          .map((d) => mapCategory(docToCategory(d.id, d.data())))
+          .sort((a, b) => a.sortOrder - b.sortOrder);
         onData(categories);
       },
-      (error) => onError(error.message)
+      (error) => {
+        const message = error instanceof Error ? error.message : "Failed to subscribe to categories";
+        console.error("[Categories] subscribeToCategories failed:", message);
+        onError(message);
+      }
     );
   } catch (error) {
     onError(error instanceof Error ? error.message : "Failed to subscribe to categories");

@@ -8,7 +8,7 @@ import {
   deleteDoc,
   onSnapshot,
   query,
-  orderBy,
+  where,
   type Unsubscribe,
   type DocumentData,
 } from "firebase/firestore";
@@ -103,14 +103,21 @@ function applyFilters(items: Product[], filters?: ProductFilters): Product[] {
   return result;
 }
 
-async function fetchAllProducts(): Promise<Product[]> {
+function bySortOrder(a: { sortOrder?: number }, b: { sortOrder?: number }): number {
+  return (a.sortOrder ?? 0) - (b.sortOrder ?? 0);
+}
+
+/** Active products only. The constraint matches the public Firestore read rule. */
+async function fetchPublicProducts(): Promise<Product[]> {
   const db = getDb();
   const q = query(
     collection(db, COLLECTIONS.products),
-    orderBy("sortOrder", "asc")
+    where("active", "==", true)
   );
   const snapshot = await getDocs(q);
-  return snapshot.docs.map((d) => mapProduct(docToProduct(d.id, d.data())));
+  return snapshot.docs
+    .map((d) => mapProduct(docToProduct(d.id, d.data())))
+    .sort(bySortOrder);
 }
 
 /** Every product in the collection, including hidden/inactive. No orderBy so docs without sortOrder are not dropped. */
@@ -133,7 +140,7 @@ export async function getAllProductsForExport(): Promise<Product[]> {
 export async function getProducts(filters?: ProductFilters): Promise<Product[]> {
   if (isMockMode()) return mock.getProducts(filters);
   try {
-    const products = await fetchAllProducts();
+    const products = await fetchPublicProducts();
     return applyFilters(products, filters);
   } catch (error) {
     throw new ServiceError(
@@ -167,21 +174,24 @@ export async function getPopularProducts(limit = 6): Promise<Product[]> {
 export function subscribeToProducts(
   filters: ProductFilters | undefined,
   onData: (products: Product[]) => void,
-  onError: (error: string) => void
+  onError: (error: string) => void,
+  options?: { includeInactive?: boolean }
 ): Unsubscribe {
   if (isMockMode()) return mock.subscribeToProducts(filters, onData, onError);
   try {
     const db = getDb();
-    const q = query(
-      collection(db, COLLECTIONS.products),
-      orderBy("sortOrder", "asc")
-    );
+    const base = collection(db, COLLECTIONS.products);
+    // Public listeners must be constrained to active == true so they satisfy
+    // the security rules. Staff listeners read the whole collection.
+    const q = options?.includeInactive
+      ? query(base)
+      : query(base, where("active", "==", true));
     return onSnapshot(
       q,
       (snapshot) => {
-        const products = snapshot.docs.map((d) =>
-          mapProduct(docToProduct(d.id, d.data()))
-        );
+        const products = snapshot.docs
+          .map((d) => mapProduct(docToProduct(d.id, d.data())))
+          .sort(bySortOrder);
         onData(applyFilters(products, filters));
       },
       (error) => {
@@ -273,7 +283,7 @@ export async function reorderProducts(
 export async function readOneProductForTest(): Promise<ServiceResult<Product | null>> {
   if (isMockMode()) return mock.readOneProductForTest();
   try {
-    const products = await fetchAllProducts();
+    const products = await fetchPublicProducts();
     return success(products[0] ?? null);
   } catch (error) {
     return failure(error, "Product read test failed");

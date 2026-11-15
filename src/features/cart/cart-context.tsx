@@ -18,12 +18,15 @@ import {
 } from "@/lib/product-builder/engine";
 import { NEW_ORDER_FULFILLMENT } from "@/lib/orders/fulfillment";
 import { isViewOnlyMenuSurface } from "@/lib/domains/host-routing";
+import { isMockMode } from "@/lib/data-provider/mode";
+import { findActiveCoupon } from "@/services/couponService";
 
 interface CartState {
   items: CartItem[];
   isOpen: boolean;
   couponCode: string;
   couponDiscount: number;
+  couponFixed: number;
 }
 
 type CartAction =
@@ -51,7 +54,7 @@ type CartAction =
   | { type: "OPEN_CART" }
   | { type: "CLOSE_CART" }
   | { type: "TOGGLE_CART" }
-  | { type: "SET_COUPON"; code: string; discount: number };
+  | { type: "SET_COUPON"; code: string; discount: number; fixed?: number };
 
 interface AddItemOptions {
   selections?: SelectedModifier[];
@@ -81,7 +84,7 @@ interface CartContextValue {
     options: Required<Pick<AddItemOptions, "selections" | "unitPrice" | "quantity">> &
       Pick<AddItemOptions, "notes">
   ) => void;
-  applyCoupon: (code: string) => boolean;
+  applyCoupon: (code: string) => Promise<boolean>;
   clearCart: () => void;
   openCart: () => void;
   closeCart: () => void;
@@ -180,6 +183,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
         items: Array.isArray(action.state.items) ? action.state.items : state.items,
         couponCode: action.state.couponCode ?? state.couponCode,
         couponDiscount: action.state.couponDiscount ?? state.couponDiscount,
+        couponFixed: action.state.couponFixed ?? state.couponFixed,
         isOpen: false,
       };
     case "CLEAR_CART":
@@ -191,7 +195,7 @@ function cartReducer(state: CartState, action: CartAction): CartState {
     case "TOGGLE_CART":
       return { ...state, isOpen: !state.isOpen };
     case "SET_COUPON":
-      return { ...state, couponCode: action.code, couponDiscount: action.discount };
+      return { ...state, couponCode: action.code, couponDiscount: action.discount, couponFixed: action.fixed ?? 0 };
     default:
       return state;
   }
@@ -203,6 +207,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     isOpen: false,
     couponCode: "",
     couponDiscount: 0,
+    couponFixed: 0,
   });
   const [hydrated, setHydrated] = useState(false);
 
@@ -230,9 +235,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
         items: state.items,
         couponCode: state.couponCode,
         couponDiscount: state.couponDiscount,
+        couponFixed: state.couponFixed,
       })
     );
-  }, [hydrated, state.couponCode, state.couponDiscount, state.items]);
+  }, [hydrated, state.couponCode, state.couponDiscount, state.couponFixed, state.items]);
 
   const addItem = useCallback((product: Product, options?: AddItemOptions) => {
     if (
@@ -288,26 +294,37 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const closeCart = useCallback(() => dispatch({ type: "CLOSE_CART" }), []);
   const toggleCart = useCallback(() => dispatch({ type: "TOGGLE_CART" }), []);
 
-  const applyCoupon = useCallback((code: string) => {
-    const normalized = code.trim().toUpperCase();
-    if (normalized === "STORE10") {
-      dispatch({ type: "SET_COUPON", code: normalized, discount: 0.1 });
-      return true;
-    }
-    if (normalized === "WELCOME15") {
-      dispatch({ type: "SET_COUPON", code: normalized, discount: 0.15 });
-      return true;
-    }
-    return false;
-  }, []);
-
   const itemCount = state.items.reduce((sum, i) => sum + i.quantity, 0);
   const subtotal = state.items.reduce(
     (sum, item) =>
       sum + calculateLineTotal(item.unitPrice, item.quantity),
     0
   );
-  const discount = subtotal * state.couponDiscount;
+  const applyCoupon = useCallback(async (code: string) => {
+    const normalized = code.trim().toUpperCase();
+    if (isMockMode()) {
+      if (normalized === "STORE10") {
+        dispatch({ type: "SET_COUPON", code: normalized, discount: 0.1 });
+        return true;
+      }
+      if (normalized === "WELCOME15") {
+        dispatch({ type: "SET_COUPON", code: normalized, discount: 0.15 });
+        return true;
+      }
+      return false;
+    }
+    const coupon = await findActiveCoupon(normalized);
+    if (!coupon) return false;
+    if ((coupon.minOrder ?? 0) > subtotal) return false;
+    if (coupon.type === "fixed") {
+      dispatch({ type: "SET_COUPON", code: coupon.code, discount: 0, fixed: Math.max(0, coupon.value) });
+      return true;
+    }
+    const discount = coupon.type === "percent" ? Math.min(100, Math.max(0, coupon.value)) / 100 : 0;
+    dispatch({ type: "SET_COUPON", code: coupon.code, discount, fixed: 0 });
+    return true;
+  }, [subtotal]);
+  const discount = Math.min(subtotal, subtotal * state.couponDiscount + state.couponFixed);
   const deliveryFee = 0;
   const total = subtotal - discount;
 

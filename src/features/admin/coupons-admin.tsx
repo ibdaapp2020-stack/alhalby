@@ -15,6 +15,8 @@ import {
 import { AdminPageHeader } from "./components/admin-page-header";
 import { useT } from "@/components/providers/locale-provider";
 import { mockCoupons, type CouponType, type MockCoupon } from "@/lib/mock-data";
+import { isMockMode } from "@/lib/data-provider/mode";
+import { deleteCoupon, saveCoupon, subscribeToCoupons } from "@/services/couponService";
 import { formatPrice } from "@/lib/utils";
 
 const STORAGE_KEY = "ibda-mock-coupons-v1";
@@ -64,13 +66,24 @@ function emptyCoupon(): MockCoupon {
  */
 export function CouponsAdmin() {
   const t = useT();
-  const [coupons, setCoupons] = useState<MockCoupon[]>(mockCoupons);
+  const firebaseMode = !isMockMode();
+  const [coupons, setCoupons] = useState<MockCoupon[]>(firebaseMode ? [] : mockCoupons);
   const [editing, setEditing] = useState<MockCoupon | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
-  // Hydrate from localStorage on mount so edits persist across reloads.
   useEffect(() => {
-    setCoupons(loadCoupons());
-  }, []);
+    if (!firebaseMode) {
+      setCoupons(loadCoupons());
+      return;
+    }
+    return subscribeToCoupons(
+      (rows) => {
+        setCoupons(rows);
+        setError(null);
+      },
+      (message) => setError(message)
+    );
+  }, [firebaseMode]);
 
   const activeCount = useMemo(() => coupons.filter((c) => c.active).length, [coupons]);
   const totalUses = useMemo(
@@ -78,13 +91,20 @@ export function CouponsAdmin() {
     [coupons]
   );
 
-  const update = (next: MockCoupon[]) => {
+  const updateLocal = (next: MockCoupon[]) => {
     setCoupons(next);
     persistCoupons(next);
   };
 
   const toggleActive = (id: string) => {
-    update(coupons.map((c) => (c.id === id ? { ...c, active: !c.active } : c)));
+    const current = coupons.find((c) => c.id === id);
+    if (!current) return;
+    const next = { ...current, active: !current.active };
+    if (!firebaseMode) {
+      updateLocal(coupons.map((c) => (c.id === id ? next : c)));
+      return;
+    }
+    void saveCoupon(next).catch((err) => setError(err instanceof Error ? err.message : "Save failed"));
   };
 
   const remove = (id: string) => {
@@ -94,7 +114,11 @@ export function CouponsAdmin() {
       );
       if (!ok) return;
     }
-    update(coupons.filter((c) => c.id !== id));
+    if (!firebaseMode) {
+      updateLocal(coupons.filter((c) => c.id !== id));
+      return;
+    }
+    void deleteCoupon(id).catch((err) => setError(err instanceof Error ? err.message : "Delete failed"));
   };
 
   const save = (coupon: MockCoupon) => {
@@ -110,12 +134,22 @@ export function CouponsAdmin() {
       alert(t("admin.coupons.codeRequired", "קוד קופון הוא שדה חובה"));
       return;
     }
-    const exists = coupons.some((c) => c.id === normalized.id);
-    const next = exists
-      ? coupons.map((c) => (c.id === normalized.id ? normalized : c))
-      : [...coupons, normalized];
-    update(next);
-    setEditing(null);
+    if (!firebaseMode) {
+      const exists = coupons.some((c) => c.id === normalized.id);
+      const next = exists
+        ? coupons.map((c) => (c.id === normalized.id ? normalized : c))
+        : [...coupons, normalized];
+      updateLocal(next);
+      setEditing(null);
+      return;
+    }
+    const previousId = coupon.id !== normalized.code ? coupon.id : "";
+    void saveCoupon(normalized)
+      .then(async () => {
+        if (previousId && previousId !== normalized.code) await deleteCoupon(previousId);
+        setEditing(null);
+      })
+      .catch((err) => setError(err instanceof Error ? err.message : "Save failed"));
   };
 
   const typeIcon = (type: CouponType) => {
@@ -141,10 +175,11 @@ export function CouponsAdmin() {
     <div className="space-y-5">
       <AdminPageHeader
         title={t("admin.coupons", "קופונים ומבצעים")}
-        subtitle={t(
-          "admin.coupons.subtitle",
-          "קודי הנחה ומבצעים לשימוש בעת תשלום. שינויים נשמרים מקומית (MOCK DATA)."
-        )}
+        subtitle={
+          firebaseMode
+            ? t("admin.coupons.subtitleLive", "קודי הנחה שנשמרים ב־Firestore. רק מנהל יכול ליצור או לשנות אותם.")
+            : t("admin.coupons.subtitle", "קודי הנחה ומבצעים. השינויים נשמרים מקומית (MOCK DATA).")
+        }
         actions={
           <button
             type="button"
@@ -174,6 +209,10 @@ export function CouponsAdmin() {
           value={totalUses.toString()}
         />
       </div>
+
+      {error && (
+        <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>
+      )}
 
       {editing && (
         <CouponEditor

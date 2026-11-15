@@ -6,28 +6,44 @@ service firebase.storage {
       return request.auth != null;
     }
 
+    function userPath() {
+      return /databases/(default)/documents/users/$(request.auth.uid);
+    }
+
+    function isStaff() {
+      return isSignedIn()
+        && firestore.exists(userPath())
+        && firestore.get(userPath()).data.role in ['Admin', 'Manager', 'Employee']
+        && firestore.get(userPath()).data.active == true;
+    }
+
     match /products/{allPaths=**} {
       allow read: if true;
-      allow write: if isSignedIn();
+      allow write: if isStaff();
     }
 
     match /categories/{allPaths=**} {
       allow read: if true;
-      allow write: if isSignedIn();
+      allow write: if isStaff();
     }
 
     match /banners/{allPaths=**} {
       allow read: if true;
-      allow write: if isSignedIn();
+      allow write: if isStaff();
     }
 
     match /settings/{allPaths=**} {
       allow read: if true;
-      allow write: if isSignedIn();
+      allow write: if isStaff();
+    }
+
+    match /modifiers/{allPaths=**} {
+      allow read: if true;
+      allow write: if isStaff();
     }
 
     match /test/{allPaths=**} {
-      allow read, write: if true;
+      allow read, write: if isStaff();
     }
   }
 }

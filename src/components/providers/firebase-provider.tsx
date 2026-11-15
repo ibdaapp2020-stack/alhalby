@@ -4,7 +4,7 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from "
 import { motion, AnimatePresence } from "framer-motion";
 import { AlertTriangle, X } from "lucide-react";
 import { useT } from "@/components/providers/locale-provider";
-import { testFirebaseConnection, isConnectionHealthy } from "@/services/connectionService";
+import { testPublicCatalogAccess, isPublicCatalogReachable } from "@/services/connectionService";
 import type { ConnectionTestResult } from "@/services/connectionService";
 import { isMockMode } from "@/lib/data-provider/mode";
 
@@ -36,10 +36,10 @@ export function FirebaseProvider({ children }: { children: ReactNode }) {
 
     async function checkConnection() {
       try {
-        const testResult = await testFirebaseConnection();
+        const testResult = await testPublicCatalogAccess();
         if (!mounted) return;
         setResult(testResult);
-        const healthy = isConnectionHealthy(testResult);
+        const healthy = isPublicCatalogReachable(testResult);
         setConnected(healthy);
         if (!healthy) setShowError(true);
       } catch {

@@ -46,10 +46,11 @@ export function hasFirebaseEnvConfigured(): boolean {
 
 function resolveMode(): DataProviderMode {
   const explicit = process.env.NEXT_PUBLIC_DATA_PROVIDER?.toLowerCase().trim();
-  if (explicit === "firebase") return "firebase";
   if (explicit === "mock" || explicit === "demo" || explicit === "local") return "mock";
-  // Auto-detect based on Firebase env availability.
-  return hasFirebaseEnvConfigured() ? "firebase" : "mock";
+  // Firebase is only usable when the public keys are actually filled in.
+  // An explicit "firebase" value with empty keys cannot reach a server.
+  if (!hasFirebaseEnvConfigured()) return "mock";
+  return "firebase";
 }
 
 /** Resolved once at module load. Safe to cache — env is static. */

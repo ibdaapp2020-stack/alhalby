@@ -48,10 +48,11 @@ export function useProducts(filters?: ProductFilters, options?: { admin?: boolea
     const unsubscribe = subscribeToProducts(
       parsedFilters,
       (data) => {
-        if (data.length === 0 && !adminMode) {
+        if (data.length === 0 && !adminMode && fallbackProducts.length > 0) {
           setUsingFallback(true);
           setProducts(applyProductFilters(fallbackProducts, parsedFilters));
         } else {
+          setUsingFallback(false);
           setProducts(data);
         }
         setLoading(false);
@@ -60,14 +61,11 @@ export function useProducts(filters?: ProductFilters, options?: { admin?: boolea
       (err) => {
         console.error("[Products] Failed to load products:", err);
         setError(err);
-        if (!adminMode) {
-          setUsingFallback(true);
-          setProducts(applyProductFilters(fallbackProducts, parsedFilters));
-        } else {
-          setProducts([]);
-        }
+        setUsingFallback(false);
+        setProducts([]);
         setLoading(false);
-      }
+      },
+      { includeInactive: adminMode }
     );
 
     return unsubscribe;
@@ -98,7 +96,7 @@ export function useCategories() {
       },
       (err) => {
         setError(err);
-        setCategories(fallbackCategories);
+        setCategories([]);
         setLoading(false);
       }
     );
@@ -132,7 +130,7 @@ export function useAllCategories() {
       (err) => {
         console.error("[Categories] Failed to load categories:", err);
         setError(err);
-        setCategories(fallbackCategories);
+        setCategories([]);
         setLoading(false);
       },
       { includeInactive: true }
@@ -146,6 +144,7 @@ export function useAllCategories() {
 export function useAllProducts() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { products: fallbackProducts } = useMasterMenuFallback();
 
   useEffect(() => {
@@ -153,17 +152,20 @@ export function useAllProducts() {
       { active: true },
       (data) => {
         setProducts(data.length > 0 ? data : fallbackProducts);
+        setError(null);
         setLoading(false);
       },
-      () => {
-        setProducts(fallbackProducts);
+      (err) => {
+        console.error("[Products] subscribeToProducts failed:", err);
+        setError(err);
+        setProducts([]);
         setLoading(false);
       }
     );
     return unsubscribe;
   }, [fallbackProducts]);
 
-  return { products, loading };
+  return { products, loading, error };
 }
 
 export function useBanners() {

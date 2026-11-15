@@ -9,6 +9,7 @@ import { STORAGE_PATHS } from "@/lib/firebase/collections";
 import { type ServiceResult, success, failure } from "@/lib/errors";
 import { isMockMode } from "@/lib/data-provider/mode";
 import { mockStorage as mock } from "@/lib/data-provider/mock";
+import { storageUrlBelongsToCurrentProject } from "@/lib/firebase/storage-url";
 
 export function storagePathFromUrl(url: string): string | null {
   try {
@@ -124,6 +125,8 @@ export async function deleteImageByUrl(
   imageUrl: string
 ): Promise<ServiceResult<void>> {
   if (isMockMode()) return mock.deleteImageByUrl(imageUrl);
+  // An old link may point at another business's bucket. Leave that file alone.
+  if (!storageUrlBelongsToCurrentProject(imageUrl)) return success(undefined);
   const path = storagePathFromUrl(imageUrl);
   if (!path) return success(undefined);
   try {

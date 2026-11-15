@@ -22,9 +22,9 @@ const RULES_BACKUP = resolve(ROOT, "firestore.rules.backup");
 const PROJECT = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID?.trim() ?? "";
 const API_KEY = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
 
-const EMAIL = process.env.ADMIN_BOOTSTRAP_EMAIL ?? "admin@example.com";
-const PASSWORD = process.env.ADMIN_BOOTSTRAP_PASSWORD ?? "ChangeMe2026!";
-const DISPLAY_NAME = process.env.ADMIN_BOOTSTRAP_NAME ?? "Al Halabi Admin";
+const EMAIL = process.env.ADMIN_BOOTSTRAP_EMAIL?.trim() ?? "";
+const PASSWORD = process.env.ADMIN_BOOTSTRAP_PASSWORD ?? "";
+const DISPLAY_NAME = process.env.ADMIN_BOOTSTRAP_NAME?.trim() || "מנהל אלחלבי";
 
 const OPEN_RULES = `rules_version = '2';
 
@@ -113,6 +113,10 @@ async function ensureFirestoreProfile(uid: string) {
 }
 
 async function main() {
+  if (!EMAIL || PASSWORD.length < 12 || PASSWORD === "Halabi1234") {
+    process.stderr.write("Set ADMIN_BOOTSTRAP_EMAIL and a unique ADMIN_BOOTSTRAP_PASSWORD of at least 12 characters. Do not use the demo password.\n");
+    process.exit(1);
+  }
   process.stdout.write("\n=== Al Halabi Sweets — Auto Admin Bootstrap ===\n\n");
 
   try {

@@ -26,12 +26,14 @@ export async function POST() {
       return Response.json({ bootstrapped: true, created: false });
     }
 
-    const email =
-      process.env.ADMIN_BOOTSTRAP_EMAIL ?? "admin@example.com";
-    const password =
-      process.env.ADMIN_BOOTSTRAP_PASSWORD ?? "ChangeMe2026!";
+    const email = process.env.ADMIN_BOOTSTRAP_EMAIL?.trim() ?? "";
+    const password = process.env.ADMIN_BOOTSTRAP_PASSWORD ?? "";
     const displayName =
-      process.env.ADMIN_BOOTSTRAP_NAME ?? "Store Admin";
+      process.env.ADMIN_BOOTSTRAP_NAME?.trim() || "מנהל אלחלבי";
+    // No default account. A short or demo password must never become a production admin.
+    if (!email || password.length < 12 || password === "Halabi1234") {
+      return Response.json({ bootstrapped: false, created: false, configured: false });
+    }
 
     let uid: string;
     try {
