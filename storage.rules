@@ -6,15 +6,19 @@ service firebase.storage {
       return request.auth != null;
     }
 
-    function userPath() {
-      return /databases/(default)/documents/users/$(request.auth.uid);
+    function hasStaffClaim() {
+      return request.auth.token.role in ['Admin', 'Manager', 'Employee']
+        && request.auth.token.active == true;
     }
 
+    // Storage cannot read the staff profile through Firestore on this project,
+    // so staff authority comes from the Auth token. The owner mailbox is
+    // accepted as well, including sessions issued before the claim existed.
     function isStaff() {
-      return isSignedIn()
-        && firestore.exists(userPath())
-        && firestore.get(userPath()).data.role in ['Admin', 'Manager', 'Employee']
-        && firestore.get(userPath()).data.active == true;
+      return isSignedIn() && (
+        hasStaffClaim()
+        || request.auth.token.email == 'admin@alhalabi.com'
+      );
     }
 
     match /products/{allPaths=**} {

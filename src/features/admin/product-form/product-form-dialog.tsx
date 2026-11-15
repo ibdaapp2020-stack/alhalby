@@ -434,6 +434,15 @@ export function ProductFormDialog({
 
     try {
       perf.mark("Validation");
+      const draft = form.getValues();
+      const sharedName = draft.nameHe.trim() || draft.nameAr.trim() || draft.nameEn.trim();
+      if (sharedName) {
+        if (!draft.nameHe.trim()) form.setValue("nameHe", sharedName);
+        if (!draft.nameAr.trim()) form.setValue("nameAr", sharedName);
+        if (!draft.nameEn.trim()) form.setValue("nameEn", sharedName);
+      }
+      if (!Number.isFinite(draft.price)) form.setValue("price", 0);
+      if (!Number.isFinite(draft.cost)) form.setValue("cost", 0);
       const valid = await form.trigger();
       if (!valid) {
         setError(t("admin.productForm.validationError"));

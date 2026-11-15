@@ -4,7 +4,7 @@ import {
   getDownloadURL,
   deleteObject,
 } from "firebase/storage";
-import { getFirebaseStorage } from "@/lib/firebase";
+import { getFirebaseAuth, getFirebaseStorage } from "@/lib/firebase";
 import { STORAGE_PATHS } from "@/lib/firebase/collections";
 import { type ServiceResult, success, failure } from "@/lib/errors";
 import { isMockMode } from "@/lib/data-provider/mode";
@@ -28,6 +28,8 @@ export async function uploadImageWithProgress(
 ): Promise<ServiceResult<string>> {
   if (isMockMode()) return mock.uploadImageWithProgress(file, path, onProgress);
   try {
+    const user = getFirebaseAuth().currentUser;
+    if (user) await user.getIdToken(true);
     const storage = getFirebaseStorage();
     const storageRef = ref(storage, path);
     const task = uploadBytesResumable(storageRef, file, {

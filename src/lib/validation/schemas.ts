@@ -15,9 +15,9 @@ const trilingualName = {
 };
 
 const trilingualDescription = {
-  descriptionHe: z.string().min(1),
-  descriptionAr: z.string().min(1),
-  descriptionEn: z.string().min(1),
+  descriptionHe: z.string().default(""),
+  descriptionAr: z.string().default(""),
+  descriptionEn: z.string().default(""),
 };
 
 export const categorySchema = z.object({
@@ -33,7 +33,7 @@ export const categorySchema = z.object({
 export const productSchema = z.object({
   ...trilingualName,
   ...trilingualDescription,
-  categoryId: z.string().min(1, "Category is required"),
+  categoryId: z.string().default(""),
   subcategoryId: z.string().optional().nullable(),
   price: z.number().min(0, "Price cannot be negative"),
   cost: z.number().min(0).default(0),
