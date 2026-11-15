@@ -3,6 +3,8 @@ import {
   adminPath,
   isMenuHost,
   isOrderingPath,
+  canonicalAdminPathname,
+  hasDedicatedPortalHost,
   isPortalHost,
   isViewOnlyMenuSurface,
   shouldBlockAdminOnHost,
@@ -26,11 +28,21 @@ describe("host-routing", () => {
     expect(isMenuHost("portal.example.com")).toBe(false);
   });
 
-  it("blocks /admin on public and menu hosts", () => {
-    expect(shouldBlockAdminOnHost("example.com")).toBe(true);
+  it("keeps /admin on the store when no portal host is configured", () => {
+    expect(hasDedicatedPortalHost()).toBe(false);
+    expect(shouldBlockAdminOnHost("example.com")).toBe(false);
+    expect(shouldBlockAdminOnHost("alhalby.vercel.app")).toBe(false);
     expect(shouldBlockAdminOnHost("menu.example.com")).toBe(true);
     expect(shouldBlockAdminOnHost("portal.example.com")).toBe(false);
     expect(shouldBlockAdminOnHost("localhost:3000")).toBe(false);
+  });
+
+  it("folds /ADMIN onto the /admin route", () => {
+    expect(canonicalAdminPathname("/ADMIN")).toBe("/admin");
+    expect(canonicalAdminPathname("/Admin/Login")).toBe("/admin/login");
+    expect(canonicalAdminPathname("/admin")).toBeNull();
+    expect(canonicalAdminPathname("/admin/login")).toBeNull();
+    expect(canonicalAdminPathname("/")).toBeNull();
   });
 
   it("maps portal paths to internal admin routes", () => {

@@ -5,6 +5,7 @@ import {
   isMenuHost,
   isOrderingPath,
   isPortalHost,
+  canonicalAdminPathname,
   shouldBlockAdminOnHost,
   toInternalAdminPath,
   toPortalPath,
@@ -32,6 +33,13 @@ function redirectHome(request: NextRequest) {
 export function middleware(request: NextRequest) {
   const host = request.headers.get("host");
   const pathname = request.nextUrl.pathname;
+
+  const canonicalAdmin = canonicalAdminPathname(pathname);
+  if (canonicalAdmin) {
+    const target = request.nextUrl.clone();
+    target.pathname = canonicalAdmin;
+    return NextResponse.redirect(target);
+  }
 
   // --- Digital menu host (VIEW ONLY) ---
   if (isMenuHost(host)) {
@@ -87,7 +95,7 @@ export function middleware(request: NextRequest) {
     return rewrite(request, toInternalAdminPath(pathname));
   }
 
-  // --- Public production host: block /admin ---
+  // Block /admin only on the menu host, or on the store when a real portal exists.
   if (shouldBlockAdminOnHost(host) && pathname.startsWith("/admin")) {
     return redirectHome(request);
   }

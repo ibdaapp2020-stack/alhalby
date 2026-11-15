@@ -69,9 +69,33 @@ export function isPublicProductionHost(host: string | null | undefined): boolean
   return true;
 }
 
+const PLACEHOLDER_PORTAL_HOST = "portal.example.com";
+
+/**
+ * A separate admin portal exists only when NEXT_PUBLIC_PORTAL_HOST is set to a
+ * real hostname. The template placeholder is not a portal.
+ */
+export function hasDedicatedPortalHost(): boolean {
+  const configured = process.env.NEXT_PUBLIC_PORTAL_HOST?.trim().toLowerCase() ?? "";
+  return configured.length > 0 && configured !== PLACEHOLDER_PORTAL_HOST;
+}
+
+/**
+ * Hide /admin only on the view-only menu host, and on the public store when a
+ * dedicated portal host is actually configured. This store has no portal, so
+ * staff sign in at /admin on the public site.
+ */
 export function shouldBlockAdminOnHost(host: string | null | undefined): boolean {
   if (isMenuHost(host)) return true;
+  if (!hasDedicatedPortalHost()) return false;
   return isPublicProductionHost(host);
+}
+
+/** Lowercase the /admin prefix so /ADMIN reaches the same Next.js route. */
+export function canonicalAdminPathname(pathname: string): string | null {
+  if (!/^\/admin(?:\/|$)/i.test(pathname)) return null;
+  const canonical = "/admin" + pathname.slice("/admin".length).toLowerCase();
+  return canonical === pathname ? null : canonical;
 }
 
 export function isCustomerOnlyPath(pathname: string): boolean {
