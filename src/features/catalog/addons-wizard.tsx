@@ -244,7 +244,8 @@ function GroupStep({
             (selection) => selection.optionId === option.id
           );
           const isSelected = Boolean(entry);
-          const optDisabled = atMax && !isSelected;
+          const optDisabled =
+            group.selectionType !== "single" && atMax && !isSelected;
 
           return (
             <div

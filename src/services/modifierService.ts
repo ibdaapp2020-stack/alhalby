@@ -696,14 +696,13 @@ export async function getProductSuggestions(triggerProductId?: string): Promise<
   const q = triggerProductId
     ? query(
         collection(db, COLLECTIONS.suggestions),
-        where("triggerProductId", "==", triggerProductId),
-        orderBy("sortOrder", "asc")
+        where("triggerProductId", "==", triggerProductId)
       )
     : query(collection(db, COLLECTIONS.suggestions), orderBy("sortOrder", "asc"));
   const snapshot = await getDocs(q);
-  return snapshot.docs.map((d) =>
-    mapProductSuggestion(docTo<FirestoreProductSuggestion>(d.id, d.data()))
-  );
+  return snapshot.docs
+    .map((d) => mapProductSuggestion(docTo<FirestoreProductSuggestion>(d.id, d.data())))
+    .sort((a, b) => a.sortOrder - b.sortOrder);
 }
 
 export function subscribeToSuggestions(
@@ -832,11 +831,7 @@ export async function loadProductBuilderConfig(productId: string): Promise<Produ
     ),
     getDocs(query(collection(db, COLLECTIONS.businessRules), orderBy("priority", "asc"))),
     getDocs(
-      query(
-        collection(db, COLLECTIONS.suggestions),
-        where("triggerProductId", "==", productId),
-        orderBy("sortOrder", "asc")
-      )
+      query(collection(db, COLLECTIONS.suggestions), where("triggerProductId", "==", productId))
     ),
     getDocs(collection(db, COLLECTIONS.inventoryLinks)),
   ]);
@@ -860,9 +855,9 @@ export async function loadProductBuilderConfig(productId: string): Promise<Produ
       mapProductModifierOption(docTo<FirestoreProductModifierOption>(d.id, d.data()))
     ),
     rules: rulesSnap.docs.map((d) => mapBusinessRule(docTo<FirestoreBusinessRule>(d.id, d.data()))),
-    suggestions: suggestionsSnap.docs.map((d) =>
-      mapProductSuggestion(docTo<FirestoreProductSuggestion>(d.id, d.data()))
-    ),
+    suggestions: suggestionsSnap.docs
+      .map((d) => mapProductSuggestion(docTo<FirestoreProductSuggestion>(d.id, d.data())))
+      .sort((a, b) => a.sortOrder - b.sortOrder),
     inventory: inventorySnap.docs.map((d) =>
       mapInventoryLink(docTo<FirestoreInventoryLink>(d.id, d.data()))
     ),
@@ -953,13 +948,19 @@ export function subscribeToProductBuilderConfig(
       emit();
     }, (e) => onError(e.message)),
     onSnapshot(
-      query(collection(db, COLLECTIONS.suggestions), where("triggerProductId", "==", productId), orderBy("sortOrder", "asc")),
+      query(collection(db, COLLECTIONS.suggestions), where("triggerProductId", "==", productId)),
       (s) => {
-        cache.suggestions = s.docs.map((d) => mapProductSuggestion(docTo<FirestoreProductSuggestion>(d.id, d.data())));
+        cache.suggestions = s.docs
+          .map((d) => mapProductSuggestion(docTo<FirestoreProductSuggestion>(d.id, d.data())))
+          .sort((a, b) => a.sortOrder - b.sortOrder);
         ready.suggestions = true;
         emit();
       },
-      (e) => onError(e.message)
+      () => {
+        cache.suggestions = [];
+        ready.suggestions = true;
+        emit();
+      }
     ),
     onSnapshot(collection(db, COLLECTIONS.inventoryLinks), (s) => {
       cache.inventory = s.docs.map((d) => mapInventoryLink(docTo<FirestoreInventoryLink>(d.id, d.data())));
