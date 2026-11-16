@@ -44,8 +44,8 @@ export const BRAND = {
   logo: preset.brand.logoUrl,
   /** Alias kept for backward compatibility with legacy imports. */
   logoOriginal: preset.brand.logoUrl,
-  /** Width / height of public/logo.png (333×585). */
-  logoAspect: 333 / 585,
+  /** Width / height of public/logo.png (609×1200). */
+  logoAspect: 609 / 1200,
   store: preset.brand.storeImageUrl,
   /** Local fallback when remote store image fails to load. */
   storeFallback: preset.brand.storeImageUrl,

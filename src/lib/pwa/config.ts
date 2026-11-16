@@ -28,7 +28,7 @@ export const PWA_THEME_COLOR = preset.palette.bg;
 export const PWA_BACKGROUND_COLOR = preset.palette.bg;
 
 /** Bump when service worker caching strategy or precache list changes. */
-export const PWA_SW_VERSION = "store-pwa-3";
+export const PWA_SW_VERSION = "store-pwa-4";
 
 export const PWA_ICONS = {
   icon192: "/icons/icon-192.png",

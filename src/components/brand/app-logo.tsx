@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { BRAND, LOGO_HEIGHT, type LogoSize } from "@/lib/brand";
+import { BRAND, type LogoSize } from "@/lib/brand";
 
 export type AppLogoProps = {
   size?: LogoSize;
@@ -28,17 +28,16 @@ export function AppLogo({
   priority = false,
   href = "/",
 }: AppLogoProps) {
-  const height = LOGO_HEIGHT[size];
-  const width = Math.round(height * BRAND.logoAspect);
-
+  const hasHeight = /\bh-/.test(className ?? "");
   const image = (
     <Image
       src={BRAND.logo}
       alt={BRAND.name}
-      width={width}
-      height={height}
+      width={Math.round(640 * BRAND.logoAspect)}
+      height={640}
+      sizes="160px"
       priority={priority}
-      className={cn("max-w-none object-contain", SIZE_CLASS[size], className)}
+      className={cn("w-auto max-w-none object-contain", !hasHeight && SIZE_CLASS[size], className)}
     />
   );
 

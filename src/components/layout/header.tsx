@@ -77,7 +77,7 @@ export function SiteHeader() {
         {/* ─── Desktop ─── */}
         <div className="hidden h-20 w-full items-center gap-4 px-6 lg:flex lg:px-10">
           <div className="shrink-0">
-            <Logo size="md" href="/" priority className="h-16 w-auto" />
+            <Logo size="md" href="/" priority className="h-[72px] w-auto" />
           </div>
 
           <nav className="flex flex-1 items-center justify-center gap-1" aria-label="Main">
@@ -151,7 +151,7 @@ export function SiteHeader() {
           </button>
 
           <div className="flex-1 min-w-0 flex justify-center">
-            <Logo size="sm" href="/" priority className="h-12 w-auto" />
+            <Logo size="sm" href="/" priority className="h-14 w-auto" />
           </div>
 
           <div className="flex items-center gap-1.5">
@@ -245,7 +245,7 @@ export function SiteHeader() {
               }}
             >
               <div className="flex items-center justify-between gap-3 border-b border-ds-border px-4 py-3">
-                <Logo size="xs" href="/" className="h-8 w-auto" />
+                <Logo size="xs" href="/" className="h-12 w-auto" />
                 <button
                   type="button"
                   onClick={() => setMobileOpen(false)}

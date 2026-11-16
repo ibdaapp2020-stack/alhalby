@@ -117,14 +117,14 @@ export const metadata: Metadata = {
   openGraph: {
     title: BRAND.name,
     description: siteDescription,
-    images: [{ url: BRAND.logo, alt: BRAND.name }],
+    images: [{ url: PWA_ICONS.icon512, alt: BRAND.name }],
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
     title: BRAND.name,
     description: siteDescription,
-    images: [BRAND.logo],
+    images: [PWA_ICONS.icon512],
   },
 };
 

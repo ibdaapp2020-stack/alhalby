@@ -11,7 +11,7 @@
  * Bump SW_VERSION whenever precache contents or caching logic change so
  * clients get the fresh shell on next load.
  */
-const SW_VERSION = "store-pwa-3";
+const SW_VERSION = "store-pwa-4";
 const STATIC_CACHE = `${SW_VERSION}-static`;
 const PAGES_CACHE = `${SW_VERSION}-pages`;
 

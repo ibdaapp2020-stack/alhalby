@@ -29,7 +29,7 @@ export function AppLoadingScreen({ className }: { className?: string }) {
           href={null}
           className="h-auto max-h-none w-[128px] sm:w-[164px]"
         />
-        <span className="mt-6 h-6 w-6 animate-spin rounded-full border-2 border-beige-dark/35 border-t-turquoise" />
+        <span className="mt-6 h-6 w-6 animate-spin rounded-full border-2 border-[#E6D3B0] border-t-[#C9A35D]" />
         <span className="sr-only">Loading</span>
       </div>
     </div>

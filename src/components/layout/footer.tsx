@@ -104,7 +104,7 @@ export function SiteFooter() {
 
           {/* Logo */}
           <div className="flex flex-col items-start sm:items-start">
-            <Logo size="md" href="/" priority className="h-12 w-auto" />
+            <Logo size="md" href="/" priority className="h-16 w-auto" />
             <p className="text-caption mt-4 max-w-xs leading-relaxed">{t("footer.about")}</p>
           </div>
         </div>

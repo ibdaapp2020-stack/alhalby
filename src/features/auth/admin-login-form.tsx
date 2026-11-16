@@ -89,7 +89,7 @@ export function AdminLoginForm() {
         <div aria-hidden className="absolute -top-24 -start-16 h-72 w-72 rounded-full bg-[#C9A35D]/25 blur-3xl" />
         <div aria-hidden className="absolute -bottom-20 end-0 h-64 w-64 rounded-full bg-black/20 blur-3xl" />
         <div className="relative z-10 flex max-w-sm flex-col items-center px-10 text-center">
-          <Logo size="xl" href={null} className="h-40 w-auto rounded-3xl bg-[#FFFCF7] p-4" />
+          <Logo size="xl" href={null} className="h-48 w-auto" />
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

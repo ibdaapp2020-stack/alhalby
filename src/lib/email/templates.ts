@@ -81,7 +81,7 @@ export function emailShell(opts: {
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:${COLORS.warmWhite};border-radius:16px;overflow:hidden;border:1px solid ${COLORS.border};">
           <tr>
             <td style="background:${COLORS.primary};padding:22px 24px;text-align:center;">
-              <img src="${logoUrl}" alt="${escapeHtml(brand)}" width="72" height="63" style="display:inline-block;border:0;outline:none;max-width:72px;height:auto;" />
+              <img src="${logoUrl}" alt="${escapeHtml(brand)}" width="78" height="154" style="display:inline-block;border:0;outline:none;max-width:78px;height:auto;" />
               <div style="margin-top:10px;font-size:20px;font-weight:700;letter-spacing:0.04em;color:${COLORS.warmWhite};">${escapeHtml(brand)}</div>
               ${
                 badge
