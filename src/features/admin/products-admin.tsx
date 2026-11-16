@@ -52,9 +52,9 @@ function AddProductCard({
       type="button"
       onClick={onClick}
       aria-label={title}
-      className="group flex aspect-[3/4] min-h-[220px] w-full flex-col items-center justify-center rounded-2xl border-2 border-dashed border-turquoise/45 bg-turquoise/[0.04] px-4 text-center transition-colors duration-200 hover:border-turquoise hover:bg-turquoise/[0.08] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-turquoise focus-visible:ring-offset-2 dark:bg-turquoise/[0.06]"
+      className="group flex min-h-[220px] w-full flex-col items-center justify-center rounded-2xl border border-dashed border-[#C9A24A] bg-[#FFFCF7] px-4 text-center transition-colors duration-200 hover:border-[#6E2132] hover:bg-[#F8F1E7] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C9A24A]"
     >
-      <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-turquoise/10 text-turquoise transition-colors duration-200 group-hover:bg-turquoise group-hover:text-warm-white">
+      <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#6E2132] text-[#F8F1E7] transition-colors duration-200 group-hover:bg-[#4A1522]">
         <Plus className="h-7 w-7" strokeWidth={2} aria-hidden />
       </span>
       <span className="mt-4 text-base font-semibold text-dark-brown dark:text-warm-white">
@@ -77,6 +77,7 @@ export function ProductsAdmin() {
   const { categories, error: categoriesError, retry: retryCategories } = useAllCategories();
   const [view, setView] = useState<ViewMode>("grid");
   const [search, setSearch] = useState("");
+  const [categoryId, setCategoryId] = useState("all");
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [editing, setEditing] = useState<Product | null>(null);
   const [open, setOpen] = useState(false);
@@ -88,6 +89,8 @@ export function ProductsAdmin() {
   // Header "מוצר חדש" links to /admin/products?new=1
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
+    const q = params.get("q");
+    if (q) setSearch(q);
     if (params.get("new") !== "1") return;
     setEditing(null);
     setOpen(true);
@@ -102,15 +105,34 @@ export function ProductsAdmin() {
   );
 
   const filtered = useMemo(() => {
-    if (!search) return products;
-    const q = search.toLowerCase();
-    return products.filter(
-      (p) =>
+    const q = search.trim().toLowerCase();
+    return products.filter((p) => {
+      const matchesSearch =
+        !q ||
         p.name_en.toLowerCase().includes(q) ||
-        p.name_he.includes(search) ||
-        p.name_ar.includes(search)
-    );
-  }, [products, search]);
+        p.name_he.includes(search.trim()) ||
+        p.name_ar.includes(search.trim());
+      const matchesCategory = categoryId === "all" || p.categoryId === categoryId;
+      return matchesSearch && matchesCategory;
+    });
+  }, [products, search, categoryId]);
+
+  const productTitle = (product: Product) =>
+    locale === "en"
+      ? product.name_en || product.name_ar || product.name_he
+      : locale === "he"
+        ? product.name_he || product.name_ar || product.name_en
+        : product.name_ar || product.name_he || product.name_en;
+
+  const categoryName = (id: string) => {
+    const category = categories.find((item) => item.id === id);
+    if (!category) return "";
+    return locale === "en"
+      ? category.name_en || category.name_ar || category.name_he
+      : locale === "he"
+        ? category.name_he || category.name_ar || category.name_en
+        : category.name_ar || category.name_he || category.name_en;
+  };
 
   const toggleSelect = (id: string) => {
     setSelected((prev) => {
@@ -252,33 +274,24 @@ export function ProductsAdmin() {
         subtitle={t("admin.products.subtitle")}
         actions={
           <>
-            <div className="relative">
-              <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-coffee/40" />
-              <Input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder={t("admin.action.search")}
-                className="h-10 w-44 pl-9 sm:w-56"
-              />
-            </div>
-            <div className="flex rounded-xl border border-beige-dark/30 p-0.5 dark:border-white/10">
+            <div className="flex rounded-full border border-[#E6D3B0] bg-[#FFFCF7] p-0.5">
               <button
                 onClick={() => setView("grid")}
-                className={cn("rounded-lg p-2", view === "grid" && "bg-coffee text-warm-white")}
+                className={cn("rounded-full p-2 text-[#6B5346]", view === "grid" && "bg-[#6E2132] text-[#F8F1E7]")}
                 title={t("admin.products.grid")}
               >
                 <LayoutGrid className="h-4 w-4" />
               </button>
               <button
                 onClick={() => setView("table")}
-                className={cn("rounded-lg p-2", view === "table" && "bg-coffee text-warm-white")}
+                className={cn("rounded-full p-2 text-[#6B5346]", view === "table" && "bg-[#6E2132] text-[#F8F1E7]")}
                 title={t("admin.products.table")}
               >
                 <List className="h-4 w-4" />
               </button>
               <button
                 onClick={() => setView("reorder")}
-                className={cn("rounded-lg p-2", view === "reorder" && "bg-coffee text-warm-white")}
+                className={cn("rounded-full p-2 text-[#6B5346]", view === "reorder" && "bg-[#6E2132] text-[#F8F1E7]")}
                 title={t("admin.action.reorder")}
               >
                 <GripVertical className="h-4 w-4" />
@@ -299,6 +312,47 @@ export function ProductsAdmin() {
           </>
         }
       />
+
+      <div className="admin-card space-y-3 p-3 sm:p-4">
+        <div className="relative md:hidden">
+          <Search className="absolute top-1/2 start-3 h-4 w-4 -translate-y-1/2 text-[#A6843D]" />
+          <Input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder={t("admin.action.search")}
+            className="h-10 border-[#E6D3B0] bg-[#FFFCF7] ps-9"
+          />
+        </div>
+        <div className="flex gap-2 overflow-x-auto pb-1">
+          <button
+            type="button"
+            onClick={() => setCategoryId("all")}
+            className={cn(
+              "shrink-0 rounded-full border px-3 py-1.5 text-xs font-semibold",
+              categoryId === "all"
+                ? "border-[#6E2132] bg-[#6E2132] text-[#F8F1E7]"
+                : "border-[#E6D3B0] bg-[#FFFCF7] text-[#4A1522]"
+            )}
+          >
+            {t("catalog.all", "الكل")}
+          </button>
+          {categories.map((category) => (
+            <button
+              key={category.id}
+              type="button"
+              onClick={() => setCategoryId(category.id)}
+              className={cn(
+                "shrink-0 rounded-full border px-3 py-1.5 text-xs font-semibold",
+                categoryId === category.id
+                  ? "border-[#6E2132] bg-[#6E2132] text-[#F8F1E7]"
+                  : "border-[#E6D3B0] bg-[#FFFCF7] text-[#4A1522]"
+              )}
+            >
+              {categoryName(category.id)}
+            </button>
+          ))}
+        </div>
+      </div>
 
       <AnimatePresence>
         {selected.size > 0 && (
@@ -373,8 +427,8 @@ export function ProductsAdmin() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.02 }}
               className={cn(
-                "group overflow-hidden rounded-2xl border bg-warm-white shadow-soft transition-all hover:shadow-elevated dark:bg-[#1a1412]",
-                selected.has(product.id) ? "border-turquoise ring-2 ring-turquoise/30" : "border-beige-dark/20 dark:border-white/10"
+                "group flex flex-col overflow-hidden rounded-2xl border bg-[#FFFCF7] shadow-[0_12px_28px_-22px_rgba(74,21,34,0.55)] transition-transform hover:-translate-y-0.5",
+                selected.has(product.id) ? "border-[#C9A24A] ring-2 ring-[#C9A24A]/40" : "border-[#E6D3B0]"
               )}
             >
               <div
@@ -388,7 +442,7 @@ export function ProductsAdmin() {
                     openEdit(product);
                   }
                 }}
-                className="relative aspect-square cursor-pointer"
+                className="relative aspect-[4/3] cursor-pointer bg-[#F3EBDD]"
               >
                 <ProductImage
                   image={product.image}
@@ -401,61 +455,47 @@ export function ProductsAdmin() {
                     event.stopPropagation();
                     toggleSelect(product.id);
                   }}
-                  className="absolute top-2 left-2 rounded-lg bg-warm-white/90 p-1.5 shadow-sm"
+                  className="absolute start-2 top-2 rounded-full bg-[#FFFCF7]/95 p-1.5 shadow-sm"
                 >
-                  {selected.has(product.id) ? <CheckSquare className="h-4 w-4 text-turquoise" /> : <Square className="h-4 w-4 text-coffee/40" />}
+                  {selected.has(product.id) ? <CheckSquare className="h-4 w-4 text-[#6E2132]" /> : <Square className="h-4 w-4 text-[#A6843D]" />}
                 </button>
-                <div className="absolute top-2 right-2 flex gap-1 opacity-100 transition-opacity sm:opacity-0 sm:group-hover:opacity-100">
-                  <button
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      void duplicateProduct(product);
-                    }}
-                    className="rounded-lg bg-warm-white/90 p-1.5"
-                    title={t("admin.action.duplicate")}
-                  >
-                    <Copy className="h-3.5 w-3.5" />
-                  </button>
-                  <button
-                    onClick={(event) => {
-                      event.stopPropagation();
-                      openEdit(product);
-                    }}
-                    className="rounded-lg bg-warm-white/90 p-1.5"
-                    title={t("admin.action.edit")}
-                  >
+                <span
+                  className={cn(
+                    "absolute bottom-2 start-2 rounded-full px-2 py-0.5 text-[10px] font-semibold",
+                    product.available ? "bg-[#F3E3B0] text-[#6A4A12]" : "bg-[#6E2132] text-[#F8F1E7]"
+                  )}
+                >
+                  {product.available ? t("admin.status.available") : t("admin.status.unavailable")}
+                </span>
+              </div>
+              <div className="flex flex-1 flex-col gap-2 p-3">
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold text-[#3E2A1F]" dir={locale === "en" ? "ltr" : "rtl"}>
+                    {productTitle(product)}
+                  </p>
+                  <p className="truncate text-[11px] text-[#8A6A45]">{categoryName(product.categoryId) || "—"}</p>
+                </div>
+                <p dir="ltr" className="text-start text-sm font-bold text-[#6E2132]">{formatPrice(product.price)}</p>
+                <div className="mt-auto flex items-center justify-between gap-1 border-t border-[#F0E2C8] pt-2">
+                  <button type="button" onClick={() => openEdit(product)} className="rounded-full p-1.5 text-[#6E2132] hover:bg-[#F8F1E7]" title={t("admin.action.edit")}>
                     <Pencil className="h-3.5 w-3.5" />
                   </button>
+                  <button type="button" onClick={() => void duplicateProduct(product)} className="rounded-full p-1.5 text-[#8A6A45] hover:bg-[#F8F1E7]" title={t("admin.action.duplicate")}>
+                    <Copy className="h-3.5 w-3.5" />
+                  </button>
+                  <button type="button" onClick={() => void handleDelete(product)} className="rounded-full p-1.5 text-[#8C3A45] hover:bg-[#F8E8E4]" title={t("admin.action.delete")}>
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
                 </div>
-                {!product.available && (
-                  <span className="absolute bottom-2 left-2 rounded-full bg-red-500/90 px-2 py-0.5 text-[10px] text-white">
-                    {t("admin.status.unavailable")}
-                  </span>
-                )}
-              </div>
-              <div className="p-3">
-                <p className="truncate text-sm font-semibold dark:text-warm-white" dir="rtl">{product.name_ar}</p>
-                <p className="truncate text-xs text-coffee/50">{product.name_en}</p>
-                <Input
-                  type="number"
-                  defaultValue={product.price}
-                  className="mt-2 h-8 text-sm font-bold"
-                  onBlur={(e) => {
-                    const val = parseFloat(e.target.value);
-                    if (!isNaN(val) && val !== product.price) {
-                      updateProduct(product.id, { price: val, profit: Math.round((val - product.cost) * 100) / 100 });
-                    }
-                  }}
-                />
               </div>
             </motion.div>
           ))}
         </div>
       ) : (
-        <div className="overflow-hidden rounded-2xl border border-beige-dark/20 bg-warm-white shadow-soft dark:border-white/10 dark:bg-[#1a1412]">
+        <div className="admin-card overflow-hidden">
           <table className="w-full">
             <thead>
-              <tr className="border-b bg-beige/30 text-left text-xs uppercase text-coffee/60 dark:bg-white/5">
+              <tr className="border-b bg-beige/30 text-start text-xs uppercase text-coffee/60 dark:bg-white/5">
                 <th className="px-4 py-3">
                   <button onClick={selectAll} title={t("admin.action.selectAll")}>
                     <Square className="h-4 w-4" />
@@ -465,7 +505,7 @@ export function ProductsAdmin() {
                 <th className="hidden px-4 py-3 md:table-cell">{t("admin.products.category")}</th>
                 <th className="px-4 py-3">{t("admin.products.price")}</th>
                 <th className="hidden px-4 py-3 sm:table-cell">{t("admin.table.status")}</th>
-                <th className="px-4 py-3 text-right">{t("admin.table.actions")}</th>
+                <th className="px-4 py-3 text-end">{t("admin.table.actions")}</th>
               </tr>
             </thead>
             <tbody>
@@ -483,13 +523,13 @@ export function ProductsAdmin() {
                       </div>
                       <div>
                         <p className="text-sm font-medium dark:text-warm-white" dir="rtl">{product.name_ar}</p>
-                        <p className="text-xs text-coffee/50">{product.name_en}</p>
+                        <p dir="ltr" className="text-start text-xs text-coffee/50">{product.name_en}</p>
                       </div>
                     </div>
                   </td>
                   <td className="hidden px-4 py-3 text-sm md:table-cell">{categories.find((c) => c.id === product.categoryId)?.name_en}</td>
                   <td className="px-4 py-3">
-                    <Input type="number" defaultValue={product.price} className="h-8 w-20"
+                    <Input type="number" dir="ltr" defaultValue={product.price} className="h-8 w-20"
                       onBlur={(e) => {
                         const val = parseFloat(e.target.value);
                         if (!isNaN(val) && val !== product.price) updateProduct(product.id, { price: val });

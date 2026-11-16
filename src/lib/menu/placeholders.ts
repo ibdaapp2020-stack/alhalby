@@ -55,11 +55,24 @@ export function isAllowedProductImageUrl(url: string): boolean {
   return false;
 }
 
+/** Store logo files are branding, not a product photo. */
+export function isBrandLogoUrl(url: string | null | undefined): boolean {
+  if (!url) return false;
+  const path = url.split("?")[0]?.split("#")[0]?.toLowerCase() ?? "";
+  if (!path) return false;
+  if (path.endsWith("/logo.png") || path.endsWith("/logo.svg") || path.endsWith("/logo.webp") || path.endsWith("/logo.jpg")) {
+    return true;
+  }
+  const brandLogo = BRAND.logo.split("?")[0]?.toLowerCase() ?? "";
+  return Boolean(brandLogo) && path === brandLogo;
+}
+
 /** True when the product has a real uploaded image worth showing as a thumbnail */
 export function hasRealProductImage(image: string | undefined | null): boolean {
   const normalized = normalizeImageUrl(image);
   if (!normalized || !isAllowedProductImageUrl(normalized)) return false;
   if (normalized.includes("placeholder")) return false;
+  if (isBrandLogoUrl(normalized)) return false;
   if (normalized === LOCAL_DEFAULT || normalized === BRAND.store) return false;
   return true;
 }

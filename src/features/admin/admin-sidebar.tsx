@@ -101,10 +101,10 @@ function SidebarBrand() {
     <div className="flex items-center gap-3 px-1 py-1">
       <Logo href={null} size="sm" className="h-14 w-auto" />
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-semibold text-[#3E2A1F]">
+        <p className="truncate text-sm font-semibold text-[#F8F1E7]">
           {displayStoreName(locale, settings?.storeName)}
         </p>
-        <p className="truncate text-[11px] text-[#A89B68]">
+        <p className="truncate text-[11px] tracking-wide text-[#E2C27A]">
           {t("admin.subtitle", "לוח ניהול")}
         </p>
       </div>
@@ -121,7 +121,7 @@ function SidebarFooter({ onNavigate }: { onNavigate?: () => void }) {
       : "/";
 
   return (
-    <div className="space-y-1 border-t border-[#E6D7C3] pt-3">
+    <div className="space-y-1 border-t border-[#E2C27A]/25 pt-3">
       <Link
         href={storeHref}
         onClick={onNavigate}
@@ -138,7 +138,7 @@ function SidebarFooter({ onNavigate }: { onNavigate?: () => void }) {
         }}
         className="admin-sidebar-link w-full text-start"
       >
-        <LogOut className="h-4 w-4 shrink-0" strokeWidth={1.75} />
+        <LogOut className="h-4 w-4 shrink-0 rtl:-scale-x-100" strokeWidth={1.75} />
         <span className="truncate">{t("admin.signOut")}</span>
       </button>
     </div>
@@ -156,14 +156,14 @@ export function AdminSidebar() {
       className={cn(
         ADMIN_LAYOUT.sidebarVisible,
         "admin-sidebar sticky top-0 h-screen shrink-0 flex-col",
-        "border-s"
+        "border-e"
       )}
       style={{ width: ADMIN_SIDEBAR_WIDTH_PX }}
       aria-label={t("admin.subtitle")}
     >
       <div className="flex h-full flex-col gap-4 p-4">
         <SidebarBrand />
-        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain pr-1">
+        <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain pe-1">
           <NavSections />
         </div>
         <SidebarFooter />
@@ -182,10 +182,8 @@ export function AdminMobileDrawer({
 }) {
   const t = useT();
   const { dir } = useLocale();
-  // RTL: slide in from the right (matches sidebar position on desktop).
-  // LTR: slide in from the left.
+  // Drawer lives on the start edge: right for Arabic/Hebrew, left for English.
   const offScreen = dir === "rtl" ? "100%" : "-100%";
-  const sideClass = dir === "rtl" ? "end-0" : "start-0";
 
   return (
     <>
@@ -198,9 +196,8 @@ export function AdminMobileDrawer({
       )}
       <aside
         className={cn(
-          "admin-sidebar fixed inset-y-0 z-50 flex flex-col shadow-2xl transition-transform duration-250",
-          ADMIN_LAYOUT.drawerOnly,
-          sideClass
+          "admin-sidebar fixed inset-y-0 start-0 z-50 flex flex-col shadow-2xl transition-transform duration-250",
+          ADMIN_LAYOUT.drawerOnly
         )}
         style={{
           width: ADMIN_SIDEBAR_WIDTH_PX,
@@ -213,13 +210,13 @@ export function AdminMobileDrawer({
             <SidebarBrand />
             <button
               onClick={onClose}
-              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-[#6E2132] transition-colors hover:bg-[#EFE4D1]"
+              className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-[#F8F1E7] transition-colors hover:bg-white/10"
               aria-label={t("common.close", "סגור")}
             >
               <X className="h-5 w-5" strokeWidth={1.75} />
             </button>
           </div>
-          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain pr-1">
+          <div className="min-h-0 flex-1 overflow-y-auto overscroll-contain pe-1">
             <NavSections onNavigate={onClose} />
           </div>
           <SidebarFooter onNavigate={onClose} />

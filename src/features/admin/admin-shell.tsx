@@ -20,20 +20,15 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthGuard>
-      <div
-        className="admin-page min-h-screen overflow-x-hidden"
-        data-admin
-      >
-        {/* Drawer overlay — mobile & tablet only (< lg) */}
+      <div className="admin-page min-h-screen overflow-x-hidden" data-admin>
         <AdminMobileDrawer open={mobileOpen} onClose={() => setMobileOpen(false)} />
 
         {/*
-          Desktop layout (lg+): CSS Grid — Main (Header + Content) | Sidebar
-          (RTL: sidebar on right). No fixed overlay; sidebar is a real grid
-          column.
+          First column is the sidebar, so it sits on the start edge:
+          right in Arabic and Hebrew, left in English.
         */}
-        <div className="lg:grid lg:min-h-screen lg:grid-cols-[minmax(0,1fr)_280px]">
-          {/* Column 1: Header + Main — never under sidebar */}
+        <div className="lg:grid lg:min-h-screen lg:grid-cols-[280px_minmax(0,1fr)]">
+          <AdminSidebar />
           <div className="flex min-h-screen min-w-0 flex-col">
             <AdminHeader onMenuClick={() => setMobileOpen(true)} />
             <motion.main
@@ -49,10 +44,6 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               </div>
             </motion.main>
           </div>
-
-          {/* Column 2: Sidebar — in-flow, sticky, 100vh (RTL: visually on
-             the right thanks to RTL document direction + grid-column order) */}
-          <AdminSidebar />
         </div>
       </div>
     </AuthGuard>

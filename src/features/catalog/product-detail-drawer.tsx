@@ -1,8 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
-import { Heart, Minus, Plus, ShoppingBag, X, Share2, Sparkles, ImageIcon } from "lucide-react";
+import { Heart, Minus, Plus, ShoppingBag, X, Share2, Sparkles } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -23,7 +22,7 @@ import { useFavorites } from "@/hooks/useFavorites";
 import { useProducts } from "@/hooks/useProducts";
 import { useProductBuilderConfig } from "@/hooks/useModifiers";
 import { useIsMobile } from "@/hooks/useIsMobile";
-import { getProductImage } from "@/lib/menu/placeholders";
+import { ProductImage } from "@/components/catalog/product-image";
 import { getLocalizedDescription, getProductDisplayName } from "@/lib/i18n/localized-content";
 import {
   calculateLineTotal,
@@ -31,7 +30,7 @@ import {
   getSuggestedProducts,
 } from "@/lib/product-builder/engine";
 import { AddonsWizard } from "@/features/catalog/addons-wizard";
-import { ProductCard } from "./product-card";
+import { HaatProductCard } from "./haat-product-card";
 import type { Product } from "@/types";
 
 interface ProductDetailDrawerProps {
@@ -67,7 +66,6 @@ function ProductDetailContent({
 
   const hasBuilder = config ? productHasBuilder(config) : false;
   const suggestions = config ? getSuggestedProducts(config, products, locale) : [];
-  const imageSrc = getProductImage(product.image, product.categoryId);
   const isSplit = layout === "split";
 
   const handleAdd = () => {
@@ -173,24 +171,14 @@ function ProductDetailContent({
           )}
           onClick={() => setZoomed(!zoomed)}
         >
-          {imageSrc ? (
-            <Image
-              src={imageSrc}
-              alt={localized.name}
-              fill
-              unoptimized={imageSrc.includes("firebasestorage")}
-              className={cn(
-                "object-cover object-center transition-transform",
-                zoomed && "scale-105"
-              )}
-              sizes={isSplit ? "(min-width: 1024px) 380px, 100vw" : "100vw"}
-              priority
-            />
-          ) : (
-            <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-beige/60 via-cream to-beige/40">
-              <ImageIcon className="h-12 w-12 text-coffee/20" strokeWidth={1.5} />
-            </div>
-          )}
+          <ProductImage
+            image={product.image}
+            categoryId={product.categoryId}
+            alt={localized.name}
+            priority
+            sizes={isSplit ? "(min-width: 1024px) 380px, 100vw" : "100vw"}
+            className={cn("object-cover object-center transition-transform", zoomed && "scale-105")}
+          />
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-dark-brown/35 via-transparent to-transparent" />
           {imageActions}
         </div>
@@ -201,7 +189,7 @@ function ProductDetailContent({
               <h2 className="font-display text-2xl font-bold text-ds-primary sm:text-[1.75rem]" dir={localized.dir}>
                 {localized.name}
               </h2>
-              <p className="text-2xl font-bold text-ds-primary">{formatPrice(product.price)}</p>
+              <p dir="ltr" className="text-2xl font-bold tabular-nums text-[#541826]">{formatPrice(product.price)}</p>
               {isMockMode() ? (
                 <p className="text-xs font-medium text-[#A89B68]">{t("catalog.demoPrice", "מחיר הדגמה")}</p>
               ) : null}
@@ -258,9 +246,9 @@ function ProductDetailContent({
                   <Sparkles className="h-4 w-4" />
                   {t("builder.suggestions")}
                 </div>
-                <div className="flex flex-col gap-2">
+                <div className="boutique-product-grid">
                   {suggestions.map(({ product: sug }) => (
-                    <ProductCard
+                    <HaatProductCard
                       key={sug.id}
                       product={sug}
                       onClick={() => onSelectProduct?.(sug)}
@@ -273,9 +261,8 @@ function ProductDetailContent({
 
           <div className="shrink-0 border-t border-beige-dark/15 bg-warm-white px-5 py-4 pb-[max(1rem,env(safe-area-inset-bottom))] sm:px-6 lg:px-7">
             <Button
-              variant="turquoise"
               size="lg"
-              className="h-12 w-full rounded-xl shadow-soft"
+              className="h-12 w-full rounded-[16px] bg-[#6E2132] text-[#F8F3EA] shadow-soft hover:bg-[#541826]"
               onClick={handleAdd}
               disabled={!product.available || configLoading}
             >
@@ -344,7 +331,7 @@ export function ProductDetailDrawer({
         <DialogContent
           layout="custom"
           className={cn(
-            "inset-0 flex h-[100dvh] max-h-[100dvh] w-full max-w-none flex-col overflow-hidden rounded-none border-0 p-0 shadow-none",
+            "inset-x-0 bottom-0 top-auto flex h-[min(92dvh,100%)] max-h-[92dvh] w-full max-w-none flex-col overflow-hidden rounded-t-[22px] border-0 p-0 shadow-none",
             "[&>button]:hidden"
           )}
           style={{ backgroundColor: "#FFFFFF" }}

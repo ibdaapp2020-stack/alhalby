@@ -24,12 +24,13 @@ import {
 } from "@/features/admin/components/admin-modal";
 import { Badge } from "@/components/ui/badge";
 import { getInitials, formatDateShort, formatPrice } from "@/lib/utils";
-import { useT } from "@/components/providers/locale-provider";
+import { useLocale, useT } from "@/components/providers/locale-provider";
 import { AdminPageHeader } from "./components/admin-page-header";
 import type { Customer, OrderStatus } from "@/types";
 
 export function CustomersAdmin() {
   const t = useT();
+  const { locale } = useLocale();
   const { customers, loading } = useCustomers();
   const { orders } = useOrders();
   const [editing, setEditing] = useState<Customer | null>(null);
@@ -116,17 +117,17 @@ export function CustomersAdmin() {
           ))}
         </div>
       ) : (
-        <div className="overflow-hidden rounded-2xl border border-beige-dark/20 bg-warm-white shadow-soft dark:border-white/10 dark:bg-white/5">
+        <div className="admin-card overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[640px]">
               <thead>
-                <tr className="border-b border-beige-dark/20 bg-beige/30 text-left text-xs uppercase tracking-wider text-coffee/60 dark:bg-white/5">
+                <tr className="border-b border-beige-dark/20 bg-beige/30 text-start text-xs uppercase tracking-wider text-coffee/60 dark:bg-white/5">
                   <th className="px-4 py-3">{t("admin.customers.name")}</th>
                   <th className="hidden px-4 py-3 md:table-cell">{t("admin.customers.phone")}</th>
                   <th className="px-4 py-3">{t("admin.customers.orders")}</th>
                   <th className="hidden px-4 py-3 sm:table-cell">{t("admin.customers.spending")}</th>
                   <th className="hidden px-4 py-3 lg:table-cell">{t("admin.customers.lastVisit")}</th>
-                  <th className="px-4 py-3 text-right">{t("admin.table.actions")}</th>
+                  <th className="px-4 py-3 text-end">{t("admin.table.actions")}</th>
                 </tr>
               </thead>
               <tbody>
@@ -142,7 +143,7 @@ export function CustomersAdmin() {
                       <button
                         type="button"
                         onClick={() => setProfile(customer)}
-                        className="flex items-center gap-3 text-left"
+                        className="flex items-center gap-3 text-start"
                       >
                         <Avatar className="h-9 w-9">
                           <AvatarFallback className="bg-beige text-coffee text-xs">
@@ -151,17 +152,17 @@ export function CustomersAdmin() {
                         </Avatar>
                         <div>
                           <p className="text-sm font-medium text-dark-brown dark:text-warm-white">{customer.name}</p>
-                          <p className="text-xs text-coffee/50 md:hidden">{customer.phone}</p>
+                          <p dir="ltr" className="text-start text-xs text-coffee/50 md:hidden">{customer.phone}</p>
                         </div>
                       </button>
                     </td>
-                    <td className="hidden px-4 py-3 text-sm text-coffee/60 md:table-cell">{customer.phone}</td>
+                    <td dir="ltr" className="hidden px-4 py-3 text-start text-sm text-coffee/60 md:table-cell">{customer.phone}</td>
                     <td className="px-4 py-3 text-sm font-medium text-coffee">{customer.ordersCount}</td>
-                    <td className="hidden px-4 py-3 text-sm text-coffee sm:table-cell">
+                    <td dir="ltr" className="hidden px-4 py-3 text-start text-sm text-coffee sm:table-cell">
                       {formatPrice(customer.totalSpending || totalSpendingFor(customer, orders))}
                     </td>
-                    <td className="hidden px-4 py-3 text-sm text-coffee/50 lg:table-cell">
-                      {formatDateShort(customer.lastOrder)}
+                    <td dir="ltr" className="hidden px-4 py-3 text-start text-sm text-coffee/50 lg:table-cell">
+                      {formatDateShort(customer.lastOrder, locale)}
                     </td>
                     <td className="px-4 py-3">
                       <div className="flex justify-end gap-1">
@@ -269,11 +270,11 @@ export function CustomersAdmin() {
             </div>
             <div>
               <Label htmlFor="phone">{t("admin.customers.phone")}</Label>
-              <Input id="phone" {...form.register("phone")} className="mt-1" />
+              <Input id="phone" dir="ltr" {...form.register("phone")} className="mt-1" />
             </div>
             <div>
               <Label htmlFor="email">{t("admin.email")}</Label>
-              <Input id="email" type="email" {...form.register("email")} className="mt-1" />
+              <Input id="email" type="email" dir="ltr" {...form.register("email")} className="mt-1" />
             </div>
             <div>
               <Label htmlFor="address">{t("admin.customers.address")}</Label>

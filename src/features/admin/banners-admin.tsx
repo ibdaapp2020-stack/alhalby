@@ -27,7 +27,7 @@ import {
 } from "@/lib/banners/manager";
 import { formatDate, cn } from "@/lib/utils";
 import { isAllowedProductImageUrl } from "@/lib/menu/placeholders";
-import { useT } from "@/components/providers/locale-provider";
+import { useLocale, useT } from "@/components/providers/locale-provider";
 import { AdminPageHeader } from "./components/admin-page-header";
 import { AdminEmptyState } from "./components/admin-empty-state";
 import type { BannerInput } from "@/lib/validation/schemas";
@@ -35,6 +35,7 @@ import type { BannerSlide } from "@/types";
 
 export function BannersAdmin() {
   const t = useT();
+  const { locale } = useLocale();
   const { products } = useAllProducts();
   const { categories } = useAllCategories();
   const [banners, setBanners] = useState<BannerSlide[]>([]);
@@ -206,7 +207,7 @@ export function BannersAdmin() {
         {(banner.startDate || banner.endDate) && (
           <p className="flex items-center gap-1.5 text-xs text-coffee/50">
             <Calendar className="h-3.5 w-3.5" />
-            {banner.startDate ? formatDate(banner.startDate) : "—"} → {banner.endDate ? formatDate(banner.endDate) : "—"}
+            <span dir="ltr">{banner.startDate ? formatDate(banner.startDate, locale) : "—"} → {banner.endDate ? formatDate(banner.endDate, locale) : "—"}</span>
           </p>
         )}
 

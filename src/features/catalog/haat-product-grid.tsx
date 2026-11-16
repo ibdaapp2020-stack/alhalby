@@ -60,16 +60,12 @@ export function HaatProductGrid({
   }
 
   return (
-    <div
-      className={cn(
-        "grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4",
-        className
-      )}
-    >
+    <div className={cn("boutique-product-grid", className)}>
       <AnimatePresence mode="popLayout">
         {list.map((product, index) => (
           <motion.div
             key={product.id}
+            className="h-full min-w-0"
             layout
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}

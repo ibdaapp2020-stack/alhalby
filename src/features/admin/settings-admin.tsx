@@ -86,6 +86,7 @@ export function SettingsAdmin() {
             <div>
               <Label>{t("admin.settings.phone")}</Label>
               <Input
+                dir="ltr"
                 value={settings.phone}
                 onChange={(e) => setSettings({ ...settings, phone: e.target.value })}
                 className={`mt-1 ${adminInput}`}
@@ -155,6 +156,7 @@ export function SettingsAdmin() {
             <div>
               <Label>{t("admin.settings.whatsapp")}</Label>
               <Input
+                dir="ltr"
                 value={settings.social.whatsapp}
                 onChange={(e) => setSettings({ ...settings, social: { ...settings.social, whatsapp: e.target.value } })}
                 className={`mt-1 ${adminInput}`}
@@ -171,6 +173,7 @@ export function SettingsAdmin() {
             <div>
               <Label>{t("admin.settings.instagram")}</Label>
               <Input
+                dir="ltr"
                 value={settings.social.instagram}
                 onChange={(e) => setSettings({ ...settings, social: { ...settings.social, instagram: e.target.value } })}
                 className={`mt-1 ${adminInput}`}
@@ -179,6 +182,7 @@ export function SettingsAdmin() {
             <div>
               <Label>{t("admin.settings.mapsUrl")}</Label>
               <Input
+                dir="ltr"
                 value={settings.mapsUrl}
                 onChange={(e) => setSettings({ ...settings, mapsUrl: e.target.value })}
                 className={`mt-1 ${adminInput}`}

@@ -53,7 +53,7 @@ export function HeroBanner() {
   if (settingsLoading || bannersLoading) {
     return (
       <section className="haat-container mt-3 md:mt-6">
-        <Skeleton className="h-[240px] w-full rounded-2xl md:h-[380px] lg:h-[440px]" />
+        <Skeleton className="h-[180px] w-full rounded-2xl md:h-[240px] lg:h-[280px]" />
       </section>
     );
   }
@@ -129,7 +129,7 @@ export function HeroBanner() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          className="relative z-10 flex min-h-[240px] max-w-full flex-col justify-end px-5 py-6 sm:px-8 sm:py-10 md:min-h-[380px] md:max-w-[62%] md:justify-center md:px-12 md:py-14 lg:min-h-[440px] lg:px-16"
+          className="relative z-10 flex min-h-[180px] max-w-full flex-col justify-end px-5 py-5 sm:px-8 sm:py-7 md:min-h-[240px] md:max-w-[62%] md:justify-center md:px-10 md:py-8 lg:min-h-[280px] lg:px-12"
         >
           <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/85 md:text-xs">
             {t("hero.badge", "Welcome")}

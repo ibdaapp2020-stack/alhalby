@@ -47,8 +47,8 @@ function ProductGridSkeleton({ count = 3 }: { count?: number }) {
 /** HAAT-style vertical card skeleton (image on top, body below). */
 function HaatProductCardSkeleton() {
   return (
-    <div className="haat-card flex flex-col overflow-hidden">
-      <Skeleton className="aspect-square w-full rounded-none" />
+    <div className="boutique-product-card flex flex-col overflow-hidden">
+      <Skeleton className="aspect-[4/3] w-full rounded-none" />
       <div className="space-y-2 p-3">
         <Skeleton className="h-3.5 w-3/4" />
         <Skeleton className="h-3 w-1/2" />
@@ -63,7 +63,7 @@ function HaatProductCardSkeleton() {
 
 function HaatProductGridSkeleton({ count = 8 }: { count?: number }) {
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+    <div className="boutique-product-grid">
       {Array.from({ length: count }).map((_, i) => (
         <HaatProductCardSkeleton key={i} />
       ))}

@@ -220,18 +220,18 @@ export function OrdersAdmin() {
               setDateFilter("today");
               setStatusFilter(status);
             }}
-            className="rounded-2xl border border-beige-dark/15 bg-warm-white p-4 text-start shadow-soft transition hover:border-turquoise/40"
+            className="admin-card p-4 text-start transition hover:border-[#C9A24A]"
           >
-            <p className="text-2xl font-bold text-dark-brown dark:text-warm-white">{value}</p>
+            <p dir="ltr" className="text-start text-2xl font-bold text-[#4A1522] dark:text-warm-white">{value}</p>
             <p className="text-sm text-coffee/55">{t(`admin.status.${status}`)}</p>
           </button>
         ))}
-        <div className="rounded-2xl border border-beige-dark/15 bg-warm-white p-4 shadow-soft">
-          <p className="text-xl font-bold text-turquoise">{formatPrice(todayRevenue)}</p>
+        <div className="admin-card p-4">
+          <p dir="ltr" className="text-start text-xl font-bold text-[#6E2132]">{formatPrice(todayRevenue)}</p>
           <p className="text-sm text-coffee/55">{t("admin.orders.todayRevenue")}</p>
         </div>
-        <div className="rounded-2xl border border-beige-dark/15 bg-warm-white p-4 shadow-soft">
-          <p className="text-xl font-bold text-coffee">
+        <div className="admin-card p-4">
+          <p dir="ltr" className="text-start text-xl font-bold text-[#4A1522]">
             {averagePrep == null
               ? "—"
               : t("admin.orders.minutesShort").replace("{count}", String(averagePrep))}
@@ -251,7 +251,7 @@ export function OrdersAdmin() {
             }}
             className={cn(
               "border-b-2 px-4 py-3 text-sm font-semibold",
-              tab === value ? "border-turquoise text-turquoise" : "border-transparent text-coffee/55"
+              tab === value ? "border-[#6E2132] text-[#6E2132]" : "border-transparent text-[#8A6A45]"
             )}
           >
             {t(`admin.orders.tab.${value}`)}
@@ -259,7 +259,7 @@ export function OrdersAdmin() {
         ))}
       </div>
 
-      <div className="mt-4 grid gap-3 rounded-2xl bg-warm-white p-3 shadow-soft sm:grid-cols-2 lg:grid-cols-6">
+      <div className="admin-card mt-4 grid gap-3 p-3 sm:grid-cols-2 lg:grid-cols-6">
         <div className="relative sm:col-span-2">
           <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-coffee/40" />
           <input

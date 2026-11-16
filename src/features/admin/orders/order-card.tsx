@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useT } from "@/components/providers/locale-provider";
+import { useLocale, useT } from "@/components/providers/locale-provider";
 import {
   ORDER_STATUSES,
   effectivePaymentStatus,
@@ -117,6 +117,7 @@ export function OrderCard({
   onEditItem?: (index: number) => void;
 }) {
   const t = useT();
+  const { locale } = useLocale();
   const next = nextOrderStatus(order.status);
   const age = orderAgeMinutes(order);
   const urgent = age >= 15 && order.status === "pending";
@@ -125,7 +126,7 @@ export function OrderCard({
   return (
     <article
       className={cn(
-        "rounded-2xl border border-beige-dark/15 border-s-4 bg-warm-white p-4 shadow-soft dark:border-white/10 dark:bg-white/5",
+        "rounded-2xl border border-[#E6D3B0] border-s-4 bg-[#FFFCF7] p-4 shadow-[0_12px_28px_-22px_rgba(74,21,34,0.45)] dark:border-white/10 dark:bg-white/5",
         STATUS_BORDER[order.status],
         urgent && "ring-2 ring-amber-400/40"
       )}
@@ -133,7 +134,7 @@ export function OrderCard({
       <div className="flex flex-wrap items-start justify-between gap-3">
         <button type="button" onClick={onToggle} className="min-w-0 flex-1 text-start">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="font-bold text-dark-brown dark:text-warm-white">{order.orderNumber}</span>
+            <span dir="ltr" className="font-bold text-dark-brown dark:text-warm-white">{order.orderNumber}</span>
             <Badge variant="outline" className={STATUS_STYLE[order.status]}>
               {t(`admin.status.${order.status}`)}
             </Badge>
@@ -157,7 +158,7 @@ export function OrderCard({
           </div>
           <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-coffee/55">
             <span className="font-medium text-coffee/75">{order.customerName}</span>
-            <span>{new Date(order.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>
+            <span dir="ltr">{new Date(order.createdAt).toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" })}</span>
             <span className={cn("inline-flex items-center gap-1", urgent && "font-bold text-amber-700")}>
               <Clock className="h-3.5 w-3.5" />
               {age < 1
@@ -168,7 +169,7 @@ export function OrderCard({
         </button>
 
         <div className="text-end">
-          <p className="text-xl font-bold text-coffee">{formatPrice(order.total)}</p>
+          <p dir="ltr" className="text-xl font-bold text-coffee">{formatPrice(order.total)}</p>
           {order.orderType && (
             <p className="text-xs text-coffee/45">{t(`admin.orders.type.${order.orderType}`)}</p>
           )}
@@ -189,7 +190,7 @@ export function OrderCard({
           </div>
           <div className="space-y-1">
             <p className="font-semibold">{t("orders.date")}</p>
-            <p>{formatDate(order.createdAt)}</p>
+            <p dir="ltr">{formatDate(order.createdAt, locale)}</p>
             <p>{t("admin.orders.paymentMethod")}: {order.paymentMethod || "—"}</p>
           </div>
           {order.notes && (

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Bell,
@@ -13,6 +13,7 @@ import {
   Store,
   Moon,
   Sun,
+  Search,
 } from "lucide-react";
 import { useAppTheme } from "@/hooks/useAppTheme";
 import { useAuth } from "@/components/providers/auth-provider";
@@ -43,8 +44,10 @@ export function AdminHeader({ onMenuClick }: AdminHeaderProps) {
   const pathname = usePathname();
   const { settings } = useSettings();
   const adminPath = useAdminPath();
+  const router = useRouter();
   const [profileOpen, setProfileOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
+  const [query, setQuery] = useState("");
 
   const pageTitle = t(getAdminPageTitleKey(pathname));
   const storeHref =
@@ -59,13 +62,13 @@ export function AdminHeader({ onMenuClick }: AdminHeaderProps) {
         : t("admin.role.employee", "עובד");
 
   return (
-    <header className="sticky top-0 z-30 border-b border-[#ECE9E4] bg-white/95 backdrop-blur">
-      <div className="flex h-16 items-center gap-3 px-4 md:px-6">
+    <header className="admin-topbar sticky top-0 z-30 backdrop-blur">
+      <div className="flex h-[4.25rem] items-center gap-3 px-4 md:gap-4 md:px-6">
         {/* Mobile hamburger — opens the sidebar drawer */}
         <button
           type="button"
           onClick={onMenuClick}
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#ECE9E4] text-[#1A1A1A] transition-colors hover:bg-[#F8F7F5] lg:hidden"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#E6D3B0] bg-[#FFFCF7] text-[#4A1522] transition-colors hover:border-[#C9A24A] lg:hidden"
           aria-label={t("admin.openMenu", "פתח תפריט")}
         >
           <Menu className="h-5 w-5" strokeWidth={1.75} />
@@ -73,19 +76,37 @@ export function AdminHeader({ onMenuClick }: AdminHeaderProps) {
 
         <Logo href={null} size="xs" className="hidden h-12 w-auto sm:block" />
 
-        <div className="min-w-0 flex-1">
-          <p className="truncate text-[11px] font-medium text-[#A89B68]">
+        <div className="min-w-0 flex-1 md:flex-none">
+          <p className="truncate text-[11px] font-medium tracking-wide text-[#A6843D]">
             {displayStoreName(locale, settings?.storeName)}
           </p>
-          <h1 className="truncate text-base font-semibold text-[#6E2132] md:text-lg">
+          <h1 className="truncate font-display text-base font-semibold text-[#4A1522] md:text-lg">
             {pageTitle}
           </h1>
         </div>
 
+        <form
+          className="relative ms-auto hidden min-w-0 flex-1 justify-center md:flex"
+          onSubmit={(event) => {
+            event.preventDefault();
+            const q = query.trim();
+            router.push(q ? `${adminPath("products")}?q=${encodeURIComponent(q)}` : adminPath("products"));
+          }}
+        >
+          <Search className="pointer-events-none absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-[#A6843D]" />
+          <input
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder={t("admin.action.search")}
+            className="admin-search"
+            aria-label={t("admin.action.search")}
+          />
+        </form>
+
         <div className="hidden items-center gap-2 md:flex">
           <Link
             href={storeHref}
-            className="inline-flex h-10 items-center gap-1.5 rounded-xl border border-[#ECE9E4] bg-white px-3 text-xs font-medium text-[#1A1A1A] transition-colors hover:border-ds-primary hover:text-ds-primary"
+            className="inline-flex h-10 items-center gap-1.5 rounded-full border border-[#E6D3B0] bg-[#FFFCF7] px-3 text-xs font-medium text-[#4A1522] transition-colors hover:border-[#C9A24A]"
           >
             <Store className="h-3.5 w-3.5" strokeWidth={1.75} />
             <span>{t("admin.viewStore", "צפייה בחנות")}</span>
@@ -97,7 +118,7 @@ export function AdminHeader({ onMenuClick }: AdminHeaderProps) {
           onClick={toggleTheme}
           disabled={!mounted}
           aria-label={isDark ? t("admin.lightMode", "מצב בהיר") : t("admin.darkMode", "מצב כהה")}
-          className="hidden h-10 w-10 items-center justify-center rounded-xl border border-[#ECE9E4] text-[#1A1A1A] transition-colors hover:bg-[#F8F7F5] disabled:opacity-50 md:inline-flex"
+          className="hidden h-10 w-10 items-center justify-center rounded-full border border-[#E6D3B0] bg-[#FFFCF7] text-[#4A1522] transition-colors hover:border-[#C9A24A] disabled:opacity-50 md:inline-flex"
         >
           {mounted ? (
             isDark ? (
@@ -120,7 +141,7 @@ export function AdminHeader({ onMenuClick }: AdminHeaderProps) {
               setNotifOpen((v) => !v);
               setProfileOpen(false);
             }}
-            className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-[#ECE9E4] text-[#1A1A1A] transition-colors hover:bg-[#F8F7F5]"
+            className="relative flex h-10 w-10 items-center justify-center rounded-full border border-[#E6D3B0] bg-[#FFFCF7] text-[#4A1522] transition-colors hover:border-[#C9A24A]"
             aria-label={t("admin.notifications", "התראות")}
           >
             <Bell className="h-4 w-4" strokeWidth={1.75} />
@@ -132,7 +153,7 @@ export function AdminHeader({ onMenuClick }: AdminHeaderProps) {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 8, scale: 0.96 }}
                 transition={{ duration: 0.15 }}
-                className="absolute end-0 mt-2 w-72 rounded-2xl border border-[#ECE9E4] bg-white p-4 shadow-lg"
+                className="absolute end-0 mt-2 w-72 rounded-2xl border border-[#E6D3B0] bg-[#FFFCF7] p-4 shadow-lg"
               >
                 <p className="text-sm font-semibold text-[#1A1A1A]">
                   {t("admin.notifications", "התראות")}
@@ -152,12 +173,12 @@ export function AdminHeader({ onMenuClick }: AdminHeaderProps) {
               setProfileOpen((v) => !v);
               setNotifOpen(false);
             }}
-            className="flex h-10 items-center gap-2 rounded-xl border border-[#ECE9E4] px-2 transition-colors hover:bg-[#F8F7F5]"
+            className="flex h-10 items-center gap-2 rounded-full border border-[#E6D3B0] bg-[#FFFCF7] px-2 transition-colors hover:border-[#C9A24A]"
           >
             <span
               aria-hidden
               className="flex h-8 w-8 items-center justify-center rounded-lg text-xs font-bold text-white"
-              style={{ backgroundColor: "var(--color-ds-primary)" }}
+              style={{ background: "linear-gradient(135deg, #6E2132, #8C3A45)" }}
             >
               {user?.displayName?.charAt(0) ?? "A"}
             </span>
@@ -173,13 +194,13 @@ export function AdminHeader({ onMenuClick }: AdminHeaderProps) {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: 8, scale: 0.96 }}
                 transition={{ duration: 0.15 }}
-                className="absolute end-0 mt-2 w-60 rounded-2xl border border-[#ECE9E4] bg-white py-2 shadow-lg"
+                className="absolute end-0 mt-2 w-60 rounded-2xl border border-[#E6D3B0] bg-[#FFFCF7] py-2 shadow-lg"
               >
-                <div className="border-b border-[#ECE9E4] px-4 py-3">
+                <div className="border-b border-[#E6D3B0] px-4 py-3">
                   <p className="truncate text-sm font-semibold text-[#1A1A1A]">
                     {user?.displayName}
                   </p>
-                  <p className="truncate text-xs text-[#777]">{user?.email}</p>
+                  <p dir="ltr" className="truncate text-start text-xs text-[#777]">{user?.email}</p>
                   <span
                     className="mt-1 inline-block rounded-full px-2 py-0.5 text-[10px] font-medium"
                     style={{

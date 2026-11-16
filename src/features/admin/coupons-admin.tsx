@@ -257,7 +257,7 @@ export function CouponsAdmin() {
                     ? t("admin.coupons.statusActive", "פעיל")
                     : t("admin.coupons.statusInactive", "כבוי")}
                 </span>
-                <span className="font-mono text-sm font-semibold text-[#1A1A1A]">
+                <span dir="ltr" className="font-mono text-sm font-semibold text-[#1A1A1A]">
                   {coupon.code}
                 </span>
               </div>
@@ -397,6 +397,7 @@ function CouponEditor({
             {t("admin.coupons.code", "קוד")}
           </span>
           <input
+            dir="ltr"
             value={coupon.code}
             onChange={(e) => onChange({ ...coupon, code: e.target.value })}
             className={`${inputBase} font-mono uppercase`}

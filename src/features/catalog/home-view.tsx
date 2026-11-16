@@ -8,6 +8,7 @@ import { SiteHeader } from "@/components/layout/header";
 import { HeroBanner } from "@/features/catalog/hero-banner";
 import { HaatCategoryGrid } from "@/features/catalog/haat-category-grid";
 import { HaatProductGrid } from "@/features/catalog/haat-product-grid";
+import { MenuCategoryStrip } from "@/features/catalog/menu-category-strip";
 import { HaatPromoBanner } from "@/features/catalog/haat-promo-banner";
 import { HaatAboutSection } from "@/features/catalog/haat-about-section";
 import { ProductDetailDrawer } from "@/features/catalog/product-detail-drawer";
@@ -20,7 +21,7 @@ import {
   DEFAULT_HOMEPAGE_SECTIONS,
   type HomepageSection,
 } from "@/services/settingsService";
-import { sortProducts } from "@/lib/menu/category-tree";
+import { filterMenuDisplayProducts, sortProducts } from "@/lib/menu/category-tree";
 import type { Product } from "@/types";
 
 /** Max products rendered inside a single HAAT home-page section. */
@@ -41,6 +42,7 @@ export function HomeView() {
   const { categories, loading: categoriesLoading, error: categoriesError } = useCategories();
   const { settings } = useSettings();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [menuCategoryId, setMenuCategoryId] = useState<string | null>(null);
 
   // Deep-link support: ?product=…  ?category=… navigates straight to catalog.
   useEffect(() => {
@@ -76,6 +78,10 @@ export function HomeView() {
     () => activeProducts.filter((p) => p.isNew),
     [activeProducts]
   );
+  const menuProducts = useMemo(
+    () => filterMenuDisplayProducts(allProducts, menuCategoryId, categories),
+    [allProducts, menuCategoryId, categories]
+  );
 
   const accessError = productsError || categoriesError;
   if (
@@ -103,7 +109,7 @@ export function HomeView() {
       <>
         <SiteHeader />
 
-        <div className="flex flex-col gap-10 pb-16 pt-2 md:gap-14 md:pt-4">
+        <div className="flex flex-col gap-6 pb-12 pt-2 md:gap-8 md:pt-3">
           {order.map((section) => {
             switch (section) {
               case "hero":
@@ -172,23 +178,30 @@ export function HomeView() {
 
               case "all":
                 return (
-                  <SectionBlock
-                    key="all"
-                    id="menu"
-                    title={t("home.allProducts", "כל המוצרים")}
-                    subtitle={t(
-                      "home.allProductsHint",
-                      "עיינו בכל הקטלוג וסננו לפי הקטגוריות שלכם"
-                    )}
-                    seeAllHref="/catalog"
-                  >
-                    <HaatProductGrid
-                      products={activeProducts}
-                      loading={allLoading}
-                      limit={SECTION_LIMIT * 2}
-                      onProductClick={setSelectedProduct}
+                  <section key="all" id="menu" className="haat-container scroll-mt-20">
+                    <header className="mb-3 text-start">
+                      <h2 className="font-display text-2xl font-bold text-[#6E2132] md:text-[1.75rem]">
+                        {t("catalog.sweetsTitle", "حلوياتنا")}
+                      </h2>
+                      <p className="mt-1 text-sm text-[#6B5346]">
+                        {t(
+                          "catalog.sweetsSubtitle",
+                          "تشكيلة من الحلويات الشرقية المحضّرة بعناية"
+                        )}
+                      </p>
+                    </header>
+                    <MenuCategoryStrip
+                      selectedId={menuCategoryId}
+                      onSelect={setMenuCategoryId}
                     />
-                  </SectionBlock>
+                    <div className="mt-3">
+                      <HaatProductGrid
+                        products={menuProducts}
+                        loading={allLoading}
+                        onProductClick={setSelectedProduct}
+                      />
+                    </div>
+                  </section>
                 );
 
               case "about":

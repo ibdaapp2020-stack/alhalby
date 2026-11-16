@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 
 /** Shared admin design tokens — single source for cards, buttons, inputs */
 export const adminCard = cn(
-  "rounded-2xl border border-beige-dark/15 bg-warm-white p-5 shadow-soft",
+  "admin-card rounded-2xl p-5",
   "dark:border-white/10 dark:bg-[#1a1412]/80"
 );
 
@@ -17,8 +17,8 @@ export const adminKpiCard = cn(
   "dark:border-white/10 dark:bg-[#1a1412]/80"
 );
 
-export const adminPageTitle = "font-display text-2xl font-bold text-dark-brown md:text-3xl dark:text-warm-white";
-export const adminPageSubtitle = "mt-1 text-sm text-coffee/60 dark:text-warm-white/60";
+export const adminPageTitle = "font-display text-2xl font-bold tracking-tight text-[#4A1522] md:text-3xl dark:text-warm-white";
+export const adminPageSubtitle = "mt-1 text-sm text-[#6B5346] dark:text-warm-white/60";
 
 export const adminInput = cn(
   "h-10 rounded-xl border-beige-dark/30 bg-beige/20",

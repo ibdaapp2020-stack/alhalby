@@ -37,7 +37,7 @@ export function BrandHeroPanel({
     <div
       className={cn(
         "relative overflow-hidden rounded-[1.75rem] border border-[#E4D3B4] bg-[#FFFCF7]",
-        compact ? "min-h-[320px] px-5 py-8" : "min-h-[300px] px-6 py-10 md:min-h-[420px] md:px-14 md:py-16"
+        compact ? "min-h-[200px] px-5 py-6" : "min-h-[180px] px-6 py-7 md:min-h-[240px] md:px-10 md:py-8"
       )}
     >
       <div

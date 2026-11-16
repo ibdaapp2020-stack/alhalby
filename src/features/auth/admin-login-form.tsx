@@ -121,6 +121,7 @@ export function AdminLoginForm() {
               <Input
                 id="email"
                 type="email"
+                dir="ltr"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="admin@alhalabi.com"
@@ -134,16 +135,18 @@ export function AdminLoginForm() {
               <div className="relative mt-1.5">
                 <Input
                   id="password"
+                  dir="ltr"
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
                   required
+                  className="pe-10"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute top-1/2 right-3 -translate-y-1/2 text-coffee/40"
+                  className="absolute top-1/2 end-3 -translate-y-1/2 text-coffee/40"
                 >
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </button>

@@ -283,7 +283,6 @@ export function AdminModalHeader({
   onClose,
   ...props
 }: React.HTMLAttributes<HTMLDivElement> & { onClose?: () => void }) {
-  const { dir } = useLocale();
   return (
     <div
       data-slot="admin-modal-header"
@@ -298,10 +297,7 @@ export function AdminModalHeader({
         <button
           type="button"
           onClick={onClose}
-          className={cn(
-            "absolute top-4 z-10 rounded-lg p-1 text-coffee/60 transition-colors hover:bg-beige/60 hover:text-dark-brown focus:outline-none",
-            dir === "rtl" ? "start-4" : "end-4"
-          )}
+          className="absolute end-4 top-4 z-10 rounded-lg p-1 text-coffee/60 transition-colors hover:bg-beige/60 hover:text-dark-brown focus:outline-none"
           aria-label="Close"
         >
           <X className="h-4 w-4" />

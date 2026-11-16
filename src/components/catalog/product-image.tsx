@@ -2,9 +2,10 @@
 
 import { useState, useCallback, useEffect } from "react";
 import Image from "next/image";
-import { ImageIcon } from "lucide-react";
+import { Candy } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { useT } from "@/components/providers/locale-provider";
 import { hasRealProductImage, normalizeImageUrl } from "@/lib/menu/placeholders";
 
 interface ProductImageProps {
@@ -25,16 +26,21 @@ function isFirebaseUrl(url: string): boolean {
   );
 }
 
-function ProductImagePlaceholder({ className }: { className?: string }) {
+function ProductImagePlaceholder({ className, compact }: { className?: string; compact?: boolean }) {
+  const t = useT();
   return (
     <div
       className={cn(
-        "absolute inset-0 flex items-center justify-center bg-gradient-to-br from-beige/60 via-cream to-beige/40",
+        "absolute inset-0 flex flex-col items-center justify-center gap-1.5 bg-[#F3EBDD] px-3 text-center text-[#6E2132]",
         className
       )}
-      aria-hidden
     >
-      <ImageIcon className="h-8 w-8 text-coffee/20" strokeWidth={1.5} />
+      <Candy className={cn("text-[#6E2132]/70", compact ? "h-5 w-5" : "h-8 w-8")} strokeWidth={1.5} />
+      {!compact && (
+        <span className="max-w-[12rem] text-[11px] font-medium leading-snug text-[#6B5346]">
+          {t("catalog.photoSoon", "ستُضاف الصورة قريباً")}
+        </span>
+      )}
     </div>
   );
 }
@@ -65,7 +71,7 @@ export function ProductImage({
   }, []);
 
   if (!src || failed) {
-    return <ProductImagePlaceholder className={className} />;
+    return <ProductImagePlaceholder className={className} compact={compact || thumbnail} />;
   }
 
   const resolvedSizes =

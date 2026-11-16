@@ -304,6 +304,45 @@ html.dark .mobile-bottom-nav {
     color: var(--color-ds-primary-hover);
   }
 
+  /* Boutique catalog: one card never stretches across the row. */
+  .boutique-product-grid {
+    display: grid;
+    width: 100%;
+    align-items: stretch;
+    gap: 0.75rem;
+    grid-template-columns: minmax(0, 220px);
+    justify-content: start;
+  }
+  @media (min-width: 380px) {
+    .boutique-product-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      justify-content: stretch;
+    }
+  }
+  @media (min-width: 1024px) {
+    .boutique-product-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 1280px) {
+    .boutique-product-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1rem;
+    }
+  }
+
+  .boutique-product-card {
+    border-radius: 20px;
+    background-color: #fffcf7;
+    border: 1px solid #e6d7c3;
+    box-shadow: 0 1px 2px rgba(62, 42, 31, 0.04), 0 8px 20px -16px rgba(110, 33, 50, 0.35);
+    transition: transform 180ms ease, box-shadow 180ms ease;
+  }
+  .boutique-product-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px -16px rgba(110, 33, 50, 0.45);
+  }
+
   .haat-container {
     width: 100%;
     max-width: 1360px;
@@ -326,54 +365,97 @@ html.dark .mobile-bottom-nav {
    * All admin surfaces consume these so a single palette flip (or admin
    * theme per-tenant) restyles the whole backoffice.
    * ─────────────────────────────────────────────────────────────────── */
+  .admin-page th {
+    text-align: start;
+  }
+  .admin-page th.text-end {
+    text-align: end;
+  }
   .admin-sidebar {
-    background-color: #FBF7F1;
-    color: #3E2A1F;
-    border-color: #E6D7C3;
+    background:
+      radial-gradient(circle at 20% 0%, rgba(201, 162, 74, 0.18), transparent 36%),
+      linear-gradient(180deg, #4A1522 0%, #6E2132 48%, #3D121C 100%);
+    color: #F8F1E7;
+    border-color: rgba(201, 162, 74, 0.28);
   }
   .admin-sidebar-link {
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding: 0.625rem 0.875rem;
-    border-radius: 0.75rem;
+    padding: 0.7rem 0.9rem;
+    border-radius: 0.9rem;
+    border-inline-start: 3px solid transparent;
     font-size: 0.875rem;
-    color: #5C4638;
-    transition: background-color 180ms ease, color 180ms ease;
+    font-weight: 500;
+    color: rgba(248, 241, 231, 0.78);
+    transition: background-color 180ms ease, color 180ms ease, border-color 180ms ease;
     position: relative;
   }
   .admin-sidebar-link:hover {
-    background-color: #EFE4D1;
-    color: #6E2132;
+    background-color: rgba(248, 241, 231, 0.08);
+    color: #F8F1E7;
   }
   .admin-sidebar-link[data-active="true"] {
-    background-color: var(--color-ds-primary);
-    color: var(--color-ds-text-on-primary);
-    box-shadow: 0 8px 18px -10px rgba(110, 33, 50, 0.65);
+    background: linear-gradient(90deg, rgba(201, 162, 74, 0.28), rgba(248, 241, 231, 0.08));
+    border-inline-start-color: #E2C27A;
+    color: #F8E7B0;
+    box-shadow: 0 10px 24px -16px rgba(0, 0, 0, 0.7);
   }
   .admin-sidebar-link[data-active="true"]:hover {
-    background-color: var(--color-ds-primary-hover);
-    color: var(--color-ds-text-on-primary);
+    background: linear-gradient(90deg, rgba(201, 162, 74, 0.36), rgba(248, 241, 231, 0.1));
+    color: #FFF6D8;
   }
   .admin-sidebar-section-label {
     font-size: 0.6875rem;
     font-weight: 600;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: #A89B68;
-    padding: 0 0.875rem;
-    margin-bottom: 0.375rem;
+    color: #E2C27A;
+    padding: 0 0.9rem;
+    margin-bottom: 0.4rem;
   }
 
   .admin-page {
-    background-color: #F8F3EA;
+    background:
+      radial-gradient(ellipse at 100% 0%, rgba(201, 162, 74, 0.14), transparent 34%),
+      #F3EBDD;
+    color: #3E2A1F;
     min-height: 100%;
+  }
+  .admin-topbar {
+    background: rgba(255, 252, 247, 0.92);
+    border-bottom: 1px solid #E6D3B0;
+    box-shadow: 0 8px 24px -20px rgba(74, 21, 34, 0.45);
+  }
+  .admin-search {
+    height: 2.5rem;
+    width: min(18rem, 34vw);
+    border-radius: 999px;
+    border: 1px solid #E6D3B0;
+    background: #FFFCF7;
+    padding-inline-start: 2.25rem;
+    padding-inline-end: 0.9rem;
+    font-size: 0.8125rem;
+    color: #3E2A1F;
+  }
+  .admin-search:focus {
+    outline: none;
+    border-color: #C9A24A;
+    box-shadow: 0 0 0 3px rgba(201, 162, 74, 0.2);
   }
   .admin-card {
     background-color: #FFFCF7;
-    border: 1px solid #E6D7C3;
-    border-radius: 1rem;
-    box-shadow: 0 1px 2px rgba(62, 42, 31, 0.04);
+    border: 1px solid #E6D3B0;
+    border-radius: 1.15rem;
+    box-shadow: 0 10px 28px -22px rgba(74, 21, 34, 0.45);
+  }
+  .admin-page button.bg-turquoise,
+  .admin-page a.bg-turquoise {
+    background-color: #6E2132;
+  }
+  .admin-page button.bg-turquoise:hover,
+  .admin-page a.bg-turquoise:hover {
+    background-color: #541826;
   }
   .admin-card--muted {
     background-color: #F8F3EA;

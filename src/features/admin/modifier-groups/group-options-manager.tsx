@@ -176,7 +176,7 @@ export function GroupOptionsManager({
                   {opt.name_he}
                 </p>
                 {opt.priceDelta > 0 && (
-                  <p className="text-xs text-coffee/50">+₪{opt.priceDelta}</p>
+                  <p dir="ltr" className="text-xs text-coffee/50">+₪{opt.priceDelta}</p>
                 )}
               </div>
               <div className="flex shrink-0 gap-1">
@@ -232,6 +232,7 @@ export function GroupOptionsManager({
               <Label>{t("admin.modifiers.priceDelta")}</Label>
               <Input
                 type="number"
+                dir="ltr"
                 step="0.5"
                 min={0}
                 value={priceDelta}

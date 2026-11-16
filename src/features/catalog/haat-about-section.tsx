@@ -53,7 +53,7 @@ export function HaatAboutSection() {
       id="about"
       className="haat-container scroll-mt-24"
     >
-      <div className="haat-card grid gap-6 overflow-hidden p-5 sm:p-8 md:grid-cols-[1.1fr_1fr] md:gap-10 md:p-10">
+      <div className="haat-card grid gap-4 overflow-hidden p-4 sm:p-5 md:grid-cols-[1.1fr_1fr] md:gap-6 md:p-6">
         <div className="flex flex-col gap-3">
           <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-ds-primary/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-ds-primary">
             <Sparkles className="h-3 w-3" strokeWidth={2.5} />

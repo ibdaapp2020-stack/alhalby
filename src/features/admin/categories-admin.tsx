@@ -170,11 +170,11 @@ export function CategoriesAdmin() {
     <motion.div
       layout
       className={cn(
-        "flex items-center gap-3 rounded-2xl p-4 shadow-soft transition-colors",
-        cat.parentId && "ms-4 border-s-2 border-turquoise/25",
+        "flex flex-col gap-3 rounded-2xl border border-[#E6D3B0] bg-[#FFFCF7] p-4 shadow-[0_12px_28px_-22px_rgba(74,21,34,0.5)] sm:flex-row sm:items-center",
+        cat.parentId && "ms-4 border-s-4 border-s-[#C9A24A]",
         cat.active
-          ? "bg-warm-white dark:bg-white/5"
-          : "bg-beige/50 opacity-55 dark:bg-white/[0.03]"
+          ? "dark:bg-white/5"
+          : "bg-[#F3EBDD] opacity-70 dark:bg-white/[0.03]"
       )}
     >
       {dragHandle}
@@ -306,8 +306,8 @@ export function CategoriesAdmin() {
             className={cn(
               "rounded-full px-4 py-1.5 text-sm font-medium transition-colors",
               statusFilter === opt.id
-                ? "bg-turquoise text-warm-white"
-                : "bg-beige/60 text-coffee hover:bg-beige dark:bg-white/10 dark:text-warm-white/80"
+                ? "bg-[#6E2132] text-[#F8F1E7]"
+                : "border border-[#E6D3B0] bg-[#FFFCF7] text-[#4A1522] hover:border-[#C9A24A]"
             )}
           >
             {opt.label}
@@ -445,7 +445,7 @@ export function CategoriesAdmin() {
                 </div>
                 <div>
                   <Label htmlFor="nameEn">{t("admin.categoryNameEn")}</Label>
-                  <Input id="nameEn" {...form.register("nameEn")} className="mt-1" />
+                  <Input id="nameEn" dir="ltr" {...form.register("nameEn")} className="mt-1" />
                 </div>
               </div>
             </section>

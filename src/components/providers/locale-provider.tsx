@@ -43,6 +43,7 @@ function readStoredLocale(): Locale {
 
 export function LocaleProvider({ children }: { children: ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>(DEFAULT_LOCALE);
+  const [hasReadStorage, setHasReadStorage] = useState(false);
   const [strings, setStrings] = useState<Record<Locale, TranslationMap>>({
     he: {},
     ar: {},
@@ -51,9 +52,8 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const initial = readStoredLocale();
-    setLocaleState(initial);
-    applyLocaleFonts(initial);
+    setLocaleState(readStoredLocale());
+    setHasReadStorage(true);
     fetchAllLocaleStrings().then((all) => {
       setStrings({
         he: { ...UI_TRANSLATIONS_SEED.he, ...ADMIN_TRANSLATIONS.he, ...all.he },
@@ -69,14 +69,19 @@ export function LocaleProvider({ children }: { children: ReactNode }) {
     localStorage.setItem(STORAGE_KEY, next);
     document.documentElement.lang = next;
     document.documentElement.dir = LOCALE_META[next].dir;
+    document.documentElement.dataset.locale = next;
     applyLocaleFonts(next);
   }, []);
 
   useEffect(() => {
+    // Skip the first paint so the inline script's saved direction is not
+    // overwritten by the default Arabic locale before storage is read.
+    if (!hasReadStorage) return;
     document.documentElement.lang = locale;
     document.documentElement.dir = LOCALE_META[locale].dir;
+    document.documentElement.dataset.locale = locale;
     applyLocaleFonts(locale);
-  }, [locale]);
+  }, [locale, hasReadStorage]);
 
   const t = useCallback(
     (key: string, fallback?: string) => {

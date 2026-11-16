@@ -57,7 +57,7 @@ export function MobileBottomNav() {
               <span className="relative">
                 <Icon className="h-5 w-5" />
                 {cart && itemCount > 0 && (
-                  <span className="absolute -top-1.5 -right-2 flex h-4 min-w-4 items-center justify-center rounded-full bg-turquoise px-1 text-[9px] font-bold text-white">
+                  <span className="absolute -end-2 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-turquoise px-1 text-[9px] font-bold text-white">
                     {itemCount}
                   </span>
                 )}

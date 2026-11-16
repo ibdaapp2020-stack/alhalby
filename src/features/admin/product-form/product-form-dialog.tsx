@@ -699,6 +699,7 @@ export function ProductFormDialog({
                       </button>
                     </div>
                     <Input
+                      dir="ltr"
                       {...form.register("nameEn", { onChange: () => markManual("nameEn") })}
                       className="rounded-xl"
                     />
@@ -750,6 +751,7 @@ export function ProductFormDialog({
                       </button>
                     </div>
                     <Textarea
+                      dir="ltr"
                       rows={3}
                       {...form.register("descriptionEn", { onChange: () => markManual("descriptionEn") })}
                       className="rounded-xl"
@@ -801,6 +803,7 @@ export function ProductFormDialog({
                     <Label>{t("admin.products.price")} (₪)</Label>
                     <Input
                       type="number"
+                      dir="ltr"
                       step="0.01"
                       {...form.register("price", { valueAsNumber: true })}
                       className="mt-1 rounded-xl"
@@ -810,6 +813,7 @@ export function ProductFormDialog({
                     <Label>{t("admin.products.cost")}</Label>
                     <Input
                       type="number"
+                      dir="ltr"
                       step="0.01"
                       {...form.register("cost", { valueAsNumber: true })}
                       className="mt-1 rounded-xl"
@@ -820,11 +824,11 @@ export function ProductFormDialog({
                 <div className="grid grid-cols-2 gap-3 rounded-xl bg-beige/30 p-4 dark:bg-white/5">
                   <div>
                     <p className="text-xs text-coffee/50">{t("admin.products.profit")}</p>
-                    <p className="text-lg font-bold text-turquoise">₪{profit.toFixed(2)}</p>
+                    <p dir="ltr" className="text-lg font-bold text-turquoise">₪{profit.toFixed(2)}</p>
                   </div>
                   <div>
                     <p className="text-xs text-coffee/50">{t("admin.productForm.marginPercent")}</p>
-                    <p className="text-lg font-bold text-gold">{marginPercent.toFixed(1)}%</p>
+                    <p dir="ltr" className="text-lg font-bold text-gold">{marginPercent.toFixed(1)}%</p>
                   </div>
                 </div>
               </div>

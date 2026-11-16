@@ -61,7 +61,7 @@ const ACTIVE_STATUSES: OrderStatus[] = ["pending", "confirmed", "preparing", "re
  */
 export function AdminDashboard() {
   const t = useT();
-  const { locale } = useLocale();
+  const { locale, dir } = useLocale();
   const adminPath = useAdminPath();
   const { settings } = useSettings();
   const { products, loading: productsLoading } = useProducts();
@@ -256,7 +256,7 @@ export function AdminDashboard() {
                 className="object-cover opacity-90"
                 sizes="(max-width: 768px) 0px, 420px"
               />
-              <div className="absolute inset-0 bg-gradient-to-l from-transparent via-white/0 to-white" />
+              <div className="absolute inset-0 bg-gradient-to-l from-transparent to-[#FFFCF7] rtl:bg-gradient-to-r" />
             </div>
           ) : null}
         </div>
@@ -275,7 +275,7 @@ export function AdminDashboard() {
             </span>
             <div className="min-w-0">
               <p className="admin-kpi-label truncate">{kpi.label}</p>
-              <p className="admin-kpi-value">{loading ? "…" : kpi.value}</p>
+              <p dir="ltr" className="admin-kpi-value text-start">{loading ? "…" : kpi.value}</p>
             </div>
           </div>
         ))}
@@ -312,11 +312,22 @@ export function AdminDashboard() {
                     <stop offset="100%" stopColor="var(--color-ds-primary)" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <XAxis dataKey="day" tick={{ fontSize: 11, fill: "#777" }} stroke="#ECE9E4" />
-                <YAxis tick={{ fontSize: 11, fill: "#777" }} stroke="#ECE9E4" />
+                <XAxis
+                  dataKey="day"
+                  reversed={dir === "rtl"}
+                  tick={{ fontSize: 11, fill: "#777" }}
+                  stroke="#ECE9E4"
+                />
+                <YAxis
+                  orientation={dir === "rtl" ? "right" : "left"}
+                  tick={{ fontSize: 11, fill: "#777" }}
+                  stroke="#ECE9E4"
+                />
                 <Tooltip
                   formatter={(v) => formatPrice(Number(v))}
                   contentStyle={{
+                    direction: "ltr",
+                    textAlign: dir === "rtl" ? "right" : "left",
                     borderRadius: 12,
                     border: "1px solid #ECE9E4",
                     boxShadow: "0 6px 24px -8px rgba(16,14,12,0.1)",
@@ -475,7 +486,7 @@ function RecentOrdersCard({
               className="admin-table-row grid-cols-[auto_1fr_auto]"
             >
               <div className="min-w-0">
-                <p className="truncate text-sm font-semibold text-[#1A1A1A]">
+                <p dir="ltr" className="truncate text-start text-sm font-semibold text-[#1A1A1A]">
                   {order.orderNumber}
                 </p>
                 <p className="truncate text-xs text-[#777]">
@@ -483,10 +494,10 @@ function RecentOrdersCard({
                 </p>
               </div>
               <div className="min-w-0 text-end">
-                <p className="text-sm font-bold text-[#1A1A1A]">
+                <p dir="ltr" className="text-start text-sm font-bold text-[#1A1A1A]">
                   {formatPrice(order.total)}
                 </p>
-                <p className="truncate text-[11px] text-[#777]">
+                <p dir="ltr" className="truncate text-start text-[11px] text-[#777]">
                   {new Date(order.createdAt).toLocaleTimeString([], {
                     hour: "2-digit",
                     minute: "2-digit",
@@ -555,7 +566,7 @@ function PopularProductsCard({
                   {item.count} {t("admin.dashboard.sold", "נמכרו")}
                 </p>
               </div>
-              <p className="text-sm font-bold text-[#1A1A1A]">
+              <p dir="ltr" className="text-start text-sm font-bold text-[#1A1A1A]">
                 {formatPrice(item.revenue)}
               </p>
             </div>

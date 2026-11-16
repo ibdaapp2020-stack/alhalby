@@ -1,8 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
 import { DEFAULT_LOCALE, LOCALE_META, type Locale } from "@/lib/i18n/types";
-import { applyLocaleFonts } from "@/lib/typography/locale-fonts";
 
 const STORAGE_KEY = "store-locale";
 
@@ -39,11 +37,7 @@ export function LocaleHtmlScript() {
   return <script dangerouslySetInnerHTML={{ __html: script }} />;
 }
 
-export function LocaleHtmlSync({ locale }: { locale: Locale }) {
-  useEffect(() => {
-    document.documentElement.lang = locale;
-    document.documentElement.dir = LOCALE_META[locale].dir;
-    applyLocaleFonts(locale);
-  }, [locale]);
+/** Direction is applied by LocaleProvider after the saved locale is read. */
+export function LocaleHtmlSync(_props: { locale: Locale }) {
   return null;
 }

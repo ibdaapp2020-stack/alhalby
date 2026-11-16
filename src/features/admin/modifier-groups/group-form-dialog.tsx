@@ -259,6 +259,7 @@ export function GroupFormDialog({
                 <div>
                   <Label>{t("admin.modifiers.nameEnOptional")}</Label>
                   <Input
+                    dir="ltr"
                     value={form.nameEn}
                     onChange={(e) => set("nameEn", e.target.value)}
                     className="mt-1 rounded-xl"

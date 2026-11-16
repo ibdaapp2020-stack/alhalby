@@ -5,7 +5,6 @@ import { Search, SlidersHorizontal, X } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { SiteHeader } from "@/components/layout/header";
 import { HaatProductGrid } from "@/features/catalog/haat-product-grid";
-import { HaatCategoryGrid } from "@/features/catalog/haat-category-grid";
 import { MenuCategoryStrip } from "@/features/catalog/menu-category-strip";
 import { SubcategoryChips } from "@/features/catalog/subcategory-chips";
 import { ProductFiltersBar } from "@/features/catalog/product-filters-bar";
@@ -131,7 +130,7 @@ export function CatalogView() {
 
   const sectionTitle = useMemo(() => {
     if (isSearchMode) return `"${searchQuery}"`;
-    if (!selectedCategoryId) return t("catalog.fullMenu", "כל המוצרים");
+    if (!selectedCategoryId) return t("catalog.allProducts", "جميع المنتجات");
     return localized.name || t("catalog.menuSection", "תפריט");
   }, [isSearchMode, searchQuery, selectedCategoryId, localized.name, t]);
 
@@ -199,7 +198,15 @@ export function CatalogView() {
         <SiteHeader />
 
         {/* Hero-less catalog — jump straight to categories + products */}
-        <div className="haat-container pb-16 pt-4 md:pt-6">
+        <div className="haat-container pb-12 pt-4 md:pt-5">
+          <header className="mb-3 text-start">
+            <h1 className="font-display text-2xl font-bold text-[#6E2132] md:text-[1.75rem]">
+              {t("catalog.sweetsTitle", "حلوياتنا")}
+            </h1>
+            <p className="mt-1 text-sm text-[#6B5346]">
+              {t("catalog.sweetsSubtitle", "تشكيلة من الحلويات الشرقية المحضّرة بعناية")}
+            </p>
+          </header>
           {/* Sticky toolbar — search + category chips */}
           <div className="sticky top-14 z-30 -mx-4 border-b border-ds-border bg-ds-bg/95 px-4 pb-3 pt-3 backdrop-blur md:top-16 md:mx-0 md:rounded-2xl md:border md:px-5 md:py-4 md:shadow-[0_1px_2px_rgba(16,14,12,0.04)]">
             <div className="flex items-center gap-2">
@@ -254,22 +261,10 @@ export function CatalogView() {
             )}
           </div>
 
-          {/* When no category and no search: show category hero grid first. */}
-          {!selectedCategoryId && !isSearchMode && (
-            <section className="mt-8">
-              <HaatCategoryGrid
-                variant="card"
-                onCategoryClick={handleCategorySelect}
-                alwaysExpanded
-                seeAllHref="#menu"
-              />
-            </section>
-          )}
-
-          <div id="menu" className="mt-8 scroll-mt-32">
-            <div className="mb-4 flex items-end justify-between gap-3">
+          <div id="menu" className="mt-4 scroll-mt-32">
+            <div className="mb-3 flex items-end justify-between gap-3">
               <div className="min-w-0">
-                <h2 className="haat-section-title truncate" dir={localized.dir}>
+                <h2 className="truncate text-base font-semibold text-[#3E2A1F]" dir={localized.dir}>
                   {sectionTitle}
                 </h2>
                 {selectedCategoryId && !isSearchMode && (

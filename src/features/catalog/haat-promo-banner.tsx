@@ -28,7 +28,7 @@ export function HaatPromoBanner({
     <section className="haat-container">
       <Link
         href={href}
-        className="relative flex min-h-[140px] overflow-hidden rounded-2xl bg-gradient-to-br from-ds-primary via-ds-primary to-ds-primary-hover text-ds-text-on-primary shadow-[0_12px_32px_-16px_rgba(16,14,12,0.25)] transition-transform hover:scale-[1.005] md:min-h-[180px]"
+        className="relative flex min-h-[104px] overflow-hidden rounded-2xl bg-gradient-to-br from-ds-primary via-ds-primary to-ds-primary-hover text-ds-text-on-primary shadow-[0_12px_32px_-16px_rgba(16,14,12,0.25)] transition-transform hover:scale-[1.005] md:min-h-[128px]"
       >
         {/* Decorative circles — purely visual */}
         <span
